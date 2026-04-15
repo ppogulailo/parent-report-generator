@@ -30,4 +30,27 @@ export class ReportService {
       report,
     };
   }
+
+  async *generateStream(
+    dto: GenerateReportDto,
+  ): AsyncGenerator<
+    | { type: 'scores'; domainScores: Record<string, number>; topDomains: string[] }
+    | { type: 'text'; text: string }
+    | { type: 'done' }
+  > {
+    const { domainScores, topDomains } = this.scoringService.calculateScores(
+      dto.responses,
+    );
+
+    yield { type: 'scores', domainScores, topDomains };
+
+    for await (const chunk of this.claudeService.generateReportStream(
+      domainScores,
+      topDomains,
+    )) {
+      yield { type: 'text', text: chunk };
+    }
+
+    yield { type: 'done' };
+  }
 }

@@ -4,8 +4,10 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Res,
   UseGuards,
 } from '@nestjs/common';
+import type { Response } from 'express';
 import {
   ApiOperation,
   ApiResponse,
@@ -88,5 +90,41 @@ export class ReportController {
   })
   generate(@Body() dto: GenerateReportDto): Promise<GenerateReportResponse> {
     return this.reportService.generate(dto);
+  }
+
+  @Post('generate/stream')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Stream a Parent Action Plan (Server-Sent Events)',
+    description:
+      'Same input/scoring as /generate, but streams the plan back as SSE. Emits `event: scores` immediately, then `event: text` deltas as OpenAI produces tokens, then `event: done`. On failure emits `event: error` and ends.',
+  })
+  async generateStream(
+    @Body() dto: GenerateReportDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    res.setHeader('Content-Type', 'text/event-stream');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders();
+
+    const send = (event: string, data: unknown) => {
+      res.write(`event: ${event}\n`);
+      res.write(`data: ${JSON.stringify(data)}\n\n`);
+    };
+
+    try {
+      for await (const chunk of this.reportService.generateStream(dto)) {
+        send(chunk.type, chunk);
+      }
+    } catch {
+      send('error', {
+        type: 'error',
+        error: 'Report generation failed. Please try again.',
+      });
+    } finally {
+      res.end();
+    }
   }
 }
