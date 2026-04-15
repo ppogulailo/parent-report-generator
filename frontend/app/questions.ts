@@ -1,0 +1,33 @@
+export const QUESTIONS: string[] = [
+  'How certain are you that your child has used drugs, alcohol, or other substances?',
+  'How frequently do you suspect substance use may be occurring?',
+  'Have you observed secrecy, lying, or avoidance when discussing concerns?',
+  'How often does your child spend time in environments where substances may be present?',
+  'How intense are conflicts between you and your child regarding behavior or rules?',
+  'How confident do you feel confronting your child about substance concerns?',
+  'How consistent are consequences when rules are broken?',
+  'How often do you feel unsure whether you are overreacting or underreacting?',
+  'Have you noticed significant mood swings, withdrawal, or aggressive behavior?',
+  'How concerned are you about your child’s safety (driving, risky environments, etc.)?',
+  'How aligned are caregivers or co-parents in responding to the situation?',
+  'How often does your child spend time with peers you consider a negative influence?',
+  'How comfortable is your child discussing stress, anxiety, or emotional pain?',
+  'How frequently do you monitor your child’s whereabouts and activities?',
+  'How supported do you feel by school staff or community professionals?',
+  'Have you sought guidance from a therapist, counselor, or treatment provider?',
+  'How often do you feel exhausted, fearful, or overwhelmed by the situation?',
+  'How clear is your plan for next steps if substance use continues?',
+  'How often does your child accept responsibility for their behavior?',
+  'How much structure currently exists in your child’s daily routine?',
+  'How confident are you that your home environment discourages substance use?',
+  'How prepared do you feel to set firm but supportive boundaries?',
+  'How frequently do you worry about long-term consequences if patterns continue?',
+  'How ready are you to take decisive action to protect your child’s well-being?',
+];
+
+export const SCALE_LABELS: Record<number, string> = {
+  1: '1 — Strong',
+  2: '2',
+  3: '3',
+  4: '4 — Concerning',
+};

@@ -11,5 +11,13 @@ export function buildUserPrompt(
 
 Top 3 Priority Domains: ${topDomains[0]}, ${topDomains[1]}, ${topDomains[2]}
 
-Generate a Parent Action Plan following the required output structure exactly.`;
+Generate a Parent Action Plan. Use EXACTLY these five section headers, each on its own line, in this exact order, written in plain UPPERCASE text with no markdown (no #, no *, no numbering, no bold):
+
+HEADLINE SUMMARY
+KEY PRIORITIES
+WHAT TO AVOID
+NEXT 7 DAYS ACTION PLAN
+ENCOURAGEMENT & DIRECTION
+
+Place the body of each section on the lines immediately following its header. Do not add any other headers, titles, or preamble before HEADLINE SUMMARY.`;
 }

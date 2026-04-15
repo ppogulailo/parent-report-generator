@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
 import * as http from 'http';
 import { spawn } from 'child_process';
+import { SYSTEM_PROMPT } from '../src/report/prompts/system.prompt';
 
 const KEY = 'test-secret';
+const MOCK_BASE = 'http://localhost:4001';
 const VALID = Array(24).fill(2) as number[];
 const SAMPLE = [
   4, 3, 4, 2, 3, 2, 3, 3, 4, 4, 2, 3, 2, 2, 3, 2, 4, 2, 2, 2, 2, 2, 4, 3,
@@ -83,13 +85,17 @@ for (const [label, body] of invalidCases) {
 
 // ─── Scoring ──────────────────────────────────────────────────────────────────
 
-test('domain scores are calculated correctly for sample input', async ({
+test('all 5 domain scores are calculated correctly for sample input', async ({
   request,
 }) => {
   const res = await post(request, { responses: SAMPLE });
   expect(res.status()).toBe(200);
   const { domainScores } = await res.json();
-  expect(domainScores['Immediate Safety & Urgency']).toBeCloseTo(3.6, 1);
+  expect(domainScores['Immediate Safety & Urgency']).toBeCloseTo(3.6, 2);
+  expect(domainScores['Household Structure']).toBeCloseTo(2.0, 2);
+  expect(domainScores['Boundary Consistency']).toBeCloseTo(2.2, 2);
+  expect(domainScores['Communication & Conflict']).toBeCloseTo(3.0, 2);
+  expect(domainScores['Support & Professional Engagement']).toBeCloseTo(3.0, 2);
 });
 
 test('top domain for sample input is Immediate Safety & Urgency', async ({
@@ -112,6 +118,29 @@ test('tie-breaking: all-equal input puts Safety & Urgency first', async ({
   const res = await post(request, { responses: Array(24).fill(2) });
   const { topDomains } = await res.json();
   expect(topDomains[0]).toBe('Immediate Safety & Urgency');
+});
+
+test('tie-breaking: Communication & Conflict beats Boundary on tie', async ({
+  request,
+}) => {
+  // Build a payload where Communication & Conflict and Boundary Consistency
+  // both average exactly 3, and Safety averages 4 (top), so Communication
+  // must be #2 ahead of Boundary per TIE_BREAK_ORDER.
+  const r = Array(24).fill(2);
+  // Safety: Q1,2,10,23,24 → indices 0,1,9,22,23
+  for (const i of [0, 1, 9, 22, 23]) r[i] = 4;
+  // Communication & Conflict: Q3,5,6,9,13 → 2,4,5,8,12
+  for (const i of [2, 4, 5, 8, 12]) r[i] = 3;
+  // Boundary Consistency: Q7,11,18,19,22 → 6,10,17,18,21
+  for (const i of [6, 10, 17, 18, 21]) r[i] = 3;
+
+  const res = await post(request, { responses: r });
+  const { domainScores, topDomains } = await res.json();
+  expect(domainScores['Communication & Conflict']).toBeCloseTo(3.0, 2);
+  expect(domainScores['Boundary Consistency']).toBeCloseTo(3.0, 2);
+  expect(topDomains[0]).toBe('Immediate Safety & Urgency');
+  expect(topDomains[1]).toBe('Communication & Conflict');
+  expect(topDomains[2]).toBe('Boundary Consistency');
 });
 
 // ─── Response Shape ───────────────────────────────────────────────────────────
@@ -159,9 +188,44 @@ test('success response has correct shape', async ({ request }) => {
   }
 });
 
+// ─── Outgoing Prompt ──────────────────────────────────────────────────────────
+
+test('outgoing OpenAI request uses verbatim SYSTEM_PROMPT and includes scores + top 3', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  expect(captured).not.toBeNull();
+  expect(captured.headers['authorization']).toBe('Bearer mock-key');
+
+  const { body } = captured;
+  expect(body.model).toBe('gpt-4o-mini');
+
+  expect(Array.isArray(body.messages)).toBe(true);
+  expect(body.messages).toHaveLength(2);
+  expect(body.messages[0].role).toBe('system');
+  expect(body.messages[0].content).toBe(SYSTEM_PROMPT);
+  expect(body.messages[1].role).toBe('user');
+
+  const userContent: string = body.messages[1].content;
+  // All 5 domain names + numeric values rounded to 2dp must be present
+  expect(userContent).toContain('Immediate Safety & Urgency: 3.60');
+  expect(userContent).toContain('Household Structure: 2.00');
+  expect(userContent).toContain('Boundary Consistency: 2.20');
+  expect(userContent).toContain('Communication & Conflict: 3.00');
+  expect(userContent).toContain('Support & Professional Engagement: 3.00');
+  // Top 3 list must appear, with Safety first
+  expect(userContent).toContain('Top 3 Priority Domains:');
+  expect(userContent).toMatch(
+    /Top 3 Priority Domains:\s*Immediate Safety & Urgency,/,
+  );
+});
+
 // ─── Claude Failure ───────────────────────────────────────────────────────────
 
-test('returns 500 when Claude API fails', async () => {
+test('returns 500 when OpenAI API fails', async () => {
   const errorServer = http.createServer((_req, res) => {
     res.writeHead(500, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: { message: 'upstream error' } }));
@@ -177,8 +241,8 @@ test('returns 500 when Claude API fails', async () => {
         ...process.env,
         PORT: '3002',
         API_SECRET_KEY: 'test-secret',
-        ANTHROPIC_API_KEY: 'mock-key',
-        ANTHROPIC_API_URL: 'http://localhost:4002',
+        OPENAI_API_KEY: 'mock-key',
+        OPENAI_API_URL: 'http://localhost:4002',
       },
       stdio: 'pipe',
     },

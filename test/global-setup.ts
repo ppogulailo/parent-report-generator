@@ -5,33 +5,56 @@ const MOCK_PORT = 4001;
 const APP_PORT = 3001;
 
 const MOCK_RESPONSE_BODY = JSON.stringify({
-  content: [
+  choices: [
     {
-      type: 'text',
-      text: [
-        'HEADLINE SUMMARY',
-        'You are taking a courageous step by addressing this situation directly.',
-        '',
-        'KEY PRIORITIES',
-        'Immediate Safety & Urgency is the most pressing concern right now.',
-        '',
-        'WHAT TO AVOID',
-        'Avoid issuing ultimatums without a clear follow-through plan.',
-        '',
-        'NEXT 7 DAYS ACTION PLAN',
-        'Days 1–2: Have a calm, private conversation with your child.',
-        '',
-        'ENCOURAGEMENT & DIRECTION',
-        'You are not alone. Many parents have navigated this successfully.',
-      ].join('\n'),
+      message: {
+        role: 'assistant',
+        content: [
+          'HEADLINE SUMMARY',
+          'You are taking a courageous step by addressing this situation directly.',
+          '',
+          'KEY PRIORITIES',
+          'Immediate Safety & Urgency is the most pressing concern right now.',
+          '',
+          'WHAT TO AVOID',
+          'Avoid issuing ultimatums without a clear follow-through plan.',
+          '',
+          'NEXT 7 DAYS ACTION PLAN',
+          'Days 1–2: Have a calm, private conversation with your child.',
+          '',
+          'ENCOURAGEMENT & DIRECTION',
+          'You are not alone. Many parents have navigated this successfully.',
+        ].join('\n'),
+      },
     },
   ],
 });
 
 export default async function globalSetup() {
-  const mockServer = http.createServer((_req, res) => {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(MOCK_RESPONSE_BODY);
+  let lastRequest: { headers: http.IncomingHttpHeaders; body: any } | null =
+    null;
+
+  const mockServer = http.createServer((req, res) => {
+    if (req.method === 'GET' && req.url === '/_last') {
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify(lastRequest));
+      return;
+    }
+
+    let raw = '';
+    req.on('data', (chunk) => (raw += chunk));
+    req.on('end', () => {
+      try {
+        lastRequest = {
+          headers: req.headers,
+          body: raw ? JSON.parse(raw) : null,
+        };
+      } catch {
+        lastRequest = { headers: req.headers, body: null };
+      }
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(MOCK_RESPONSE_BODY);
+    });
   });
 
   await new Promise<void>((resolve) => mockServer.listen(MOCK_PORT, resolve));
@@ -45,8 +68,8 @@ export default async function globalSetup() {
         ...process.env,
         PORT: String(APP_PORT),
         API_SECRET_KEY: 'test-secret',
-        ANTHROPIC_API_KEY: 'mock-key',
-        ANTHROPIC_API_URL: `http://localhost:${MOCK_PORT}`,
+        OPENAI_API_KEY: 'mock-key',
+        OPENAI_API_URL: `http://localhost:${MOCK_PORT}`,
       },
       stdio: 'pipe',
     },

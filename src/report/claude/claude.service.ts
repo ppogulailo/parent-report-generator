@@ -9,16 +9,16 @@ import { ReportSections } from '../interfaces/report.interface';
 export class ClaudeService {
   private readonly apiKey: string;
   private readonly apiUrl: string;
-  private readonly model = 'claude-sonnet-4-20250514';
+  private readonly model = 'gpt-4o-mini';
 
   constructor(
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {
-    this.apiKey = this.configService.getOrThrow<string>('ANTHROPIC_API_KEY');
+    this.apiKey = this.configService.getOrThrow<string>('OPENAI_API_KEY');
     this.apiUrl = this.configService.get<string>(
-      'ANTHROPIC_API_URL',
-      'https://api.anthropic.com/v1/messages',
+      'OPENAI_API_URL',
+      'https://api.openai.com/v1/chat/completions',
     );
   }
 
@@ -35,20 +35,21 @@ export class ClaudeService {
           {
             model: this.model,
             max_tokens: 2000,
-            system: SYSTEM_PROMPT,
-            messages: [{ role: 'user', content: userPrompt }],
+            messages: [
+              { role: 'system', content: SYSTEM_PROMPT },
+              { role: 'user', content: userPrompt },
+            ],
           },
           {
             headers: {
-              'x-api-key': this.apiKey,
-              'anthropic-version': '2023-06-01',
+              authorization: `Bearer ${this.apiKey}`,
               'content-type': 'application/json',
             },
           },
         ),
       );
 
-      const text: string = response.data.content[0].text;
+      const text: string = response.data.choices[0].message.content;
       return this.parseSections(text);
     } catch {
       throw new InternalServerErrorException(
@@ -60,7 +61,7 @@ export class ClaudeService {
   private parseSections(text: string): ReportSections {
     const extract = (label: string): string => {
       const pattern = new RegExp(
-        `${label}\\s*\\n([\\s\\S]*?)(?=\\n[A-Z][A-Z\\s&]+\\n|$)`,
+        `${label}\\s*\\n([\\s\\S]*?)(?=\\n[A-Z][A-Z0-9\\s&]+\\n|$)`,
         'i',
       );
       const match = text.match(pattern);
