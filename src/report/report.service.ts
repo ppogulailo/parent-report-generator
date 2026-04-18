@@ -21,6 +21,7 @@ export class ReportService {
     const report = await this.claudeService.generateReport(
       domainScores,
       topDomains,
+      dto.responses,
     );
 
     return {
@@ -47,6 +48,7 @@ export class ReportService {
     for await (const chunk of this.claudeService.generateReportStream(
       domainScores,
       topDomains,
+      dto.responses,
     )) {
       yield { type: 'text', text: chunk };
     }

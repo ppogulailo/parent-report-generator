@@ -155,9 +155,11 @@ const DOMAIN_NAMES = [
 
 const REPORT_KEYS = [
   'headlineSummary',
+  'topImmediatePriorities',
   'keyPriorities',
   'whatToAvoid',
-  'next7Days',
+  'first72Hours',
+  'days4to7',
   'encouragement',
 ];
 
@@ -181,7 +183,7 @@ test('success response has correct shape', async ({ request }) => {
     expect(DOMAIN_NAMES).toContain(d);
   }
 
-  expect(Object.keys(body.report)).toHaveLength(5);
+  expect(Object.keys(body.report)).toHaveLength(7);
   for (const key of REPORT_KEYS) {
     expect(typeof body.report[key]).toBe('string');
     expect(body.report[key].length).toBeGreaterThan(0);
@@ -221,6 +223,16 @@ test('outgoing OpenAI request uses verbatim SYSTEM_PROMPT and includes scores + 
   expect(userContent).toMatch(
     /Top 3 Priority Domains:\s*Immediate Safety & Urgency,/,
   );
+  // Per-question context: SAMPLE has Q1=4, Q3=4, Q9=4, Q17=4, Q23=4 as strong concerns
+  expect(userContent).toContain('Strong concerns (scored 4');
+  expect(userContent).toContain(
+    'How certain are you that your child has used drugs',
+  );
+  expect(userContent).toContain('mood swings, withdrawal, or aggressive');
+  // New 7-section header list
+  expect(userContent).toContain('TOP 3 IMMEDIATE PRIORITIES');
+  expect(userContent).toContain('FIRST 72 HOURS PLAN');
+  expect(userContent).toContain('DAYS 4 TO 7 CONTINUATION');
 });
 
 // ─── Claude Failure ───────────────────────────────────────────────────────────

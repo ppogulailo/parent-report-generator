@@ -135,17 +135,9 @@ If two or more domains share the same score, rank in this fixed order:
 
 ### 6.1 System Prompt
 
-Stored as a constant in `src/report/prompts/system.prompt.ts`. Do not modify this text:
+> **Update (post-v1.0):** The original v1.0 system prompt has been superseded by stakeholder feedback (Matthew, ASAP). The current source of truth lives in `src/report/prompts/system.prompt.ts`. The new prompt is significantly longer and bakes in: (a) ASAP Community framing — the plan is a continuation of the program the parent already started, not a standalone report; (b) ASAP resource prioritization — Articles of Action → essential workshops (Effective Communication, Building a Support Network) → ~21 auxiliary workshops → ASAP-endorsed therapists/treatment centers → external resources only when higher-risk; (c) deeper, non-obvious intervention strategies in the top priorities and 72-hour plan (parent emotional regulation before engaging, caregiver alignment, building the support structure, understanding the specific substance); (d) a more grounded, real-world tone that names the parent's actual emotional load (exhaustion, fear, frustration) instead of polished generic empathy; (e) explicit personalization rules that require every recommendation to tie back to a behavior the parent reported.
 
-```
-You are a highly experienced parent guidance specialist focused on adolescent substance use intervention.
-
-Your role is to generate a clear, structured, and emotionally supportive Parent Action Plan based on questionnaire results.
-
-This is NOT generic advice. This must feel specific, practical, and directly relevant to the parent's situation.
-
-Use a calm, confident, and supportive tone. Avoid clinical or overly technical language. Write as if you are guiding a concerned parent step-by-step.
-```
+Stored as a constant in `src/report/prompts/system.prompt.ts`. Treat the file as authoritative — when changing prompt text, edit the file directly and update this section to summarize the change.
 
 ### 6.2 User Prompt Template
 
@@ -168,15 +160,19 @@ Scores must be rounded to 2 decimal places before injection.
 
 ### 6.3 Required Output Structure
 
-The AI must return exactly 5 sections with these fixed names:
+> **Update (post-v1.0):** The original 5-section structure has been replaced by a 7-section structure to support the ASAP framing and the deeper 72-hour intervention plan. The headers below are emitted verbatim by the model and parsed in `claude.service.ts`. Response keys in §7.4 / `ReportSections` follow this 7-section layout.
+
+The AI must return exactly 7 sections with these fixed names:
 
 | # | Section Name | Content |
 |---|---|---|
-| 1 | HEADLINE SUMMARY | 3–4 sentences. Empathetic. Acknowledges the parent's situation. |
-| 2 | KEY PRIORITIES | Top 3 domains. Each: Meaning / Why It Matters / Immediate Actions. |
-| 3 | WHAT TO AVOID | 3–5 specific mistakes parents in this situation commonly make. |
-| 4 | NEXT 7 DAYS ACTION PLAN | Concrete actions for the coming week, grouped or day-by-day. |
-| 5 | ENCOURAGEMENT & DIRECTION | Supportive, forward-looking close. |
+| 1 | HEADLINE SUMMARY | 2–3 sentences. Names the parent's actual emotional load. Anchors them in the ASAP work. |
+| 2 | TOP 3 IMMEDIATE PRIORITIES | 3 deeper, non-obvious strategies (parent emotional regulation, caregiver alignment, support structure, substance understanding). |
+| 3 | KEY PRIORITIES | Top 3 domains. Each: plain-language meaning for this family / 2–3 specific steps with ASAP resource pointers / one thing to watch for. |
+| 4 | WHAT TO AVOID | 3–5 specific mistakes, including at least one warning about emotional reactivity. |
+| 5 | FIRST 72 HOURS PLAN | Day 1 / Day 2 / Day 3, sequenced bullets covering emotional regulation, caregiver coordination, support-structure building, substance learning, and decision guidance for predictable teen reactions. |
+| 6 | DAYS 4 TO 7 CONTINUATION | 3–4 bullets pointing to specific ASAP next steps (workshops, Articles of Action chapters, when to escalate to a professional). |
+| 7 | ENCOURAGEMENT AND DIRECTION | 2–3 grounded sentences. Names the determination/perseverance the work takes. Frames it as parent + child against the drugs. |
 
 ### 6.4 Content Rules
 
@@ -241,9 +237,11 @@ No API key required on this endpoint.
   ],
   "report": {
     "headlineSummary": "...",
+    "topImmediatePriorities": "...",
     "keyPriorities": "...",
     "whatToAvoid": "...",
-    "next7Days": "...",
+    "first72Hours": "...",
+    "days4to7": "...",
     "encouragement": "..."
   }
 }
@@ -388,9 +386,11 @@ export interface DomainScores {
 
 export interface ReportSections {
   headlineSummary: string;
+  topImmediatePriorities: string;
   keyPriorities: string;
   whatToAvoid: string;
-  next7Days: string;
+  first72Hours: string;
+  days4to7: string;
   encouragement: string;
 }
 

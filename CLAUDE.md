@@ -41,7 +41,7 @@ Request flow: `ApiKeyGuard → ValidationPipe → ReportController → ReportSer
 ## Conventions
 
 - Response keys are camelCase (`domainScores`, `topDomains`, `headlineSummary`, etc.) even though the domain *names* inside `domainScores` are the human-readable strings from the spec.
-- Never modify `SYSTEM_PROMPT` — it is defined in SPEC §6.1 verbatim.
+- `SYSTEM_PROMPT` is the source of truth in `src/report/prompts/system.prompt.ts` (the post-v1.0 prompt baked in ASAP framing, resource prioritization, and a 7-section structure). When changing it, update SPEC §6.1's summary at the same time.
 - Model string `claude-sonnet-4-20250514` lives only in `claude.service.ts`.
 - Read secrets via `ConfigService.getOrThrow` — fail fast at boot, not at first request.
 - `ANTHROPIC_API_URL` is overridable via env so tests can point at the mock.

@@ -2,7 +2,7 @@ import * as http from 'http';
 import { spawn, ChildProcess } from 'child_process';
 
 const MOCK_PORT = 4001;
-const APP_PORT = 3001;
+const APP_PORT = 3101;
 
 const MOCK_RESPONSE_BODY = JSON.stringify({
   choices: [
@@ -13,16 +13,26 @@ const MOCK_RESPONSE_BODY = JSON.stringify({
           'HEADLINE SUMMARY',
           'You are taking a courageous step by addressing this situation directly.',
           '',
+          'TOP 3 IMMEDIATE PRIORITIES',
+          '- Have a calm, private conversation with your child today.',
+          '- Remove or secure any substances you are aware of in the home.',
+          '- Write down the one boundary you will enforce this week.',
+          '',
           'KEY PRIORITIES',
           'Immediate Safety & Urgency is the most pressing concern right now.',
           '',
           'WHAT TO AVOID',
-          'Avoid issuing ultimatums without a clear follow-through plan.',
+          '- Avoid issuing ultimatums without a clear follow-through plan.',
           '',
-          'NEXT 7 DAYS ACTION PLAN',
-          'Days 1–2: Have a calm, private conversation with your child.',
+          'FIRST 72 HOURS PLAN',
+          'Day 1: Sit down with your child for a short, calm conversation.',
+          'Day 2: Reach out to one professional resource.',
+          'Day 3: Review and adjust your household boundaries.',
           '',
-          'ENCOURAGEMENT & DIRECTION',
+          'DAYS 4 TO 7 CONTINUATION',
+          '- Keep daily check-ins short and consistent.',
+          '',
+          'ENCOURAGEMENT AND DIRECTION',
           'You are not alone. Many parents have navigated this successfully.',
         ].join('\n'),
       },

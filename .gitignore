@@ -1,7 +1,11 @@
 # compiled output
 /dist
-/node_modules
+node_modules
 /build
+.next
+.playwright-mcp
+test-results
+playwright-report
 
 # Logs
 logs

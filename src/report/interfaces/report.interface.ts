@@ -8,9 +8,11 @@ export interface DomainScores {
 
 export interface ReportSections {
   headlineSummary: string;
+  topImmediatePriorities: string;
   keyPriorities: string;
   whatToAvoid: string;
-  next7Days: string;
+  first72Hours: string;
+  days4to7: string;
   encouragement: string;
 }
 

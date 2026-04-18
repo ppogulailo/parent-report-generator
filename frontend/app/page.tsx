@@ -5,9 +5,11 @@ import { QUESTIONS, SCALE_LABELS } from './questions';
 
 type ReportSections = {
   headlineSummary: string;
+  topImmediatePriorities: string;
   keyPriorities: string;
   whatToAvoid: string;
-  next7Days: string;
+  first72Hours: string;
+  days4to7: string;
   encouragement: string;
 };
 
@@ -18,26 +20,32 @@ type Scores = {
 
 const EMPTY_REPORT: ReportSections = {
   headlineSummary: '',
+  topImmediatePriorities: '',
   keyPriorities: '',
   whatToAvoid: '',
-  next7Days: '',
+  first72Hours: '',
+  days4to7: '',
   encouragement: '',
 };
 
 const SECTION_LABELS: Array<[keyof ReportSections, string]> = [
   ['headlineSummary', 'Headline Summary'],
+  ['topImmediatePriorities', 'Top 3 Immediate Priorities'],
   ['keyPriorities', 'Key Priorities'],
   ['whatToAvoid', 'What to Avoid'],
-  ['next7Days', 'Next 7 Days'],
+  ['first72Hours', 'First 72 Hours Plan'],
+  ['days4to7', 'Days 4–7 Continuation'],
   ['encouragement', 'Encouragement & Direction'],
 ];
 
 const SECTION_MARKERS: Array<[keyof ReportSections, string]> = [
   ['headlineSummary', 'HEADLINE SUMMARY'],
+  ['topImmediatePriorities', 'TOP 3 IMMEDIATE PRIORITIES'],
   ['keyPriorities', 'KEY PRIORITIES'],
   ['whatToAvoid', 'WHAT TO AVOID'],
-  ['next7Days', 'NEXT 7 DAYS ACTION PLAN'],
-  ['encouragement', 'ENCOURAGEMENT & DIRECTION'],
+  ['first72Hours', 'FIRST 72 HOURS PLAN'],
+  ['days4to7', 'DAYS 4 TO 7 CONTINUATION'],
+  ['encouragement', 'ENCOURAGEMENT AND DIRECTION'],
 ];
 
 function parsePartialSections(text: string): ReportSections {

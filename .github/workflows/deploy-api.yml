@@ -1,0 +1,49 @@
+name: Deploy API
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'test/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig*.json'
+      - 'nest-cli.json'
+      - 'playwright.config.ts'
+      - 'Dockerfile'
+      - 'fly.toml'
+      - '.dockerignore'
+      - '.github/workflows/deploy-api.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-api
+  cancel-in-progress: false
+
+jobs:
+  test:
+    name: API tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - run: npm ci
+
+      - run: npx playwright test --reporter=line
+
+  deploy:
+    name: Deploy to Fly.io
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

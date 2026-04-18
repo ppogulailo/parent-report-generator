@@ -25,8 +25,9 @@ export class ClaudeService {
   async generateReport(
     domainScores: Record<string, number>,
     topDomains: string[],
+    responses?: number[],
   ): Promise<ReportSections> {
-    const userPrompt = buildUserPrompt(domainScores, topDomains);
+    const userPrompt = buildUserPrompt(domainScores, topDomains, responses);
 
     try {
       const response = await firstValueFrom(
@@ -61,8 +62,9 @@ export class ClaudeService {
   async *generateReportStream(
     domainScores: Record<string, number>,
     topDomains: string[],
+    responses?: number[],
   ): AsyncGenerator<string, void, void> {
-    const userPrompt = buildUserPrompt(domainScores, topDomains);
+    const userPrompt = buildUserPrompt(domainScores, topDomains, responses);
 
     const response = await fetch(this.apiUrl, {
       method: 'POST',
@@ -132,11 +134,13 @@ export class ClaudeService {
     };
 
     return {
-      headlineSummary: extract('HEADLINE SUMMARY'),
-      keyPriorities:   extract('KEY PRIORITIES'),
-      whatToAvoid:     extract('WHAT TO AVOID'),
-      next7Days:       extract('NEXT 7 DAYS ACTION PLAN'),
-      encouragement:   extract('ENCOURAGEMENT & DIRECTION'),
+      headlineSummary:        extract('HEADLINE SUMMARY'),
+      topImmediatePriorities: extract('TOP 3 IMMEDIATE PRIORITIES'),
+      keyPriorities:          extract('KEY PRIORITIES'),
+      whatToAvoid:            extract('WHAT TO AVOID'),
+      first72Hours:           extract('FIRST 72 HOURS PLAN'),
+      days4to7:               extract('DAYS 4 TO 7 CONTINUATION'),
+      encouragement:          extract('ENCOURAGEMENT AND DIRECTION'),
     };
   }
 }
