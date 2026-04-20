@@ -235,6 +235,101 @@ test('outgoing OpenAI request uses verbatim SYSTEM_PROMPT and includes scores + 
   expect(userContent).toContain('DAYS 4 TO 7 CONTINUATION');
 });
 
+// ─── System Prompt Content (Matthew refinements) ─────────────────────────────
+
+test('SYSTEM_PROMPT reflects Matthew refinements', () => {
+  // 1. Headline intuition + expanded signals
+  expect(SYSTEM_PROMPT).toMatch(/parental intuition/i);
+  expect(SYSTEM_PROMPT).toMatch(/declining grades/i);
+  expect(SYSTEM_PROMPT).toMatch(/strained relationships/i);
+
+  // 2. Priority order: regulation → alignment → support → THEN conversation
+  const regIdx = SYSTEM_PROMPT.indexOf('PARENT EMOTIONAL REGULATION');
+  const alignIdx = SYSTEM_PROMPT.indexOf('CO-PARENT / CAREGIVER ALIGNMENT');
+  const supportIdx = SYSTEM_PROMPT.indexOf('BUILD THE SUPPORT GROUP');
+  expect(regIdx).toBeGreaterThan(-1);
+  expect(alignIdx).toBeGreaterThan(regIdx);
+  expect(supportIdx).toBeGreaterThan(alignIdx);
+  expect(SYSTEM_PROMPT).toMatch(
+    /conversation with the child comes AFTER these three/i,
+  );
+
+  // 3. Soft search framing (not "don't search")
+  expect(SYSTEM_PROMPT).toMatch(/soft search/i);
+  expect(SYSTEM_PROMPT).toMatch(/without the child's knowledge/i);
+  expect(SYSTEM_PROMPT).toMatch(/room is left exactly as it was found/i);
+  expect(SYSTEM_PROMPT).toMatch(/document it, then remove it/i);
+  expect(SYSTEM_PROMPT).toMatch(
+    /boundary, not a punishment|boundary, not as punishment|clear boundary, not a punishment/i,
+  );
+  expect(SYSTEM_PROMPT).toMatch(
+    /BEFORE the initial conversation|before the initial conversation/i,
+  );
+
+  // 4. 72-hour plan sequencing
+  const d1 = SYSTEM_PROMPT.indexOf(
+    'DAY 1 — EMOTIONAL REGULATION + CO-PARENT ALIGNMENT',
+  );
+  const d2 = SYSTEM_PROMPT.indexOf(
+    'DAY 2 — BUILD THE SUPPORT GROUP + GATHER INFORMATION',
+  );
+  const d3 = SYSTEM_PROMPT.indexOf('DAY 3 — PREPARE FOR THE CONVERSATION');
+  expect(d1).toBeGreaterThan(-1);
+  expect(d2).toBeGreaterThan(d1);
+  expect(d3).toBeGreaterThan(d2);
+
+  // Natural conversation tone guidance present
+  expect(SYSTEM_PROMPT).toMatch(/not scripted/i);
+  expect(SYSTEM_PROMPT).toMatch(/parent \+ child vs the problem/i);
+
+  // 5. Articles of Action referenced by TOPIC only — no "Chapter N" guidance.
+  // The prompt must explicitly ban chapter references and must NOT contain any
+  // "Chapter 1/2/..." style citation.
+  expect(SYSTEM_PROMPT).toMatch(/Articles of Action/);
+  expect(SYSTEM_PROMPT).toMatch(/by TOPIC only|topic only/i);
+  expect(SYSTEM_PROMPT).toMatch(/no chapter numbers/i);
+  expect(SYSTEM_PROMPT).not.toMatch(/Chapter\s+\d+/);
+  expect(SYSTEM_PROMPT).not.toMatch(/Articles of Action,?\s*Chapter/i);
+
+  // 6. ASAP Discussion Groups as primary support mechanism
+  expect(SYSTEM_PROMPT).toMatch(/ASAP Discussion Group/);
+  expect(SYSTEM_PROMPT).toMatch(/PRIMARY support mechanism/i);
+  expect(SYSTEM_PROMPT).toMatch(/join and post/i);
+
+  // 7. Auxiliary workshops referenced by topic
+  expect(SYSTEM_PROMPT).toMatch(/auxiliary workshop/i);
+  expect(SYSTEM_PROMPT).toMatch(/by TOPIC|by topic/);
+});
+
+test('outgoing user prompt carries the new sequencing + resource order', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  // Resource order reminder includes Discussion Groups as a primary step
+  expect(userContent).toMatch(/ASAP Discussion Groups/);
+  expect(userContent).toMatch(/primary support mechanism/i);
+  expect(userContent).toMatch(/soft search/i);
+  expect(userContent).toMatch(/no chapter numbers/i);
+
+  // Ordering sequence for the 72-hour plan appears in the reminder
+  expect(userContent).toMatch(
+    /Day 1 = emotional regulation \+ co-parent alignment/i,
+  );
+  expect(userContent).toMatch(
+    /Day 2 = build support group \+ gather information/i,
+  );
+  expect(userContent).toMatch(/Day 3 = prepare for the first real conversation/i);
+
+  // The user prompt must not cite any "Chapter N" or "Articles of Action, Chapter ..." reference
+  expect(userContent).not.toMatch(/Chapter\s+\d+/);
+  expect(userContent).not.toMatch(/Articles of Action,?\s*Chapter/i);
+});
+
 // ─── Claude Failure ───────────────────────────────────────────────────────────
 
 test('returns 500 when OpenAI API fails', async () => {

@@ -2,7 +2,7 @@ import * as http from 'http';
 import { spawn, ChildProcess } from 'child_process';
 
 const MOCK_PORT = 4001;
-const APP_PORT = 3101;
+const APP_PORT = Number(process.env.TEST_PORT ?? 3100);
 
 const MOCK_RESPONSE_BODY = JSON.stringify({
   choices: [
