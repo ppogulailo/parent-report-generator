@@ -1,4 +1,5 @@
 import { QUESTIONS } from './questions';
+import { formatResourceDirectory } from './resources';
 
 export function buildUserPrompt(
   domainScores: Record<string, number>,
@@ -36,12 +37,16 @@ ${scoreLines}
 
 Top 3 Priority Domains: ${topDomains[0]}, ${topDomains[1]}, ${topDomains[2]}${contextBlock}
 
+${formatResourceDirectory()}
+
 Reminders before you write:
-- This plan is a continuation of the parent's ASAP Community work — not a standalone report. Anchor recommendations in ASAP resources in this order: Articles of Action (by TOPIC only — no chapter numbers) → ASAP Discussion Groups (a primary support mechanism — tell the parent to join and post this week, not just "be aware") → Effective Communication / Building a Support Network workshops → relevant auxiliary workshops by topic (peer pressure, soft search / room searches, monitoring, siblings, defiance, etc.) → ASAP-endorsed therapists or treatment centers → external resources (only if higher-risk).
+- This plan is a continuation of the parent's ASAP Community work — not a standalone report.
+- Every resource recommendation must come from the ASAP RESOURCE DIRECTORY above, cited by full exact title. Do not invent, rename, shorten, paraphrase, renumber, or abbreviate titles. Articles of Action are referenced by title only — never by chapter number.
+- ASAP Discussion Groups are a PRIMARY support mechanism. Tell the parent to join AND actively post in a specific named group this week — not just "be aware" of them.
+- Name at least one Auxiliary Workshop by exact title whose topic matches the parent's strongest concerns.
 - Tie every recommendation back to a specific behavior the parent reported above. Avoid advice that could apply to any parent.
 - TOP 3 IMMEDIATE PRIORITIES must be (in this order): (1) parent's own emotional regulation, (2) co-parent / caregiver alignment, (3) build the support group. The conversation with the child is NOT one of the top 3 priorities.
 - FIRST 72 HOURS PLAN sequencing is fixed: Day 1 = emotional regulation + co-parent alignment. Day 2 = build support group + gather information (soft search belongs here if secrecy or hidden use is indicated — done quietly, respectfully, with co-parent support, room left as found, evidence documented and removed as a clear boundary, not as punishment). Day 3 = prepare for the first real conversation — natural tone, not scripted lines.
-- Never use the word "Chapter" in the output. Refer to Articles of Action by topic only.
 
 Generate a Parent Action Plan. Use EXACTLY these seven section headers, each on its own line, in this exact order, written in plain UPPERCASE text with no markdown (no #, no *, no numbering, no bold):
 

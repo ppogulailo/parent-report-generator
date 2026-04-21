@@ -2,6 +2,11 @@ import { test, expect } from '@playwright/test';
 import * as http from 'http';
 import { spawn } from 'child_process';
 import { SYSTEM_PROMPT } from '../src/report/prompts/system.prompt';
+import {
+  ARTICLES_OF_ACTION,
+  AUXILIARY_WORKSHOPS,
+  DISCUSSION_GROUPS,
+} from '../src/report/prompts/resources';
 
 const KEY = 'test-secret';
 const MOCK_BASE = 'http://localhost:4001';
@@ -282,23 +287,71 @@ test('SYSTEM_PROMPT reflects Matthew refinements', () => {
   expect(SYSTEM_PROMPT).toMatch(/not scripted/i);
   expect(SYSTEM_PROMPT).toMatch(/parent \+ child vs the problem/i);
 
-  // 5. Articles of Action referenced by TOPIC only — no "Chapter N" guidance.
-  // The prompt must explicitly ban chapter references and must NOT contain any
-  // "Chapter 1/2/..." style citation.
+  // 5. Articles of Action referenced by TITLE only — no "Chapter N" citations.
   expect(SYSTEM_PROMPT).toMatch(/Articles of Action/);
-  expect(SYSTEM_PROMPT).toMatch(/by TOPIC only|topic only/i);
-  expect(SYSTEM_PROMPT).toMatch(/no chapter numbers/i);
+  expect(SYSTEM_PROMPT).toMatch(/by title only/i);
   expect(SYSTEM_PROMPT).not.toMatch(/Chapter\s+\d+/);
   expect(SYSTEM_PROMPT).not.toMatch(/Articles of Action,?\s*Chapter/i);
 
   // 6. ASAP Discussion Groups as primary support mechanism
   expect(SYSTEM_PROMPT).toMatch(/ASAP Discussion Group/);
   expect(SYSTEM_PROMPT).toMatch(/PRIMARY support mechanism/i);
-  expect(SYSTEM_PROMPT).toMatch(/join and post/i);
+  expect(SYSTEM_PROMPT).toMatch(/JOIN AND ACTIVELY POST/);
 
-  // 7. Auxiliary workshops referenced by topic
-  expect(SYSTEM_PROMPT).toMatch(/auxiliary workshop/i);
-  expect(SYSTEM_PROMPT).toMatch(/by TOPIC|by topic/);
+  // 7. Auxiliary workshops referenced by exact title
+  expect(SYSTEM_PROMPT).toMatch(/Auxiliary Workshop/);
+  expect(SYSTEM_PROMPT).toMatch(/exact title/i);
+});
+
+// ─── ASAP Resource Directory (16 / 6 / 20 lists) ──────────────────────────────
+
+test('resource directory module exposes the correct counts', () => {
+  expect(ARTICLES_OF_ACTION).toHaveLength(16);
+  expect(DISCUSSION_GROUPS).toHaveLength(6);
+  expect(AUXILIARY_WORKSHOPS).toHaveLength(20);
+});
+
+test('resource titles are unique', () => {
+  expect(new Set(ARTICLES_OF_ACTION).size).toBe(ARTICLES_OF_ACTION.length);
+  expect(new Set(DISCUSSION_GROUPS).size).toBe(DISCUSSION_GROUPS.length);
+  expect(new Set(AUXILIARY_WORKSHOPS.map((w) => w.title)).size).toBe(
+    AUXILIARY_WORKSHOPS.length,
+  );
+});
+
+test('outgoing user prompt ships every Article / Workshop / Discussion Group verbatim', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  // Directory header
+  expect(userContent).toContain('ASAP RESOURCE DIRECTORY');
+  expect(userContent).toContain('Articles of Action (16 total');
+  expect(userContent).toContain('ASAP Discussion Groups (6 total');
+  expect(userContent).toContain('Auxiliary Workshops (20 total');
+
+  // Every article title appears verbatim
+  for (const title of ARTICLES_OF_ACTION) {
+    expect(userContent).toContain(title);
+  }
+  // Every discussion group appears verbatim
+  for (const group of DISCUSSION_GROUPS) {
+    expect(userContent).toContain(group);
+  }
+  // Every workshop title + summary appears verbatim
+  for (const w of AUXILIARY_WORKSHOPS) {
+    expect(userContent).toContain(w.title);
+    expect(userContent).toContain(w.summary);
+  }
+
+  // Reminder requires exact-title usage and bans chapter numbers
+  expect(userContent).toMatch(/cited by full exact title/i);
+  expect(userContent).toMatch(/never by chapter number/i);
+  expect(userContent).toMatch(/PRIMARY support mechanism/i);
 });
 
 test('outgoing user prompt carries the new sequencing + resource order', async ({
@@ -314,7 +367,7 @@ test('outgoing user prompt carries the new sequencing + resource order', async (
   expect(userContent).toMatch(/ASAP Discussion Groups/);
   expect(userContent).toMatch(/primary support mechanism/i);
   expect(userContent).toMatch(/soft search/i);
-  expect(userContent).toMatch(/no chapter numbers/i);
+  expect(userContent).toMatch(/never by chapter number/i);
 
   // Ordering sequence for the 72-hour plan appears in the reminder
   expect(userContent).toMatch(
