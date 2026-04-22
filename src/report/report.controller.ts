@@ -65,7 +65,8 @@ export class ReportController {
   })
   @ApiResponse({
     status: 400,
-    description: 'Validation failed (not an array of 24 integers between 1 and 4).',
+    description:
+      'Validation failed (not an array of 24 integers between 1 and 4).',
     schema: {
       example: {
         success: false,

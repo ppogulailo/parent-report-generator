@@ -32,10 +32,13 @@ export function buildUserPrompt(
     }
   }
 
+  const severity = classifySeverity(responses, domainScores);
+  const severityBlock = `\n\nSEVERITY LEVEL: ${severity.level}\n${severity.guidance}`;
+
   return `Domain Scores:
 ${scoreLines}
 
-Top 3 Priority Domains: ${topDomains[0]}, ${topDomains[1]}, ${topDomains[2]}${contextBlock}
+Top 3 Priority Domains: ${topDomains[0]}, ${topDomains[1]}, ${topDomains[2]}${contextBlock}${severityBlock}
 
 ${formatResourceDirectory()}
 
@@ -59,4 +62,45 @@ DAYS 4 TO 7 CONTINUATION
 ENCOURAGEMENT AND DIRECTION
 
 Place the body of each section on the lines immediately following its header. Do not add any other headers, titles, or preamble before HEADLINE SUMMARY.`;
+}
+
+type Severity = {
+  level: 'MILD' | 'MODERATE' | 'SERIOUS';
+  guidance: string;
+};
+
+function classifySeverity(
+  responses: number[] | undefined,
+  domainScores: Record<string, number>,
+): Severity {
+  const safety = domainScores['Immediate Safety & Urgency'] ?? 0;
+  const avg =
+    Object.values(domainScores).reduce((a, b) => a + b, 0) /
+    Math.max(Object.values(domainScores).length, 1);
+
+  const fours = responses?.filter((r) => r === 4).length ?? 0;
+  const threes = responses?.filter((r) => r === 3).length ?? 0;
+
+  const isSerious = fours >= 3 || safety >= 3 || avg >= 2.75;
+  const isMild = fours === 0 && threes <= 2 && avg <= 2.0 && safety < 2.0;
+
+  if (isSerious) {
+    return {
+      level: 'SERIOUS',
+      guidance:
+        'Inputs show multiple strong concerns or elevated safety signals. Grounded urgency — calm, direction-giving, never alarmist. Name the emotional weight directly only where the inputs actually show it. ASAP-endorsed professional referral may appear in the FIRST 72 HOURS PLAN. Reference external emergency resources only if acute-risk signals are explicit (suspected fentanyl/heroin, safety crisis, suicidality).',
+    };
+  }
+  if (isMild) {
+    return {
+      level: 'MILD',
+      guidance:
+        'Inputs show early-stage signals at most — no strong concerns, safety low, most answers 1 or 2. Tone is observational and attentive, NOT urgent. Frame as "something may be developing — this is a good time to pay closer attention." Do NOT use crisis/fear/overwhelm language. Do NOT recommend therapists or treatment centers in the FIRST 72 HOURS or KEY PRIORITIES — route energy toward ASAP Discussion Groups, foundational Articles of Action, and preventative Auxiliary Workshops. Professional referral, if mentioned at all, belongs in DAYS 4 TO 7 as a future "if the pattern changes" option, not a now-step. Soft search appears on Day 2 only if secrecy or hidden use is specifically indicated in the inputs; otherwise Day 2 is information-gathering + joining a discussion group. Day 3 is a natural, low-pressure check-in, not a structured intervention.',
+    };
+  }
+  return {
+    level: 'MODERATE',
+    guidance:
+      'Inputs show real signals but not acute. Steady, direct, pragmatic tone — acknowledge concerns without amplifying them. ASAP Discussion Groups and Auxiliary Workshops are the primary resources. Professional referral is framed in DAYS 4 TO 7 as "if these patterns continue or intensify, this is when an ASAP-endorsed therapist becomes the right next step" — not as an immediate Day 1–3 action.',
+  };
 }

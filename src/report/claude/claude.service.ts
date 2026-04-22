@@ -134,13 +134,13 @@ export class ClaudeService {
     };
 
     return {
-      headlineSummary:        extract('HEADLINE SUMMARY'),
+      headlineSummary: extract('HEADLINE SUMMARY'),
       topImmediatePriorities: extract('TOP 3 IMMEDIATE PRIORITIES'),
-      keyPriorities:          extract('KEY PRIORITIES'),
-      whatToAvoid:            extract('WHAT TO AVOID'),
-      first72Hours:           extract('FIRST 72 HOURS PLAN'),
-      days4to7:               extract('DAYS 4 TO 7 CONTINUATION'),
-      encouragement:          extract('ENCOURAGEMENT AND DIRECTION'),
+      keyPriorities: extract('KEY PRIORITIES'),
+      whatToAvoid: extract('WHAT TO AVOID'),
+      first72Hours: extract('FIRST 72 HOURS PLAN'),
+      days4to7: extract('DAYS 4 TO 7 CONTINUATION'),
+      encouragement: extract('ENCOURAGEMENT AND DIRECTION'),
     };
   }
 }

@@ -66,7 +66,7 @@ export const AUXILIARY_WORKSHOPS: Array<{ title: string; summary: string }> = [
       'Creating clear agreements with expectations, rewards, and consequences.',
   },
   {
-    title: 'Partnering with Schools for Your Child\'s Success',
+    title: "Partnering with Schools for Your Child's Success",
     summary:
       'Working with school staff to support accountability and outcomes.',
   },
@@ -76,8 +76,7 @@ export const AUXILIARY_WORKSHOPS: Array<{ title: string; summary: string }> = [
   },
   {
     title: 'Setting Boundaries with Respect: Discipline Without Punishment',
-    summary:
-      'Enforcing rules while maintaining a supportive relationship.',
+    summary: 'Enforcing rules while maintaining a supportive relationship.',
   },
   {
     title: 'The Power of Positive Reinforcement: Rewarding Healthy Behavior',

@@ -32,10 +32,12 @@ export class ReportService {
     };
   }
 
-  async *generateStream(
-    dto: GenerateReportDto,
-  ): AsyncGenerator<
-    | { type: 'scores'; domainScores: Record<string, number>; topDomains: string[] }
+  async *generateStream(dto: GenerateReportDto): AsyncGenerator<
+    | {
+        type: 'scores';
+        domainScores: Record<string, number>;
+        topDomains: string[];
+      }
     | { type: 'text'; text: string }
     | { type: 'done' }
   > {

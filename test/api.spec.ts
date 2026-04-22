@@ -376,7 +376,9 @@ test('outgoing user prompt carries the new sequencing + resource order', async (
   expect(userContent).toMatch(
     /Day 2 = build support group \+ gather information/i,
   );
-  expect(userContent).toMatch(/Day 3 = prepare for the first real conversation/i);
+  expect(userContent).toMatch(
+    /Day 3 = prepare for the first real conversation/i,
+  );
 
   // The user prompt must not cite any "Chapter N" or "Articles of Action, Chapter ..." reference
   expect(userContent).not.toMatch(/Chapter\s+\d+/);

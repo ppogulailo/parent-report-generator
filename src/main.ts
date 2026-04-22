@@ -24,10 +24,7 @@ async function bootstrap() {
       'Scores a 24-question parent questionnaire and generates a Parent Action Plan via OpenAI.',
     )
     .setVersion('1.0.0')
-    .addApiKey(
-      { type: 'apiKey', name: 'X-API-Key', in: 'header' },
-      'api-key',
-    )
+    .addApiKey({ type: 'apiKey', name: 'X-API-Key', in: 'header' }, 'api-key')
     .build();
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, document, {
