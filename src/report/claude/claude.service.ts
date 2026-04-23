@@ -2,8 +2,14 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
-import { SYSTEM_PROMPT, buildUserPrompt } from '../prompts';
+import {
+  SYSTEM_PROMPT,
+  SYSTEM_PROMPT_ES,
+  buildUserPrompt,
+  getSectionHeaders,
+} from '../prompts';
 import { ReportSections } from '../interfaces/report.interface';
+import type { Language } from '../dto/generate-report.dto';
 
 @Injectable()
 export class ClaudeService {
@@ -22,12 +28,22 @@ export class ClaudeService {
     );
   }
 
+  private systemFor(language: Language): string {
+    return language === 'es' ? SYSTEM_PROMPT_ES : SYSTEM_PROMPT;
+  }
+
   async generateReport(
     domainScores: Record<string, number>,
     topDomains: string[],
     responses?: number[],
+    language: Language = 'en',
   ): Promise<ReportSections> {
-    const userPrompt = buildUserPrompt(domainScores, topDomains, responses);
+    const userPrompt = buildUserPrompt(
+      domainScores,
+      topDomains,
+      responses,
+      language,
+    );
 
     try {
       const response = await firstValueFrom(
@@ -37,7 +53,7 @@ export class ClaudeService {
             model: this.model,
             max_tokens: 2000,
             messages: [
-              { role: 'system', content: SYSTEM_PROMPT },
+              { role: 'system', content: this.systemFor(language) },
               { role: 'user', content: userPrompt },
             ],
           },
@@ -51,7 +67,7 @@ export class ClaudeService {
       );
 
       const text: string = response.data.choices[0].message.content;
-      return this.parseSections(text);
+      return this.parseSections(text, language);
     } catch {
       throw new InternalServerErrorException(
         'Report generation failed. Please try again.',
@@ -63,8 +79,14 @@ export class ClaudeService {
     domainScores: Record<string, number>,
     topDomains: string[],
     responses?: number[],
+    language: Language = 'en',
   ): AsyncGenerator<string, void, void> {
-    const userPrompt = buildUserPrompt(domainScores, topDomains, responses);
+    const userPrompt = buildUserPrompt(
+      domainScores,
+      topDomains,
+      responses,
+      language,
+    );
 
     const response = await fetch(this.apiUrl, {
       method: 'POST',
@@ -77,7 +99,7 @@ export class ClaudeService {
         max_tokens: 2000,
         stream: true,
         messages: [
-          { role: 'system', content: SYSTEM_PROMPT },
+          { role: 'system', content: this.systemFor(language) },
           { role: 'user', content: userPrompt },
         ],
       }),
@@ -123,10 +145,23 @@ export class ClaudeService {
     }
   }
 
-  private parseSections(text: string): ReportSections {
+  private parseSections(text: string, language: Language): ReportSections {
+    const headers = getSectionHeaders(language);
+    const [
+      headlineSummary,
+      topImmediatePriorities,
+      keyPriorities,
+      whatToAvoid,
+      first72Hours,
+      days4to7,
+      encouragement,
+    ] = headers;
+
     const extract = (label: string): string => {
+      // Escape regex metachars in header labels (Spanish headers include dashes).
+      const esc = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const pattern = new RegExp(
-        `${label}\\s*\\n([\\s\\S]*?)(?=\\n[A-Z][A-Z0-9\\s&]+\\n|$)`,
+        `${esc}\\s*\\n([\\s\\S]*?)(?=\\n[A-ZÁÉÍÓÚÑ][A-ZÁÉÍÓÚÑ0-9\\s&—-]+\\n|$)`,
         'i',
       );
       const match = text.match(pattern);
@@ -134,13 +169,13 @@ export class ClaudeService {
     };
 
     return {
-      headlineSummary: extract('HEADLINE SUMMARY'),
-      topImmediatePriorities: extract('TOP 3 IMMEDIATE PRIORITIES'),
-      keyPriorities: extract('KEY PRIORITIES'),
-      whatToAvoid: extract('WHAT TO AVOID'),
-      first72Hours: extract('FIRST 72 HOURS PLAN'),
-      days4to7: extract('DAYS 4 TO 7 CONTINUATION'),
-      encouragement: extract('ENCOURAGEMENT AND DIRECTION'),
+      headlineSummary: extract(headlineSummary),
+      topImmediatePriorities: extract(topImmediatePriorities),
+      keyPriorities: extract(keyPriorities),
+      whatToAvoid: extract(whatToAvoid),
+      first72Hours: extract(first72Hours),
+      days4to7: extract(days4to7),
+      encouragement: extract(encouragement),
     };
   }
 }

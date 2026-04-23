@@ -4,6 +4,10 @@ export default defineConfig({
   testDir: './test',
   globalSetup: './test/global-setup.ts',
   globalTeardown: './test/global-teardown.ts',
+  // Tests share a single mock server that records the last request, so they
+  // must run serially to avoid cross-test interference.
+  workers: 1,
+  fullyParallel: false,
   use: {
     baseURL: `http://localhost:${process.env.TEST_PORT ?? 3100}`,
   },

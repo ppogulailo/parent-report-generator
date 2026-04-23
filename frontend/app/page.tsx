@@ -1,7 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { QUESTIONS, SCALE_LABELS } from './questions';
+import { useEffect, useRef, useState } from 'react';
+import {
+  Language,
+  QUESTIONS,
+  SCALE_LABELS,
+  SECTION_LABELS_BY_LANG,
+  SECTION_MARKERS_BY_LANG,
+  STRINGS,
+} from './i18n';
 
 type ReportSections = {
   headlineSummary: string;
@@ -18,6 +25,8 @@ type Scores = {
   topDomains: string[];
 };
 
+type Stage = 'idle' | 'scoring' | 'writing' | 'done';
+
 const EMPTY_REPORT: ReportSections = {
   headlineSummary: '',
   topImmediatePriorities: '',
@@ -28,37 +37,24 @@ const EMPTY_REPORT: ReportSections = {
   encouragement: '',
 };
 
-const SECTION_LABELS: Array<[keyof ReportSections, string]> = [
-  ['headlineSummary', 'Headline Summary'],
-  ['topImmediatePriorities', 'Top 3 Immediate Priorities'],
-  ['keyPriorities', 'Key Priorities'],
-  ['whatToAvoid', 'What to Avoid'],
-  ['first72Hours', 'First 72 Hours Plan'],
-  ['days4to7', 'Days 4–7 Continuation'],
-  ['encouragement', 'Encouragement & Direction'],
-];
-
-const SECTION_MARKERS: Array<[keyof ReportSections, string]> = [
-  ['headlineSummary', 'HEADLINE SUMMARY'],
-  ['topImmediatePriorities', 'TOP 3 IMMEDIATE PRIORITIES'],
-  ['keyPriorities', 'KEY PRIORITIES'],
-  ['whatToAvoid', 'WHAT TO AVOID'],
-  ['first72Hours', 'FIRST 72 HOURS PLAN'],
-  ['days4to7', 'DAYS 4 TO 7 CONTINUATION'],
-  ['encouragement', 'ENCOURAGEMENT AND DIRECTION'],
-];
-
-function parsePartialSections(text: string): ReportSections {
+function parsePartialSections(
+  text: string,
+  markers: Array<[string, string]>,
+): ReportSections {
   const hits: Array<{
     key: keyof ReportSections;
     labelStart: number;
     bodyStart: number;
   }> = [];
 
-  for (const [key, label] of SECTION_MARKERS) {
+  for (const [key, label] of markers) {
     const idx = text.indexOf(label);
     if (idx !== -1) {
-      hits.push({ key, labelStart: idx, bodyStart: idx + label.length });
+      hits.push({
+        key: key as keyof ReportSections,
+        labelStart: idx,
+        bodyStart: idx + label.length,
+      });
     }
   }
 
@@ -74,17 +70,58 @@ function parsePartialSections(text: string): ReportSections {
   return out;
 }
 
+function renderSectionBody(body: string): React.ReactNode {
+  const lines = body.split('\n').map((l) => l.trim()).filter(Boolean);
+  const bulletLines = lines.filter((l) => /^[-•*]\s+/.test(l));
+  const isMostlyBullets =
+    lines.length > 1 && bulletLines.length >= Math.ceil(lines.length * 0.6);
+
+  if (isMostlyBullets) {
+    return (
+      <ul className="section-list">
+        {lines.map((l, i) => {
+          const m = l.match(/^[-•*]\s+(.*)$/);
+          return <li key={i}>{m ? m[1] : l}</li>;
+        })}
+      </ul>
+    );
+  }
+
+  return (
+    <>
+      {lines.map((l, i) => (
+        <p key={i} className="section-para">
+          {l}
+        </p>
+      ))}
+    </>
+  );
+}
+
 export default function Page() {
+  const [language, setLanguage] = useState<Language>('en');
   const [responses, setResponses] = useState<Array<number | null>>(
     Array(24).fill(null),
   );
-  const [loading, setLoading] = useState(false);
-  const [streaming, setStreaming] = useState(false);
+  const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
   const [scores, setScores] = useState<Scores | null>(null);
   const [report, setReport] = useState<ReportSections>(EMPTY_REPORT);
+  // Language the current stream was started in — used to keep parsing
+  // stable even if the user flips the toggle while streaming.
+  const [reportLanguage, setReportLanguage] = useState<Language>('en');
 
-  const allAnswered = responses.every((v) => v !== null);
+  const resultsRef = useRef<HTMLDivElement | null>(null);
+  const answeredCount = responses.filter((v) => v !== null).length;
+  const allAnswered = answeredCount === 24;
+  const progressPct = Math.round((answeredCount / 24) * 100);
+  const loading = stage === 'scoring' || stage === 'writing';
+
+  const t = STRINGS[language];
+  const questions = QUESTIONS[language];
+  const scaleLabels = SCALE_LABELS[language];
+  const sectionLabels = SECTION_LABELS_BY_LANG[reportLanguage];
+  const sectionMarkers = SECTION_MARKERS_BY_LANG[reportLanguage];
 
   const setAnswer = (idx: number, value: number) => {
     setResponses((prev) => {
@@ -101,17 +138,28 @@ export default function Page() {
   };
 
   const submit = async () => {
-    setLoading(true);
-    setStreaming(false);
+    const submitLanguage = language;
+    setReportLanguage(submitLanguage);
+    setStage('scoring');
     setError(null);
     setScores(null);
     setReport(EMPTY_REPORT);
+
+    requestAnimationFrame(() => {
+      resultsRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
+    });
+
+    // Parser uses whichever markers match the language this submit was made in.
+    const markers = SECTION_MARKERS_BY_LANG[submitLanguage];
 
     try {
       const res = await fetch('/api/report/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ responses }),
+        body: JSON.stringify({ responses, language: submitLanguage }),
       });
 
       if (!res.ok || !res.body) {
@@ -123,6 +171,7 @@ export default function Page() {
           /* ignore */
         }
         setError(errText);
+        setStage('idle');
         return;
       }
 
@@ -130,7 +179,6 @@ export default function Page() {
       const decoder = new TextDecoder();
       let buffer = '';
       let accumulatedText = '';
-      setStreaming(true);
 
       const handleEvent = (eventName: string, dataRaw: string) => {
         let data: any;
@@ -144,13 +192,15 @@ export default function Page() {
             domainScores: data.domainScores,
             topDomains: data.topDomains,
           });
+          setStage('writing');
         } else if (eventName === 'text') {
           accumulatedText += data.text ?? '';
-          setReport(parsePartialSections(accumulatedText));
+          setReport(parsePartialSections(accumulatedText, markers));
         } else if (eventName === 'error') {
           setError(data.error ?? 'Report generation failed.');
+          setStage('idle');
         } else if (eventName === 'done') {
-          setStreaming(false);
+          setStage('done');
         }
       };
 
@@ -159,14 +209,13 @@ export default function Page() {
         if (done) break;
         buffer += decoder.decode(value, { stream: true });
 
-        // Split on SSE message boundary
         const messages = buffer.split('\n\n');
         buffer = messages.pop() ?? '';
 
         for (const msg of messages) {
           const lines = msg.split('\n');
           let eventName = 'message';
-          let dataParts: string[] = [];
+          const dataParts: string[] = [];
           for (const line of lines) {
             if (line.startsWith('event:')) {
               eventName = line.slice(6).trim();
@@ -179,11 +228,11 @@ export default function Page() {
           }
         }
       }
+
+      setStage((s) => (s === 'writing' ? 'done' : s));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Request failed.');
-    } finally {
-      setLoading(false);
-      setStreaming(false);
+      setStage('idle');
     }
   };
 
@@ -193,49 +242,111 @@ export default function Page() {
       ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
+  const jumpToFirstUnanswered = () => {
+    const idx = responses.findIndex((v) => v === null);
+    if (idx >= 0) {
+      document
+        .getElementById(`q-${idx}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
+
   const hasAnyReport =
+    stage !== 'idle' ||
     scores !== null ||
-    SECTION_LABELS.some(([key]) => report[key].length > 0);
+    sectionLabels.some(([key]) => report[key as keyof ReportSections].length > 0);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      '--progress',
+      `${progressPct}%`,
+    );
+  }, [progressPct]);
+
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-hydrated', 'true');
+  }, []);
+
+  const submitLabel = loading
+    ? stage === 'scoring'
+      ? t.scoring
+      : t.writing
+    : t.generate;
 
   return (
     <main>
+      <div className="lang-switch" role="group" aria-label={t.languageLabel}>
+        <button
+          type="button"
+          className={`lang-btn${language === 'en' ? ' active' : ''}`}
+          aria-pressed={language === 'en'}
+          disabled={loading}
+          onClick={() => setLanguage('en')}
+        >
+          English
+        </button>
+        <button
+          type="button"
+          className={`lang-btn${language === 'es' ? ' active' : ''}`}
+          aria-pressed={language === 'es'}
+          disabled={loading}
+          onClick={() => setLanguage('es')}
+        >
+          Español
+        </button>
+      </div>
+
       <section className="hero">
-        <p className="eyebrow">Parent Action Plan</p>
-        <h1>A calm, clear plan when you need it most</h1>
-        <p className="hero-sub">
-          This tool helps parents quickly create a clear, step-by-step action
-          plan to support their child dealing with substance use — in just a
-          few minutes.
-        </p>
+        <p className="eyebrow">{t.eyebrow}</p>
+        <h1>{t.title}</h1>
+        <p className="hero-sub">{t.heroSub}</p>
         <ul className="benefits">
-          <li>Understand what steps to take immediately</li>
-          <li>Get a structured plan tailored to your situation</li>
-          <li>Move forward with clarity and confidence</li>
+          {t.benefits.map((b, i) => (
+            <li key={i}>{b}</li>
+          ))}
         </ul>
-        <p className="meta">24 short questions · About 3 minutes · Confidential</p>
-        <p className="reassure">
-          You are in the right place. Start when you are ready.
-        </p>
+        <p className="meta">{t.meta}</p>
+        <p className="reassure">{t.reassure}</p>
         <button
           type="button"
           className="cta-start"
           onClick={startQuestionnaire}
         >
-          Start the questionnaire
+          {t.ctaStart}
         </button>
       </section>
 
       <section id="questionnaire">
-        <h2 className="section-heading">A few questions about your situation</h2>
-        <p className="section-sub">
-          Answer each on a 1–4 scale. 1 means things feel strong or healthy. 4
-          means things feel concerning. There are no right or wrong answers —
-          your honest responses help shape the plan.
-        </p>
+        <h2 className="section-heading">{t.questionnaireHeading}</h2>
+        <p className="section-sub">{t.questionnaireSub}</p>
       </section>
 
-      {QUESTIONS.map((q, i) => (
-        <div className="question" key={i}>
+      <div className="progress-bar" aria-hidden="true">
+        <div className="progress-bar-fill" />
+      </div>
+      <div className="progress-label">
+        {t.answeredOf(answeredCount)}
+        {!allAnswered && answeredCount > 0 && (
+          <button
+            type="button"
+            className="progress-jump"
+            onClick={jumpToFirstUnanswered}
+          >
+            {t.jumpToNext}
+          </button>
+        )}
+      </div>
+
+      {questions.map((q, i) => (
+        <div
+          className={`question${responses[i] !== null ? ' answered' : ''}`}
+          key={i}
+          id={`q-${i}`}
+        >
           <label className="question-label">
             <strong>Q{i + 1}.</strong> {q}
           </label>
@@ -249,7 +360,7 @@ export default function Page() {
                   checked={responses[i] === v}
                   onChange={() => setAnswer(i, v)}
                 />
-                <span>{SCALE_LABELS[v]}</span>
+                <span>{scaleLabels[v]}</span>
               </label>
             ))}
           </div>
@@ -261,57 +372,113 @@ export default function Page() {
         className="submit"
         disabled={!allAnswered || loading}
         onClick={submit}
+        aria-busy={loading}
       >
-        {loading
-          ? streaming
-            ? 'Writing your plan…'
-            : 'Generating…'
-          : 'Generate Action Plan'}
+        {loading && <span className="spinner" aria-hidden />}
+        {submitLabel}
       </button>
+
+      {!allAnswered && <p className="submit-hint">{t.submitHint}</p>}
 
       <button type="button" className="dev-fill" onClick={fillSample}>
-        Fill sample answers
+        {t.fillSample}
       </button>
 
-      {error && <div className="error">{error}</div>}
+      {error && (
+        <div className="error" role="alert">
+          <strong>{t.errorHeading}</strong>
+          <span>{error}</span>
+          <button type="button" className="retry" onClick={submit}>
+            {t.retry}
+          </button>
+        </div>
+      )}
 
       {hasAnyReport && (
-        <div className="results">
+        <div className="results" ref={resultsRef}>
+          <div className="results-status" aria-live="polite">
+            {stage === 'scoring' && (
+              <div className="status-card">
+                <span className="spinner big" aria-hidden />
+                <div>
+                  <div className="status-title">{t.scoringTitle}</div>
+                  <div className="status-sub">{t.scoringSub}</div>
+                </div>
+              </div>
+            )}
+            {stage === 'writing' && (
+              <div className="status-card">
+                <span className="spinner big" aria-hidden />
+                <div>
+                  <div className="status-title">{t.writingTitle}</div>
+                  <div className="status-sub">{t.writingSub}</div>
+                </div>
+              </div>
+            )}
+            {stage === 'done' && (
+              <div className="status-card done">
+                <div>
+                  <div className="status-title">{t.doneTitle}</div>
+                  <div className="status-sub">{t.doneSub}</div>
+                </div>
+              </div>
+            )}
+          </div>
+
           {scores && (
             <>
-              <h2>Domain Scores</h2>
+              <h2>{t.domainScoresHeading}</h2>
               <div className="scores">
                 {Object.entries(scores.domainScores).map(([name, score]) => (
-                  <div key={name} style={{ display: 'contents' }}>
+                  <div key={name} className="score-row">
                     <div className="score-name">{name}</div>
+                    <div className="score-bar-wrap">
+                      <div
+                        className="score-bar"
+                        style={{ width: `${((score - 1) / 3) * 100}%` }}
+                      />
+                    </div>
                     <div className="score-val">{score.toFixed(2)}</div>
                   </div>
                 ))}
               </div>
 
-              <h2>Top Priorities</h2>
+              <h2>{t.topPrioritiesHeading}</h2>
               <div className="top-domains">
                 {scores.topDomains.map((d, i) => (
                   <div className="top-domain" key={d}>
-                    {i + 1}. {d}
+                    <span className="top-domain-num">{i + 1}</span>
+                    <span>{d}</span>
                   </div>
                 ))}
               </div>
             </>
           )}
 
-          <h2>Action Plan</h2>
-          {SECTION_LABELS.map(([key, label]) => (
-            <div className="section" key={key}>
-              <div className="section-title">{label}</div>
-              {report[key]}
-              {streaming && report[key].length > 0 && (
-                <span className="cursor" aria-hidden>
-                  ▍
-                </span>
-              )}
-            </div>
-          ))}
+          <h2>{t.actionPlanHeading}</h2>
+          {sectionLabels.map(([key, label]) => {
+            const body = report[key as keyof ReportSections];
+            const isActive = stage === 'writing' && body.length > 0;
+            return (
+              <div className="section" key={key}>
+                <div className="section-title">{label}</div>
+                {body.length === 0 ? (
+                  <p className="section-placeholder">
+                    {stage === 'writing' ? t.writingPlaceholder : ''}
+                  </p>
+                ) : (
+                  <>
+                    {renderSectionBody(body)}
+                    {isActive && (
+                      <span className="cursor" aria-hidden>
+                        ▍
+                      </span>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </main>

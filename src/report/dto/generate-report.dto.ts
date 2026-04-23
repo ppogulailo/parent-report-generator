@@ -2,14 +2,19 @@ import {
   ArrayMaxSize,
   ArrayMinSize,
   IsArray,
+  IsIn,
   IsInt,
+  IsOptional,
   Max,
   Min,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 const ERROR_MESSAGE =
   'responses must be an array of 24 integers between 1 and 4';
+const LANGUAGE_ERROR = 'language must be "en" or "es"';
+
+export type Language = 'en' | 'es';
 
 export class GenerateReportDto {
   @ApiProperty({
@@ -31,4 +36,15 @@ export class GenerateReportDto {
   @Min(1, { each: true, message: ERROR_MESSAGE })
   @Max(4, { each: true, message: ERROR_MESSAGE })
   responses!: number[];
+
+  @ApiPropertyOptional({
+    description:
+      'Output language. "en" (default) generates the plan in English; "es" generates a natively Spanish plan.',
+    enum: ['en', 'es'],
+    default: 'en',
+    example: 'en',
+  })
+  @IsOptional()
+  @IsIn(['en', 'es'], { message: LANGUAGE_ERROR })
+  language?: Language;
 }
