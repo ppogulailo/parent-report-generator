@@ -303,6 +303,48 @@ test('SYSTEM_PROMPT reflects Matthew refinements', () => {
   expect(SYSTEM_PROMPT).toMatch(/exact title/i);
 });
 
+// ─── Tone refinement: AI-coaching filler banned in MILD + overall ─────────────
+
+test('SYSTEM_PROMPT bans AI-coaching filler phrases by name', () => {
+  // The prompt must explicitly list these as banned so the model stops using them.
+  expect(SYSTEM_PROMPT).toMatch(/take a moment/i);
+  expect(SYSTEM_PROMPT).toMatch(/this is a good time/i);
+  expect(SYSTEM_PROMPT).toMatch(/it's important to/i);
+  expect(SYSTEM_PROMPT).toMatch(/breathe deeply|take a deep breath/i);
+  expect(SYSTEM_PROMPT).toMatch(/be mindful of|allow yourself to/i);
+
+  // The ban must be framed as a rule, not as acceptable language.
+  expect(SYSTEM_PROMPT).toMatch(/AI-coaching filler|polite AI|self-help book/i);
+});
+
+test('SYSTEM_PROMPT includes the "frustrated, angry, and unsure" direct-tone example', () => {
+  // Matthew's founder-level example — baked in so the model has a concrete template.
+  expect(SYSTEM_PROMPT).toMatch(/frustrated, angry, and unsure/i);
+  expect(SYSTEM_PROMPT).toMatch(/can't be in the driver's seat|can't be in control/i);
+  expect(SYSTEM_PROMPT).toMatch(/step away.{0,40}come back steady/i);
+});
+
+test('SYSTEM_PROMPT MILD block demands direct emotional honesty, not polished coaching', () => {
+  const mildIdx = SYSTEM_PROMPT.indexOf('MILD — mostly 1s and 2s');
+  expect(mildIdx).toBeGreaterThan(-1);
+  const moderateIdx = SYSTEM_PROMPT.indexOf('MODERATE — a mix');
+  expect(moderateIdx).toBeGreaterThan(mildIdx);
+
+  const mildBlock = SYSTEM_PROMPT.slice(mildIdx, moderateIdx);
+  // Must explicitly warn against the wellness-coach drift.
+  expect(mildBlock).toMatch(/polished|polite|sanitized|wellness-coach/i);
+  // Must give the model permission to name frustration / uncertainty.
+  expect(mildBlock).toMatch(/frustration|uncertainty|doubt/i);
+  expect(mildBlock).toMatch(/second-guess/i);
+  // Must keep the "not a crisis" guardrail.
+  expect(mildBlock).toMatch(/NOT urgent|not a crisis|NOT catastrophizing/i);
+});
+
+test('SYSTEM_PROMPT has explicit HONESTY OVER POLISH rule', () => {
+  expect(SYSTEM_PROMPT).toMatch(/HONESTY OVER POLISH/);
+  expect(SYSTEM_PROMPT).toMatch(/frustration, anger, fear, exhaustion/i);
+});
+
 // ─── ASAP Resource Directory (16 / 6 / 20 lists) ──────────────────────────────
 
 test('resource directory module exposes the correct counts', () => {
