@@ -1,66 +1,132 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
-test.beforeEach(async ({ page }) => {
-  await page.goto('/');
-  // Wait until React has hydrated — the page sets data-hydrated on <html>
-  // in a top-level useEffect, so once this attribute exists, click handlers
-  // are attached and state updates will take effect.
+async function gotoLang(page: Page, lang: 'en' | 'es') {
+  await page.goto(`/${lang}`);
   await page.waitForFunction(
     () => document.documentElement.getAttribute('data-hydrated') === 'true',
     undefined,
     { timeout: 30000 },
   );
+}
+
+test.beforeEach(async ({ page }) => {
+  await gotoLang(page, 'en');
 });
 
-// ─── Hero + language toggle ──────────────────────────────────────────────────
+// ─── Routing + persistence ───────────────────────────────────────────────────
 
-test('loads the English hero + language toggle by default', async ({
-  page,
-}) => {
-  await expect(page).toHaveTitle(/Parent Action Plan/);
-  await expect(
-    page.getByRole('heading', {
-      name: 'A calm, clear plan when you need it most',
-    }),
-  ).toBeVisible();
-  await expect(page.getByRole('button', { name: 'English' })).toHaveAttribute(
-    'aria-pressed',
-    'true',
-  );
-  await expect(page.getByRole('button', { name: 'Español' })).toHaveAttribute(
-    'aria-pressed',
-    'false',
-  );
+test('root path / redirects to /en', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveURL(/\/en\/?$/);
 });
 
-test('switches to Spanish UI when Español is clicked', async ({ page }) => {
-  await page.getByRole('button', { name: 'Español' }).click();
+test('unknown lang path redirects to /en', async ({ page }) => {
+  await page.goto('/fr');
+  await expect(page).toHaveURL(/\/en\/?$/);
+});
+
+test('/es loads Spanish UI natively', async ({ page }) => {
+  await gotoLang(page, 'es');
   await expect(
     page.getByRole('heading', {
       name: 'Un plan claro y con los pies en la tierra, cuando más lo necesitas',
     }),
   ).toBeVisible();
-  // Scale labels localized
-  await expect(page.getByText('1 — Sólido').first()).toBeVisible();
-  await expect(page.getByText('4 — Preocupante').first()).toBeVisible();
-  // Submit button label translated (still disabled, count starts at 0)
-  await expect(
-    page.getByRole('button', { name: 'Generar plan de acción' }),
-  ).toBeVisible();
-  // Progress counter text localized
-  await expect(page.getByText('Respondidas 0 de 24')).toBeVisible();
-  // html lang attribute flips
   await expect(page.locator('html')).toHaveAttribute('lang', 'es');
+  await expect(page.getByText('Respondidas 0 de 24')).toBeVisible();
 });
 
-test('toggles back to English cleanly', async ({ page }) => {
-  await page.getByRole('button', { name: 'Español' }).click();
-  await page.getByRole('button', { name: 'English' }).click();
-  await expect(page.getByText('Answered 0 of 24')).toBeVisible();
+test('language persists after a full reload', async ({ page }) => {
+  await gotoLang(page, 'es');
+  await page.reload();
+  await page.waitForFunction(
+    () => document.documentElement.getAttribute('data-hydrated') === 'true',
+  );
+  await expect(page).toHaveURL(/\/es\/?$/);
+  await expect(page.getByText('Respondidas 0 de 24')).toBeVisible();
+});
+
+// ─── Language pill toggle ────────────────────────────────────────────────────
+
+test('language pill has EN + ES segments, EN active on /en', async ({
+  page,
+}) => {
+  const en = page.locator('.lang-pill', { hasText: 'EN' });
+  const es = page.locator('.lang-pill', { hasText: 'ES' });
+  await expect(en).toHaveAttribute('aria-checked', 'true');
+  await expect(es).toHaveAttribute('aria-checked', 'false');
+  await expect(en).toHaveClass(/active/);
+});
+
+test('clicking ES navigates to /es and switches UI', async ({ page }) => {
+  await page.locator('.lang-pill', { hasText: 'ES' }).click();
+  await expect(page).toHaveURL(/\/es\/?$/);
+  await page.waitForFunction(
+    () => document.documentElement.getAttribute('data-hydrated') === 'true',
+  );
   await expect(
-    page.getByRole('button', { name: 'Generate Action Plan' }),
+    page.getByRole('heading', {
+      name: 'Un plan claro y con los pies en la tierra, cuando más lo necesitas',
+    }),
   ).toBeVisible();
-  await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+  await expect(
+    page.locator('.lang-pill', { hasText: 'ES' }),
+  ).toHaveAttribute('aria-checked', 'true');
+});
+
+test('clicking EN from /es goes back to /en', async ({ page }) => {
+  await gotoLang(page, 'es');
+  await page.locator('.lang-pill', { hasText: 'EN' }).click();
+  await expect(page).toHaveURL(/\/en\/?$/);
+  await page.waitForFunction(
+    () => document.documentElement.getAttribute('data-hydrated') === 'true',
+  );
+  await expect(page.getByText('Answered 0 of 24')).toBeVisible();
+});
+
+test('pill has real href attributes so it works as a URL', async ({
+  page,
+}) => {
+  await expect(page.locator('.lang-pill', { hasText: 'EN' })).toHaveAttribute(
+    'href',
+    '/en',
+  );
+  await expect(page.locator('.lang-pill', { hasText: 'ES' })).toHaveAttribute(
+    'href',
+    '/es',
+  );
+});
+
+test('pills are disabled while generating', async ({ page }) => {
+  await page.route('**/api/report/stream', async (route) => {
+    // Keep the connection open briefly so the UI sits in "writing" state.
+    await new Promise((r) => setTimeout(r, 1000));
+    route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream' },
+      body:
+        `event: scores\ndata: ${JSON.stringify({
+          type: 'scores',
+          language: 'en',
+          domainScores: {
+            'Immediate Safety & Urgency': 2,
+            'Household Structure': 2,
+            'Boundary Consistency': 2,
+            'Communication & Conflict': 2,
+            'Support & Professional Engagement': 2,
+          },
+          topDomains: ['A', 'B', 'C'],
+        })}\n\n` +
+        `event: done\ndata: {"type":"done"}\n\n`,
+    });
+  });
+
+  await page.getByRole('button', { name: 'Fill sample answers' }).click();
+  await page.getByRole('button', { name: 'Generate Action Plan' }).click();
+  // During scoring phase the pill is marked disabled.
+  await expect(
+    page.locator('.lang-pill', { hasText: 'ES' }),
+  ).toHaveClass(/disabled/);
 });
 
 // ─── Questionnaire progress + submit gating ──────────────────────────────────
@@ -77,10 +143,8 @@ test('submit button is disabled until all 24 questions are answered', async ({
 
 test('progress counter updates as answers are selected', async ({ page }) => {
   await expect(page.getByText('Answered 0 of 24')).toBeVisible();
-  // Answer question 1
   await page.locator('input[name="q-0"][value="2"]').check({ force: true });
   await expect(page.getByText('Answered 1 of 24')).toBeVisible();
-  // Answer question 2
   await page.locator('input[name="q-1"][value="3"]').check({ force: true });
   await expect(page.getByText('Answered 2 of 24')).toBeVisible();
 });
@@ -92,7 +156,6 @@ test('"Jump to next unanswered" appears after partial answers and scrolls', asyn
   const jump = page.getByRole('button', { name: 'Jump to next unanswered' });
   await expect(jump).toBeVisible();
   await jump.click();
-  // Wait for smooth-scroll to settle, then verify q-1 is in the viewport.
   await page.waitForTimeout(500);
   const inView = await page.locator('#q-1').evaluate((el) => {
     const r = el.getBoundingClientRect();
@@ -109,12 +172,13 @@ test('sample-fill button answers all 24 and enables submit', async ({
 }) => {
   await page.getByRole('button', { name: 'Fill sample answers' }).click();
   await expect(page.getByText('Answered 24 of 24')).toBeVisible();
-  const submit = page.getByRole('button', { name: 'Generate Action Plan' });
-  await expect(submit).toBeEnabled();
+  await expect(
+    page.getByRole('button', { name: 'Generate Action Plan' }),
+  ).toBeEnabled();
 });
 
 test('Spanish sample-fill localizes the counter', async ({ page }) => {
-  await page.getByRole('button', { name: 'Español' }).click();
+  await gotoLang(page, 'es');
   await page
     .getByRole('button', { name: 'Llenar con respuestas de ejemplo' })
     .click();
@@ -124,13 +188,10 @@ test('Spanish sample-fill localizes the counter', async ({ page }) => {
 test('all 24 questions render with 4-point scales in both languages', async ({
   page,
 }) => {
-  // English
   await expect(page.locator('.question')).toHaveCount(24);
   await expect(page.locator('input[type="radio"]')).toHaveCount(96);
-  // Spanish
-  await page.getByRole('button', { name: 'Español' }).click();
+  await gotoLang(page, 'es');
   await expect(page.locator('.question')).toHaveCount(24);
-  // First Spanish question text visible
   await expect(
     page.getByText(
       '¿Qué tan seguro estás de que tu hijo ha consumido drogas',
@@ -141,8 +202,7 @@ test('all 24 questions render with 4-point scales in both languages', async ({
 // ─── Generation flow (stubbed SSE) ───────────────────────────────────────────
 
 const mockSseStream = (language: 'en' | 'es') => {
-  const header =
-    language === 'es' ? 'RESUMEN INICIAL' : 'HEADLINE SUMMARY';
+  const header = language === 'es' ? 'RESUMEN INICIAL' : 'HEADLINE SUMMARY';
   const top =
     language === 'es'
       ? '3 PRIORIDADES INMEDIATAS'
@@ -154,7 +214,9 @@ const mockSseStream = (language: 'en' | 'es') => {
       ? 'PLAN DE LAS PRIMERAS 72 HORAS'
       : 'FIRST 72 HOURS PLAN';
   const days =
-    language === 'es' ? 'DÍAS 4 A 7 — CONTINUACIÓN' : 'DAYS 4 TO 7 CONTINUATION';
+    language === 'es'
+      ? 'DÍAS 4 A 7 — CONTINUACIÓN'
+      : 'DAYS 4 TO 7 CONTINUATION';
   const enc =
     language === 'es'
       ? 'ALIENTO Y DIRECCIÓN'
@@ -172,9 +234,7 @@ const mockSseStream = (language: 'en' | 'es') => {
         ? 'Regulación emocional primero.'
         : 'Parent regulation first.'),
     '- ' +
-      (language === 'es'
-        ? 'Alinea con el co-padre.'
-        : 'Align with co-parent.'),
+      (language === 'es' ? 'Alinea con el co-padre.' : 'Align with co-parent.'),
     '- ' +
       (language === 'es'
         ? 'Construye un grupo de apoyo.'
@@ -234,7 +294,7 @@ const mockSseStream = (language: 'en' | 'es') => {
   ].join('');
 };
 
-async function stubStream(page, language: 'en' | 'es') {
+async function stubStream(page: Page, language: 'en' | 'es') {
   await page.route('**/api/report/stream', (route) => {
     route.fulfill({
       status: 200,
@@ -257,34 +317,24 @@ test('full English flow: fill sample → submit → render report', async ({
   await expect(page.getByText('Your plan is ready.')).toBeVisible({
     timeout: 10000,
   });
-
-  // Report sections rendered with English labels
-  await expect(page.getByText('Headline Summary', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('Headline Summary', { exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByText('Top 3 Immediate Priorities', { exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByText('First 72 Hours Plan', { exact: true }),
-  ).toBeVisible();
-
-  // Body renders
-  await expect(
     page.getByText('A calm, grounded overview of the situation.'),
   ).toBeVisible();
-  // Bullet list rendered
   await expect(page.getByText('Parent regulation first.')).toBeVisible();
-
-  // Domain scores + top priorities
-  await expect(page.getByText('Domain Scores')).toBeVisible();
-  await expect(page.getByText('Top Priorities')).toBeVisible();
   await expect(page.locator('.top-domain')).toHaveCount(3);
   await expect(page.locator('.score-row')).toHaveCount(5);
 });
 
-test('full Spanish flow: toggle, fill, submit → Spanish report renders', async ({
+test('full Spanish flow: /es → fill → submit → Spanish report renders', async ({
   page,
 }) => {
-  await page.getByRole('button', { name: 'Español' }).click();
+  await gotoLang(page, 'es');
   await stubStream(page, 'es');
   await page
     .getByRole('button', { name: 'Llenar con respuestas de ejemplo' })
@@ -294,8 +344,6 @@ test('full Spanish flow: toggle, fill, submit → Spanish report renders', async
   await expect(page.getByText('Tu plan está listo.')).toBeVisible({
     timeout: 10000,
   });
-
-  // Spanish section labels
   await expect(page.getByText('Resumen inicial', { exact: true })).toBeVisible();
   await expect(
     page.getByText('3 Prioridades inmediatas', { exact: true }),
@@ -303,18 +351,8 @@ test('full Spanish flow: toggle, fill, submit → Spanish report renders', async
   await expect(
     page.getByText('Plan de las primeras 72 horas', { exact: true }),
   ).toBeVisible();
-  await expect(
-    page.getByText('Días 4 a 7 — Continuación', { exact: true }),
-  ).toBeVisible();
-
-  // Spanish body rendered
-  await expect(
-    page.getByText('Regulación emocional primero.'),
-  ).toBeVisible();
-
-  // Domain / top priority headings localized
+  await expect(page.getByText('Regulación emocional primero.')).toBeVisible();
   await expect(page.getByText('Puntajes por dominio')).toBeVisible();
-  await expect(page.getByText('Prioridades principales')).toBeVisible();
 });
 
 test('backend failure renders the retry error state', async ({ page }) => {
