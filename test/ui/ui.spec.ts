@@ -353,6 +353,53 @@ test('full Spanish flow: /es → fill → submit → Spanish report renders', as
   ).toBeVisible();
   await expect(page.getByText('Regulación emocional primero.')).toBeVisible();
   await expect(page.getByText('Puntajes por dominio')).toBeVisible();
+
+  // Domain names + top priorities localized in the Spanish UI
+  await expect(
+    page.getByText('Seguridad inmediata y urgencia').first(),
+  ).toBeVisible();
+  await expect(page.getByText('Estructura del hogar')).toBeVisible();
+  await expect(
+    page.getByText('Consistencia de límites').first(),
+  ).toBeVisible();
+  await expect(page.getByText('Comunicación y conflicto').first()).toBeVisible();
+  await expect(
+    page.getByText('Apoyo y acompañamiento profesional'),
+  ).toBeVisible();
+});
+
+test('English UI keeps English domain labels', async ({ page }) => {
+  await page.route('**/api/report/stream', (route) => {
+    route.fulfill({
+      status: 200,
+      headers: { 'Content-Type': 'text/event-stream' },
+      body:
+        `event: scores\ndata: ${JSON.stringify({
+          type: 'scores',
+          language: 'en',
+          domainScores: {
+            'Immediate Safety & Urgency': 3.6,
+            'Household Structure': 2.0,
+            'Boundary Consistency': 2.2,
+            'Communication & Conflict': 3.0,
+            'Support & Professional Engagement': 3.0,
+          },
+          topDomains: [
+            'Immediate Safety & Urgency',
+            'Communication & Conflict',
+            'Support & Professional Engagement',
+          ],
+        })}\n\n` +
+        `event: done\ndata: {"type":"done"}\n\n`,
+    });
+  });
+  await page.getByRole('button', { name: 'Fill sample answers' }).click();
+  await page.getByRole('button', { name: 'Generate Action Plan' }).click();
+  await expect(page.getByText('Your plan is ready.')).toBeVisible();
+  await expect(
+    page.getByText('Immediate Safety & Urgency').first(),
+  ).toBeVisible();
+  await expect(page.getByText('Household Structure')).toBeVisible();
 });
 
 test('backend failure renders the retry error state', async ({ page }) => {

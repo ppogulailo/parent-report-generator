@@ -9,6 +9,7 @@ import {
   SECTION_LABELS_BY_LANG,
   SECTION_MARKERS_BY_LANG,
   STRINGS,
+  domainLabel,
 } from '../i18n';
 
 type ReportSections = {
@@ -456,7 +457,9 @@ export default function PageClient({ language }: Props) {
               <div className="scores">
                 {Object.entries(scores.domainScores).map(([name, score]) => (
                   <div key={name} className="score-row">
-                    <div className="score-name">{name}</div>
+                    <div className="score-name">
+                      {domainLabel(language, name)}
+                    </div>
                     <div className="score-bar-wrap">
                       <div
                         className="score-bar"
@@ -473,7 +476,7 @@ export default function PageClient({ language }: Props) {
                 {scores.topDomains.map((d, i) => (
                   <div className="top-domain" key={d}>
                     <span className="top-domain-num">{i + 1}</span>
-                    <span>{d}</span>
+                    <span>{domainLabel(language, d)}</span>
                   </div>
                 ))}
               </div>

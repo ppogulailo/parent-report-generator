@@ -70,6 +70,30 @@ export const SCALE_LABELS: Record<Language, Record<number, string>> = {
   },
 };
 
+// Backend always returns the 5 concern domains by their English names
+// (that's the API contract). These map each English key to a display
+// label per UI language — translation is purely visual.
+export const DOMAIN_LABELS: Record<Language, Record<string, string>> = {
+  en: {
+    'Immediate Safety & Urgency': 'Immediate Safety & Urgency',
+    'Household Structure': 'Household Structure',
+    'Boundary Consistency': 'Boundary Consistency',
+    'Communication & Conflict': 'Communication & Conflict',
+    'Support & Professional Engagement': 'Support & Professional Engagement',
+  },
+  es: {
+    'Immediate Safety & Urgency': 'Seguridad inmediata y urgencia',
+    'Household Structure': 'Estructura del hogar',
+    'Boundary Consistency': 'Consistencia de límites',
+    'Communication & Conflict': 'Comunicación y conflicto',
+    'Support & Professional Engagement': 'Apoyo y acompañamiento profesional',
+  },
+};
+
+export function domainLabel(lang: Language, englishName: string): string {
+  return DOMAIN_LABELS[lang][englishName] ?? englishName;
+}
+
 export const SECTION_LABELS_BY_LANG: Record<
   Language,
   Array<[string, string]>
