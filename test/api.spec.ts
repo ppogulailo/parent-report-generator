@@ -345,6 +345,49 @@ test('SYSTEM_PROMPT has explicit HONESTY OVER POLISH rule', () => {
   expect(SYSTEM_PROMPT).toMatch(/frustration, anger, fear, exhaustion/i);
 });
 
+// ─── Tone refinement round 2: decisive + normalize ───────────────────────────
+
+test('SYSTEM_PROMPT prefers decisive language over suggestive hedging', () => {
+  expect(SYSTEM_PROMPT).toMatch(/DECISIVE LANGUAGE/);
+  // The "worth taking seriously" → "need to be taken seriously" rewrite.
+  expect(SYSTEM_PROMPT).toMatch(/need to be taken seriously/i);
+
+  // The phrase "worth taking seriously" is allowed INSIDE the DECISIVE
+  // LANGUAGE rule (it's the hedge being banned + the BAD example), but
+  // must not appear anywhere else as instructional copy.
+  const ruleStart = SYSTEM_PROMPT.indexOf('DECISIVE LANGUAGE');
+  const ruleEnd = SYSTEM_PROMPT.indexOf('NORMALIZE AFTER NAMING');
+  expect(ruleStart).toBeGreaterThan(-1);
+  expect(ruleEnd).toBeGreaterThan(ruleStart);
+  const before = SYSTEM_PROMPT.slice(0, ruleStart);
+  const after = SYSTEM_PROMPT.slice(ruleEnd);
+  expect(before).not.toMatch(/worth taking seriously/i);
+  expect(after).not.toMatch(/worth taking seriously/i);
+});
+
+test('SYSTEM_PROMPT requires normalize-after-naming for feelings', () => {
+  expect(SYSTEM_PROMPT).toMatch(/NORMALIZE AFTER NAMING/);
+  expect(SYSTEM_PROMPT).toMatch(/name → normalize → direct it/i);
+  // Founder's exact example, baked in as a template.
+  expect(SYSTEM_PROMPT).toMatch(
+    /confusion and frustration — and that's normal/,
+  );
+});
+
+test('PARENT EMOTIONAL REGULATION bullet enforces normalize step', () => {
+  const idx = SYSTEM_PROMPT.indexOf('PARENT EMOTIONAL REGULATION');
+  const next = SYSTEM_PROMPT.indexOf(
+    'CO-PARENT / CAREGIVER ALIGNMENT',
+    idx,
+  );
+  expect(idx).toBeGreaterThan(-1);
+  expect(next).toBeGreaterThan(idx);
+  const bullet = SYSTEM_PROMPT.slice(idx, next);
+  expect(bullet).toMatch(/normalize/i);
+  expect(bullet).toMatch(/that's normal/i);
+  expect(bullet).toMatch(/decisive/i);
+});
+
 // ─── ASAP Resource Directory (16 / 6 / 20 lists) ──────────────────────────────
 
 test('resource directory module exposes the correct counts', () => {
