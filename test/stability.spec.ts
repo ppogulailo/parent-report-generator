@@ -84,8 +84,11 @@ const EDGE_INPUTS: Array<[string, number[]]> = [
   ['all 2s', Array(24).fill(2)],
   ['all 3s', Array(24).fill(3)],
   ['all 4s', Array(24).fill(4)],
-  ['alternating 1-4', Array.from({ length: 24 }, (_, i) => (i % 2 === 0 ? 1 : 4))],
-  ['ascending pattern', Array.from({ length: 24 }, (_, i) => ((i % 4) + 1))],
+  [
+    'alternating 1-4',
+    Array.from({ length: 24 }, (_, i) => (i % 2 === 0 ? 1 : 4)),
+  ],
+  ['ascending pattern', Array.from({ length: 24 }, (_, i) => (i % 4) + 1)],
 ];
 
 for (const [label, responses] of EDGE_INPUTS) {
@@ -111,7 +114,8 @@ for (const [label, responses] of EDGE_INPUTS) {
 test('resource validator accepts the mock report (canonical or plain prose)', () => {
   const cleanReport = {
     headlineSummary: 'A calm, direction-giving overview.',
-    topImmediatePriorities: '- Parent regulation\n- Co-parent alignment\n- Support group',
+    topImmediatePriorities:
+      '- Parent regulation\n- Co-parent alignment\n- Support group',
     keyPriorities: 'Focus on Immediate Safety & Urgency first.',
     whatToAvoid: '- Ultimatums without follow-through',
     first72Hours: 'Day 1: regulation. Day 2: support. Day 3: conversation.',

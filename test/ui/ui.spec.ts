@@ -69,9 +69,10 @@ test('clicking ES navigates to /es and switches UI', async ({ page }) => {
       name: 'Un plan claro y con los pies en la tierra, cuando más lo necesitas',
     }),
   ).toBeVisible();
-  await expect(
-    page.locator('.lang-pill', { hasText: 'ES' }),
-  ).toHaveAttribute('aria-checked', 'true');
+  await expect(page.locator('.lang-pill', { hasText: 'ES' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
 });
 
 test('clicking EN from /es goes back to /en', async ({ page }) => {
@@ -84,9 +85,7 @@ test('clicking EN from /es goes back to /en', async ({ page }) => {
   await expect(page.getByText('Answered 0 of 24')).toBeVisible();
 });
 
-test('pill has real href attributes so it works as a URL', async ({
-  page,
-}) => {
+test('pill has real href attributes so it works as a URL', async ({ page }) => {
   await expect(page.locator('.lang-pill', { hasText: 'EN' })).toHaveAttribute(
     'href',
     '/en',
@@ -116,17 +115,16 @@ test('pills are disabled while generating', async ({ page }) => {
             'Support & Professional Engagement': 2,
           },
           topDomains: ['A', 'B', 'C'],
-        })}\n\n` +
-        `event: done\ndata: {"type":"done"}\n\n`,
+        })}\n\n` + `event: done\ndata: {"type":"done"}\n\n`,
     });
   });
 
   await page.getByRole('button', { name: 'Fill sample answers' }).click();
   await page.getByRole('button', { name: 'Generate Action Plan' }).click();
   // During scoring phase the pill is marked disabled.
-  await expect(
-    page.locator('.lang-pill', { hasText: 'ES' }),
-  ).toHaveClass(/disabled/);
+  await expect(page.locator('.lang-pill', { hasText: 'ES' })).toHaveClass(
+    /disabled/,
+  );
 });
 
 // ─── Questionnaire progress + submit gating ──────────────────────────────────
@@ -193,9 +191,7 @@ test('all 24 questions render with 4-point scales in both languages', async ({
   await gotoLang(page, 'es');
   await expect(page.locator('.question')).toHaveCount(24);
   await expect(
-    page.getByText(
-      '¿Qué tan seguro estás de que tu hijo ha consumido drogas',
-    ),
+    page.getByText('¿Qué tan seguro estás de que tu hijo ha consumido drogas'),
   ).toBeVisible();
 });
 
@@ -210,17 +206,13 @@ const mockSseStream = (language: 'en' | 'es') => {
   const key = language === 'es' ? 'PRIORIDADES CLAVE' : 'KEY PRIORITIES';
   const avoid = language === 'es' ? 'QUÉ EVITAR' : 'WHAT TO AVOID';
   const plan =
-    language === 'es'
-      ? 'PLAN DE LAS PRIMERAS 72 HORAS'
-      : 'FIRST 72 HOURS PLAN';
+    language === 'es' ? 'PLAN DE LAS PRIMERAS 72 HORAS' : 'FIRST 72 HOURS PLAN';
   const days =
     language === 'es'
       ? 'DÍAS 4 A 7 — CONTINUACIÓN'
       : 'DAYS 4 TO 7 CONTINUATION';
   const enc =
-    language === 'es'
-      ? 'ALIENTO Y DIRECCIÓN'
-      : 'ENCOURAGEMENT AND DIRECTION';
+    language === 'es' ? 'ALIENTO Y DIRECCIÓN' : 'ENCOURAGEMENT AND DIRECTION';
 
   const planText = [
     header,
@@ -344,7 +336,9 @@ test('full Spanish flow: /es → fill → submit → Spanish report renders', as
   await expect(page.getByText('Tu plan está listo.')).toBeVisible({
     timeout: 10000,
   });
-  await expect(page.getByText('Resumen inicial', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText('Resumen inicial', { exact: true }),
+  ).toBeVisible();
   await expect(
     page.getByText('3 Prioridades inmediatas', { exact: true }),
   ).toBeVisible();
@@ -359,10 +353,10 @@ test('full Spanish flow: /es → fill → submit → Spanish report renders', as
     page.getByText('Seguridad inmediata y urgencia').first(),
   ).toBeVisible();
   await expect(page.getByText('Estructura del hogar')).toBeVisible();
+  await expect(page.getByText('Consistencia de límites').first()).toBeVisible();
   await expect(
-    page.getByText('Consistencia de límites').first(),
+    page.getByText('Comunicación y conflicto').first(),
   ).toBeVisible();
-  await expect(page.getByText('Comunicación y conflicto').first()).toBeVisible();
   await expect(
     page.getByText('Apoyo y acompañamiento profesional'),
   ).toBeVisible();
@@ -389,8 +383,7 @@ test('English UI keeps English domain labels', async ({ page }) => {
             'Communication & Conflict',
             'Support & Professional Engagement',
           ],
-        })}\n\n` +
-        `event: done\ndata: {"type":"done"}\n\n`,
+        })}\n\n` + `event: done\ndata: {"type":"done"}\n\n`,
     });
   });
   await page.getByRole('button', { name: 'Fill sample answers' }).click();

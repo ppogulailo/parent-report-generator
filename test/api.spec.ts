@@ -320,7 +320,9 @@ test('SYSTEM_PROMPT bans AI-coaching filler phrases by name', () => {
 test('SYSTEM_PROMPT includes the "frustrated, angry, and unsure" direct-tone example', () => {
   // Matthew's founder-level example — baked in so the model has a concrete template.
   expect(SYSTEM_PROMPT).toMatch(/frustrated, angry, and unsure/i);
-  expect(SYSTEM_PROMPT).toMatch(/can't be in the driver's seat|can't be in control/i);
+  expect(SYSTEM_PROMPT).toMatch(
+    /can't be in the driver's seat|can't be in control/i,
+  );
   expect(SYSTEM_PROMPT).toMatch(/step away.{0,40}come back steady/i);
 });
 
@@ -376,10 +378,7 @@ test('SYSTEM_PROMPT requires normalize-after-naming for feelings', () => {
 
 test('PARENT EMOTIONAL REGULATION bullet enforces normalize step', () => {
   const idx = SYSTEM_PROMPT.indexOf('PARENT EMOTIONAL REGULATION');
-  const next = SYSTEM_PROMPT.indexOf(
-    'CO-PARENT / CAREGIVER ALIGNMENT',
-    idx,
-  );
+  const next = SYSTEM_PROMPT.indexOf('CO-PARENT / CAREGIVER ALIGNMENT', idx);
   expect(idx).toBeGreaterThan(-1);
   expect(next).toBeGreaterThan(idx);
   const bullet = SYSTEM_PROMPT.slice(idx, next);

@@ -21,8 +21,7 @@ const post = (request: any, body: unknown) =>
     data: body,
   });
 
-const getLastCaptured = async () =>
-  (await fetch(`${MOCK_BASE}/_last`)).json();
+const getLastCaptured = async () => (await fetch(`${MOCK_BASE}/_last`)).json();
 
 // ─── DTO validation ──────────────────────────────────────────────────────────
 

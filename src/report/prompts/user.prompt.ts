@@ -173,7 +173,7 @@ function classifySeverityEn(
     return {
       level: 'SERIOUS',
       guidance:
-        'Inputs show multiple strong concerns or elevated safety signals. Grounded urgency — calm, direction-giving, never alarmist. Name the emotional weight directly only where the inputs actually show it. ASAP-endorsed professional referral may appear in the FIRST 72 HOURS PLAN. Reference external emergency resources only if acute-risk signals are explicit (suspected fentanyl/heroin, safety crisis, suicidality).',
+        'Inputs show multiple strong concerns or elevated safety signals. Grounded urgency — calm, direction-giving, never alarmist. Name the emotional weight directly only where the inputs actually show it. ASAP-endorsed professional referral may appear in the FIRST 72 HOURS PLAN. Reference external emergency resources only if acute-risk signals are explicit (suspected fentanyl/heroin, safety crisis, suicidality). Primary ASAP Discussion Group is "Monitoring and Intervention" (NOT "Parent Support Forum"). Whenever you direct the parent there, also instruct them to post questions about pursuing professional help in the "Sustaining Recovery" discussion group. Every mention of professional support must point the parent to the Admin Space — that is where ASAP-endorsed treatment providers and therapists are listed.',
     };
   }
   if (tier === 'MILD') {
@@ -200,7 +200,7 @@ function classifySeverityEs(
     return {
       level: 'GRAVE',
       guidance:
-        'Los inputs muestran múltiples preocupaciones fuertes o señales de seguridad elevadas. Urgencia con los pies en la tierra — calmada, orientada a la acción, nunca alarmista. Nombra el peso emocional solo donde los inputs lo muestren. Una derivación profesional ASAP-endorsed puede aparecer en el PLAN DE LAS PRIMERAS 72 HORAS. Referencia recursos externos de emergencia solo si hay señales explícitas de riesgo agudo (sospecha de fentanilo/heroína, crisis de seguridad, ideación suicida).',
+        'Los inputs muestran múltiples preocupaciones fuertes o señales de seguridad elevadas. Urgencia con los pies en la tierra — calmada, orientada a la acción, nunca alarmista. Nombra el peso emocional solo donde los inputs lo muestren. Una derivación profesional ASAP-endorsed puede aparecer en el PLAN DE LAS PRIMERAS 72 HORAS. Referencia recursos externos de emergencia solo si hay señales explícitas de riesgo agudo (sospecha de fentanilo/heroína, crisis de seguridad, ideación suicida). El ASAP Discussion Group primario es "Monitoring and Intervention" (NO "Parent Support Forum"). Siempre que dirijas al padre allí, indícale también que publique sus preguntas sobre buscar ayuda profesional en el discussion group "Sustaining Recovery". Cada mención de apoyo profesional debe dirigir al padre al Admin Space — ahí están listados los proveedores de tratamiento y terapeutas ASAP-endorsed.',
     };
   }
   if (tier === 'MILD') {
