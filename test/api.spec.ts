@@ -285,7 +285,9 @@ test('SYSTEM_PROMPT reflects Matthew refinements', () => {
 
   // Natural conversation tone guidance present
   expect(SYSTEM_PROMPT).toMatch(/not scripted/i);
-  expect(SYSTEM_PROMPT).toMatch(/parent \+ child vs (the problem|the substance use)/i);
+  expect(SYSTEM_PROMPT).toMatch(
+    /parent \+ child vs (the problem|the substance use)/i,
+  );
 
   // 5. Articles of Action referenced by TITLE only — no "Chapter N" citations.
   expect(SYSTEM_PROMPT).toMatch(/Articles of Action/);
