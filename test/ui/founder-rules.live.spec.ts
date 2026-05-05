@@ -168,5 +168,7 @@ test('ES GRAVE (all 4s): canonical English titles + Admin Spaces sentence verbat
   expect(stripped).not.toMatch(/confront/i);
 
   // Substance-use-as-opponent framing.
-  expect(text).toMatch(/contra las drogas|against the drugs|no es el oponente|not the opponent/i);
+  expect(text).toMatch(
+    /contra las drogas|against the drugs|no es el oponente|not the opponent/i,
+  );
 });
