@@ -119,6 +119,11 @@ export const AUXILIARY_WORKSHOPS: Array<{ title: string; summary: string }> = [
     title: 'Legal Issues and Substance Use: Understanding the Consequences',
     summary: 'Awareness of legal risks and responses.',
   },
+  {
+    title: 'Building a Support Network',
+    summary:
+      'Helping parents build a broad support network for their child — family members, school staff, coaches, therapists, and community resources. Engaging schools is one of the most important components.',
+  },
 ];
 
 export const DISCUSSION_GROUPS: string[] = [
@@ -145,6 +150,6 @@ ${articles}
 ASAP Discussion Groups (6 total — primary support mechanism; tell the parent to join and actively post, not just be aware):
 ${groups}
 
-Auxiliary Workshops (20 total — pick by topic match, name the exact title):
+Auxiliary Workshops (21 total — pick by topic match, name the exact title):
 ${workshops}`;
 }
