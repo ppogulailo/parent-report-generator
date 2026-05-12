@@ -5,14 +5,21 @@ import { test, expect, Page } from '@playwright/test';
 // from the real NestJS backend → real Anthropic API. Each case is one paid
 // generation and takes ~30-90s.
 //
-// Rules being verified (refined set):
+// Rules being verified (refined set, May 2026 founder pass):
 //   1. Discussion groups are named in canonical form: "<Title> discussion group".
-//   2. SERIOUS reports name the "Monitoring and Intervention discussion group"
-//      as the primary support recommendation.
-//   3. Whenever the "Sustaining Recovery discussion group" is referenced, it is
-//      immediately followed by the verbatim sentence:
-//      "In Admin Spaces you can find a listing of treatment providers &
-//       therapists who endorse and support the ASAP program."
+//   2. The "Monitoring and Intervention discussion group" is the parent's
+//      canonical peer-support group in EVERY tier (MILD, MODERATE, SERIOUS) —
+//      no severity gating.
+//   3. PROFESSIONAL HELP SEQUENCE: whenever the plan recommends professional
+//      help (therapist, treatment provider, ASAP-endorsed, etc.), the same
+//      paragraph contains, verbatim, in order:
+//      (a) "For deeper insights, reach out to the 'Sustaining Recovery
+//          discussion group.'"
+//      (b) "In Admin Spaces, under Treatment Providers, you can find a
+//          listing of treatment providers & therapists who endorse and
+//          support the ASAP program."
+//      The legacy lead-in "If you have questions or want to share experiences"
+//      is banned.
 //   4. Action language ("join the" / "reach out to") is used to direct the
 //      parent into the group — not passive phrasing.
 //   5. Banned phrasing: "avoid searching" never appears. The phrase
@@ -46,7 +53,7 @@ async function readReportText(page: Page): Promise<string> {
 }
 
 const ADMIN_SPACES_SENTENCE =
-  'In Admin Spaces you can find a listing of treatment providers & therapists who endorse and support the ASAP program.';
+  'In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.';
 
 function assertSrFollowedByAdminSpaces(text: string) {
   // Every "Sustaining Recovery discussion group" reference must be followed
@@ -123,16 +130,22 @@ test('EN MILD (all 1s): groups still reinforced, no SERIOUS routing, no banned w
   const text = await readReportText(page);
   console.log('\n──────── EN PLAN (MILD, all 1s) ────────\n' + text + '\n');
 
-  // Discussion groups are reinforced as a primary support mechanism in every
-  // report, even MILD — name at least one in canonical form.
-  expect(text).toMatch(/discussion group/i);
+  // Per the May 2026 founder refinement, the "Monitoring and Intervention
+  // discussion group" is the parent's canonical peer-support group in EVERY
+  // tier — including MILD. Earlier behaviour (PSF-only in MILD) is retired.
+  expect(text).toContain('Monitoring and Intervention discussion group');
 
-  // MILD must NOT escalate to the Monitoring-and-Intervention group.
-  expect(text).not.toMatch(/Monitoring and Intervention/);
+  // Action language still required.
+  expect(text).toMatch(/join the|reach out to/i);
 
   // Banned phrasings still apply.
   expect(text).not.toMatch(/avoid searching/i);
   assertNoBannedConfront(text);
+
+  // SR's purpose is professional-help perspectives — the legacy
+  // "If you have questions or want to share experiences" lead-in is now
+  // banned in every tier. (Acceptable lead-in: "For deeper insights".)
+  expect(text).not.toMatch(/If you have questions or want/i);
 });
 
 test('ES GRAVE (all 4s): canonical English titles + Admin Spaces sentence verbatim', async ({
