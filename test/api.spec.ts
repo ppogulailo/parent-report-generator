@@ -248,10 +248,13 @@ test('SYSTEM_PROMPT reflects Matthew refinements', () => {
   expect(SYSTEM_PROMPT).toMatch(/declining grades/i);
   expect(SYSTEM_PROMPT).toMatch(/strained relationships/i);
 
-  // 2. Priority order: regulation → alignment → support → THEN conversation
-  const regIdx = SYSTEM_PROMPT.indexOf('PARENT EMOTIONAL REGULATION');
-  const alignIdx = SYSTEM_PROMPT.indexOf('CO-PARENT / CAREGIVER ALIGNMENT');
-  const supportIdx = SYSTEM_PROMPT.indexOf('BUILD THE SUPPORT GROUP');
+  // 2. Priority order: regulation → alignment → support → THEN conversation.
+  // Anchor on the numbered bullet headers so unrelated in-prompt mentions
+  // of these phrases (e.g. routing rules referring to "BUILD THE SUPPORT GROUP")
+  // do not shadow the actual section anchors.
+  const regIdx = SYSTEM_PROMPT.indexOf('1. PARENT EMOTIONAL REGULATION');
+  const alignIdx = SYSTEM_PROMPT.indexOf('2. CO-PARENT / CAREGIVER ALIGNMENT');
+  const supportIdx = SYSTEM_PROMPT.indexOf('3. BUILD THE SUPPORT GROUP');
   expect(regIdx).toBeGreaterThan(-1);
   expect(alignIdx).toBeGreaterThan(regIdx);
   expect(supportIdx).toBeGreaterThan(alignIdx);
@@ -389,12 +392,12 @@ test('PARENT EMOTIONAL REGULATION bullet enforces normalize step', () => {
   expect(bullet).toMatch(/decisive/i);
 });
 
-// ─── ASAP Resource Directory (16 / 6 / 20 lists) ──────────────────────────────
+// ─── ASAP Resource Directory (16 / 6 / 21 lists) ──────────────────────────────
 
 test('resource directory module exposes the correct counts', () => {
   expect(ARTICLES_OF_ACTION).toHaveLength(16);
   expect(DISCUSSION_GROUPS).toHaveLength(6);
-  expect(AUXILIARY_WORKSHOPS).toHaveLength(20);
+  expect(AUXILIARY_WORKSHOPS).toHaveLength(21);
 });
 
 test('resource titles are unique', () => {
@@ -418,7 +421,7 @@ test('outgoing user prompt ships every Article / Workshop / Discussion Group ver
   expect(userContent).toContain('ASAP RESOURCE DIRECTORY');
   expect(userContent).toContain('Articles of Action (16 total');
   expect(userContent).toContain('ASAP Discussion Groups (6 total');
-  expect(userContent).toContain('Auxiliary Workshops (20 total');
+  expect(userContent).toContain('Auxiliary Workshops (21 total');
 
   // Every article title appears verbatim
   for (const title of ARTICLES_OF_ACTION) {
