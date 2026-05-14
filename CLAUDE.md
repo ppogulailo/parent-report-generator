@@ -1,16 +1,16 @@
 # CLAUDE.md
 
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 ## Project
 
-NestJS REST API that scores a 24-question parent questionnaire, maps responses to 5 concern domains, and generates a 5-section Parent Action Plan via the Anthropic Claude API.
+NestJS REST API that scores a 24-question parent questionnaire, maps responses to 5 concern domains, and generates a 7-section Parent Action Plan via the Anthropic Claude API. A Next.js frontend in `frontend/` consumes the API.
 
 **Source of truth:** [`SPEC.md`](./SPEC.md). Read it before writing code. It defines the domain map, scoring algorithm, tie-break order, prompt text, response shape, error messages, and test coverage. Do not paraphrase or deviate from values defined there (domain names, section names, error strings, `SYSTEM_PROMPT`).
 
 **Out of scope:** no database, no auth beyond the `X-API-Key` header, no PDF/email, no streaming, no caching.
 
 ## Architecture
-
-Target layout (currently only the Nest starter exists — build it out to match):
 
 ```
 src/
@@ -21,9 +21,11 @@ src/
 │   └── filters/http-exception.filter.ts  # normalise all errors to { success: false, error }
 ├── health/                         # GET /api/health (no guard)
 └── report/
+    ├── report.module.ts
     ├── report.controller.ts        # POST /api/report/generate, @UseGuards(ApiKeyGuard)
     ├── report.service.ts           # scoring → prompt → Claude
     ├── dto/generate-report.dto.ts  # class-validator: 24 ints, 1–4
+    ├── validation/                 # extra request-shape checks beyond class-validator
     ├── scoring/{domain.map,scoring.service}.ts
     ├── prompts/{system,user}.prompt.ts
     ├── claude/claude.service.ts    # HttpService → Anthropic /v1/messages
@@ -31,6 +33,8 @@ src/
 ```
 
 Request flow: `ApiKeyGuard → ValidationPipe → ReportController → ReportService → ScoringService → buildUserPrompt → ClaudeService → response`.
+
+`frontend/` is a Next.js 15 / React 19 app (default port 3100) under `app/[lang]/` with i18n via `app/i18n.ts` and questionnaire content in `app/questions.ts`. It calls the Nest backend through `app/api/`.
 
 ## Skills — read before touching the relevant areas
 
@@ -54,11 +58,14 @@ Request flow: `ApiKeyGuard → ValidationPipe → ReportController → ReportSer
 ## Commands
 
 ```bash
-npm run start:dev     # watch mode
-npm run build         # nest build
-npm run lint          # eslint --fix
-npm run test          # jest unit tests (scoring, prompt builder)
-npm run test:e2e      # jest e2e (starter config — Playwright suite lives in test/ per SPEC §13)
+npm run start:dev                    # nodemon + ts-node, watches src/
+npm run build                        # nest build
+npm run lint                         # eslint --fix
+npm run test                         # playwright test (api.spec, language.spec, stability.spec)
+npx playwright test <pattern>        # single file/grep, e.g. npx playwright test api.spec.ts -g "health"
+npx playwright test --config=playwright.ui.config.ts   # UI suite under test/ui (needs frontend on :3100)
 ```
 
-Playwright is the test runner named in SPEC §13 and in the skills; the current `package.json` only has Jest. Add `@playwright/test` + a `playwright.config.ts` when building out Phase 8.
+`playwright.config.ts` boots the Nest app + a mock Anthropic server via `test/global-setup.ts` and forces `workers: 1` (the mock records the last request, so tests must run serially). The UI config is separate — it does NOT spawn the backend or the mock and only drives an already-running frontend.
+
+Frontend dev: `cd frontend && npm run dev` (port 3100). Deployment notes (Fly.io + Dockerfile) live in `DEPLOY.md` / `fly.toml`.
