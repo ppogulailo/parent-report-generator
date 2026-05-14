@@ -474,6 +474,132 @@ test('outgoing user prompt carries the new sequencing + resource order', async (
   expect(userContent).not.toMatch(/Articles of Action,?\s*Chapter/i);
 });
 
+// ─── Founder review pass #4 ───────────────────────────────────────────────────
+
+test('SYSTEM_PROMPT replaces "For deeper insights" with the new "For guidance, consider posting" lead-in', () => {
+  // The new canonical professional-help lead-in must appear at least once.
+  expect(SYSTEM_PROMPT).toMatch(
+    /For guidance, consider posting questions in the Sustaining Recovery discussion group\./,
+  );
+
+  // The old lead-in must only appear inside an explicit ban — never as
+  // instructional / example copy. Every remaining occurrence should be
+  // adjacent to a banning verb.
+  const oldLeadIn = "For deeper insights, reach out to the 'Sustaining Recovery discussion group.'";
+  const occurrences: number[] = [];
+  let from = 0;
+  while (from < SYSTEM_PROMPT.length) {
+    const i = SYSTEM_PROMPT.indexOf(oldLeadIn, from);
+    if (i === -1) break;
+    occurrences.push(i);
+    from = i + 1;
+  }
+  for (const i of occurrences) {
+    // The surrounding 200-char window must contain a banning verb.
+    const window = SYSTEM_PROMPT.slice(Math.max(0, i - 200), i + 200);
+    expect(window).toMatch(/BANNED|banned|prohibit|now removed|prior wording/i);
+  }
+});
+
+test('SYSTEM_PROMPT has explicit TRUSTED ADULT hard rule banning generic recommendations', () => {
+  expect(SYSTEM_PROMPT).toMatch(/TRUSTED ADULT/);
+  // The exact founder-cited bans
+  expect(SYSTEM_PROMPT).toMatch(
+    /Reach out to at least one trusted adult who can support your child/i,
+  );
+  expect(SYSTEM_PROMPT).toMatch(
+    /Identify one trusted adult to confide in about your concerns/i,
+  );
+  // Child-network advice must be routed to the Building a Support Network workshop.
+  expect(SYSTEM_PROMPT).toMatch(
+    /Building a Support Network[^.]*exclusive/i,
+  );
+  // School engagement called out as a key component
+  expect(SYSTEM_PROMPT).toMatch(/engaging schools/i);
+});
+
+test('BUILD THE SUPPORT GROUP bullet is exclusively about the parent', () => {
+  const start = SYSTEM_PROMPT.indexOf('3. BUILD THE SUPPORT GROUP');
+  const end = SYSTEM_PROMPT.indexOf(
+    'The conversation with the child comes AFTER these three',
+  );
+  expect(start).toBeGreaterThan(-1);
+  expect(end).toBeGreaterThan(start);
+  const bullet = SYSTEM_PROMPT.slice(start, end);
+
+  // The bullet must explicitly scope itself to the parent.
+  expect(bullet).toMatch(/EXCLUSIVELY about the parent/i);
+  expect(bullet).toMatch(/NEVER ABOUT THE CHILD/i);
+
+  // Banned child-network phrasings must be called out as banned.
+  expect(bullet).toMatch(/surrounding the child with trusted adults/i);
+  expect(bullet).toMatch(/identifying a trusted adult to confide in/i);
+
+  // The bullet must NOT instruct the parent to surround the child with
+  // trusted people (the prior wording).
+  expect(bullet).not.toMatch(
+    /surround the child with trusted people and surround yourself/i,
+  );
+});
+
+test('CO-PARENT / DAY 1 / DAY 2 no longer rely on "trusted adult" as a co-parent surrogate', () => {
+  // TOP 3 #2 uses the family-side phrasing instead of "trusted adult".
+  const coParentStart = SYSTEM_PROMPT.indexOf(
+    '2. CO-PARENT / CAREGIVER ALIGNMENT',
+  );
+  const coParentEnd = SYSTEM_PROMPT.indexOf(
+    '3. BUILD THE SUPPORT GROUP',
+    coParentStart,
+  );
+  const coParent = SYSTEM_PROMPT.slice(coParentStart, coParentEnd);
+  expect(coParent).toMatch(/another parent or guardian on the family side/i);
+  // "trusted adult" inside this bullet must appear only inside the cross-reference to the hard rule.
+  expect(coParent).toMatch(/TRUSTED ADULT hard rule/);
+
+  // DAY 1 same: parenthetical no longer says "or trusted adult".
+  const d1Start = SYSTEM_PROMPT.indexOf(
+    'DAY 1 — EMOTIONAL REGULATION + CO-PARENT ALIGNMENT',
+  );
+  const d1End = SYSTEM_PROMPT.indexOf(
+    'DAY 2 — BUILD THE SUPPORT GROUP + GATHER INFORMATION',
+  );
+  const d1 = SYSTEM_PROMPT.slice(d1Start, d1End);
+  expect(d1).not.toMatch(/\(or trusted adult\)/i);
+  expect(d1).toMatch(/another parent or guardian on the family side/i);
+
+  // DAY 2 must NOT start with "Identify one trusted adult to call".
+  const d2Start = SYSTEM_PROMPT.indexOf(
+    'DAY 2 — BUILD THE SUPPORT GROUP + GATHER INFORMATION',
+  );
+  const d2End = SYSTEM_PROMPT.indexOf('DAY 3 — PREPARE FOR THE CONVERSATION');
+  const d2 = SYSTEM_PROMPT.slice(d2Start, d2End);
+  expect(d2).not.toMatch(/Identify one trusted adult to call/i);
+  // DAY 2 must explicitly call out M&I as the peer-support step.
+  expect(d2).toMatch(/Monitoring and Intervention discussion group/);
+});
+
+test('outgoing user prompt carries the pass-#4 reminders', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  // New canonical professional-help sequence lead-in is present.
+  expect(userContent).toMatch(
+    /For guidance, consider posting questions in the Sustaining Recovery discussion group/,
+  );
+
+  // The TRUSTED ADULT reminder is present.
+  expect(userContent).toMatch(/TRUSTED ADULT/);
+  expect(userContent).toMatch(/banned generic/i);
+
+  // BUILD THE SUPPORT GROUP scoping reminder is present.
+  expect(userContent).toMatch(/EXCLUSIVELY about the parent['’]s own peer support/i);
+});
+
 // ─── Claude Failure ───────────────────────────────────────────────────────────
 
 test('returns 500 when OpenAI API fails', async () => {
