@@ -21,6 +21,36 @@ export const ARTICLES_OF_ACTION: string[] = [
   'The School Resource Officer (SRO)',
 ];
 
+export const ESSENTIAL_WORKSHOPS: Array<{ title: string; summary: string }> = [
+  {
+    title: 'Creating Your Personalized Prevention Plan',
+    summary:
+      'Building a tailored, family-specific plan for preventing and responding to substance use — the foundational ASAP playbook every parent works from.',
+  },
+  {
+    title:
+      'Effective Communication: Building Trust and Engagement with Your Teen',
+    summary:
+      'Core conversational skills for engaging your teen without escalation — listening, framing, and timing that keeps the dialogue open.',
+  },
+  {
+    title: 'Monitoring and Intervention: Knowing When and How to Step In',
+    summary:
+      'Recognizing patterns of use, when to step in, and how to lead a structured intervention conversation grounded in the ASAP method.',
+  },
+  {
+    title: 'Building a Support Network',
+    summary:
+      'Helping parents build a broad support network for their child — family members, school staff, coaches, therapists, and community resources. Engaging schools is one of the most important components.',
+  },
+  {
+    title:
+      'Sustaining Recovery: Parental Oversight and Support for Adolescents Post-Treatment',
+    summary:
+      'Holding the recovery line after professional treatment — oversight, ongoing structure, and the parent’s role in sustaining the work long-term.',
+  },
+];
+
 export const AUXILIARY_WORKSHOPS: Array<{ title: string; summary: string }> = [
   {
     title: 'Reflection and Assessment',
@@ -119,11 +149,6 @@ export const AUXILIARY_WORKSHOPS: Array<{ title: string; summary: string }> = [
     title: 'Legal Issues and Substance Use: Understanding the Consequences',
     summary: 'Awareness of legal risks and responses.',
   },
-  {
-    title: 'Building a Support Network',
-    summary:
-      'Helping parents build a broad support network for their child — family members, school staff, coaches, therapists, and community resources. Engaging schools is one of the most important components.',
-  },
 ];
 
 export const DISCUSSION_GROUPS: string[] = [
@@ -137,6 +162,9 @@ export const DISCUSSION_GROUPS: string[] = [
 
 export function formatResourceDirectory(): string {
   const articles = ARTICLES_OF_ACTION.map((t) => `- ${t}`).join('\n');
+  const essential = ESSENTIAL_WORKSHOPS.map(
+    (w) => `- ${w.title} — ${w.summary}`,
+  ).join('\n');
   const workshops = AUXILIARY_WORKSHOPS.map(
     (w) => `- ${w.title} — ${w.summary}`,
   ).join('\n');
@@ -150,6 +178,9 @@ ${articles}
 ASAP Discussion Groups (6 total — primary support mechanism; tell the parent to join and actively post, not just be aware):
 ${groups}
 
-Auxiliary Workshops (21 total — pick by topic match, name the exact title):
+Essential Workshops (5 total — core ASAP curriculum; cite by exact title as 'Essential Workshop "X"'):
+${essential}
+
+Auxiliary Workshops (20 total — topic-matched; pick by topic match, name the exact title as 'Auxiliary Workshop "X"'):
 ${workshops}`;
 }
