@@ -6,6 +6,7 @@ import {
   ARTICLES_OF_ACTION,
   AUXILIARY_WORKSHOPS,
   DISCUSSION_GROUPS,
+  ESSENTIAL_WORKSHOPS,
 } from '../src/report/prompts/resources';
 
 const KEY = 'test-secret';
@@ -392,17 +393,39 @@ test('PARENT EMOTIONAL REGULATION bullet enforces normalize step', () => {
   expect(bullet).toMatch(/decisive/i);
 });
 
-// ─── ASAP Resource Directory (16 / 6 / 21 lists) ──────────────────────────────
+// ─── ASAP Resource Directory (16 / 6 / 5 / 20 lists) ──────────────────────────
 
 test('resource directory module exposes the correct counts', () => {
   expect(ARTICLES_OF_ACTION).toHaveLength(16);
   expect(DISCUSSION_GROUPS).toHaveLength(6);
-  expect(AUXILIARY_WORKSHOPS).toHaveLength(21);
+  expect(ESSENTIAL_WORKSHOPS).toHaveLength(5);
+  expect(AUXILIARY_WORKSHOPS).toHaveLength(20);
+});
+
+test('Essential Workshops list matches founder canon', () => {
+  const titles = ESSENTIAL_WORKSHOPS.map((w) => w.title);
+  expect(titles).toEqual([
+    'Creating Your Personalized Prevention Plan',
+    'Effective Communication: Building Trust and Engagement with Your Teen',
+    'Monitoring and Intervention: Knowing When and How to Step In',
+    'Building a Support Network',
+    'Sustaining Recovery: Parental Oversight and Support for Adolescents Post-Treatment',
+  ]);
+});
+
+test('Building a Support Network is Essential, not Auxiliary', () => {
+  const essentialTitles = ESSENTIAL_WORKSHOPS.map((w) => w.title);
+  const auxiliaryTitles = AUXILIARY_WORKSHOPS.map((w) => w.title);
+  expect(essentialTitles).toContain('Building a Support Network');
+  expect(auxiliaryTitles).not.toContain('Building a Support Network');
 });
 
 test('resource titles are unique', () => {
   expect(new Set(ARTICLES_OF_ACTION).size).toBe(ARTICLES_OF_ACTION.length);
   expect(new Set(DISCUSSION_GROUPS).size).toBe(DISCUSSION_GROUPS.length);
+  expect(new Set(ESSENTIAL_WORKSHOPS.map((w) => w.title)).size).toBe(
+    ESSENTIAL_WORKSHOPS.length,
+  );
   expect(new Set(AUXILIARY_WORKSHOPS.map((w) => w.title)).size).toBe(
     AUXILIARY_WORKSHOPS.length,
   );
@@ -421,7 +444,8 @@ test('outgoing user prompt ships every Article / Workshop / Discussion Group ver
   expect(userContent).toContain('ASAP RESOURCE DIRECTORY');
   expect(userContent).toContain('Articles of Action (16 total');
   expect(userContent).toContain('ASAP Discussion Groups (6 total');
-  expect(userContent).toContain('Auxiliary Workshops (21 total');
+  expect(userContent).toContain('Essential Workshops (5 total');
+  expect(userContent).toContain('Auxiliary Workshops (20 total');
 
   // Every article title appears verbatim
   for (const title of ARTICLES_OF_ACTION) {
@@ -431,7 +455,12 @@ test('outgoing user prompt ships every Article / Workshop / Discussion Group ver
   for (const group of DISCUSSION_GROUPS) {
     expect(userContent).toContain(group);
   }
-  // Every workshop title + summary appears verbatim
+  // Every Essential workshop title + summary appears verbatim
+  for (const w of ESSENTIAL_WORKSHOPS) {
+    expect(userContent).toContain(w.title);
+    expect(userContent).toContain(w.summary);
+  }
+  // Every Auxiliary workshop title + summary appears verbatim
   for (const w of AUXILIARY_WORKSHOPS) {
     expect(userContent).toContain(w.title);
     expect(userContent).toContain(w.summary);
@@ -485,7 +514,8 @@ test('SYSTEM_PROMPT replaces "For deeper insights" with the new "For guidance, c
   // The old lead-in must only appear inside an explicit ban — never as
   // instructional / example copy. Every remaining occurrence should be
   // adjacent to a banning verb.
-  const oldLeadIn = "For deeper insights, reach out to the 'Sustaining Recovery discussion group.'";
+  const oldLeadIn =
+    "For deeper insights, reach out to the 'Sustaining Recovery discussion group.'";
   const occurrences: number[] = [];
   let from = 0;
   while (from < SYSTEM_PROMPT.length) {
@@ -511,9 +541,7 @@ test('SYSTEM_PROMPT has explicit TRUSTED ADULT hard rule banning generic recomme
     /Identify one trusted adult to confide in about your concerns/i,
   );
   // Child-network advice must be routed to the Building a Support Network workshop.
-  expect(SYSTEM_PROMPT).toMatch(
-    /Building a Support Network[^.]*exclusive/i,
-  );
+  expect(SYSTEM_PROMPT).toMatch(/Building a Support Network[^.]*exclusive/i);
   // School engagement called out as a key component
   expect(SYSTEM_PROMPT).toMatch(/engaging schools/i);
 });
@@ -597,7 +625,87 @@ test('outgoing user prompt carries the pass-#4 reminders', async ({
   expect(userContent).toMatch(/banned generic/i);
 
   // BUILD THE SUPPORT GROUP scoping reminder is present.
-  expect(userContent).toMatch(/EXCLUSIVELY about the parent['’]s own peer support/i);
+  expect(userContent).toMatch(
+    /EXCLUSIVELY about the parent['’]s own peer support/i,
+  );
+});
+
+// ─── Founder review pass #5 ───────────────────────────────────────────────────
+
+test('SYSTEM_PROMPT has NO PLACEHOLDERS hard rule with banned placeholder phrases', () => {
+  expect(SYSTEM_PROMPT).toMatch(/NO PLACEHOLDERS/);
+  // The exact placeholder text the founder saw in a Serious report must be
+  // listed in the banned-phrases set so the model recognizes and avoids it.
+  expect(SYSTEM_PROMPT).toMatch(/Add the two-sentence sequence here/);
+  expect(SYSTEM_PROMPT).toMatch(/Insert the professional help sequence/i);
+  // The rule must mandate writing both sentences in full every time.
+  expect(SYSTEM_PROMPT).toMatch(/verbatim, in order|in full, verbatim/i);
+  expect(SYSTEM_PROMPT).toMatch(/literal output|never a referenced label/i);
+});
+
+test('SYSTEM_PROMPT codifies Essential vs Auxiliary workshop categories', () => {
+  // Both categories must be named with their counts.
+  expect(SYSTEM_PROMPT).toMatch(/5 Essential Workshops/);
+  expect(SYSTEM_PROMPT).toMatch(/20 Auxiliary Workshops/);
+  // The 5 Essential titles must all appear by exact name.
+  expect(SYSTEM_PROMPT).toContain('Creating Your Personalized Prevention Plan');
+  expect(SYSTEM_PROMPT).toContain(
+    'Effective Communication: Building Trust and Engagement with Your Teen',
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    'Monitoring and Intervention: Knowing When and How to Step In',
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    'Sustaining Recovery: Parental Oversight and Support for Adolescents Post-Treatment',
+  );
+  // BSN is classified as Essential, not Auxiliary.
+  expect(SYSTEM_PROMPT).toMatch(/"Building a Support Network" is an ESSENTIAL/);
+  // The citation label format is taught.
+  expect(SYSTEM_PROMPT).toMatch(/Essential Workshop "X"/);
+  expect(SYSTEM_PROMPT).toMatch(/Auxiliary Workshop "X"/);
+});
+
+test('SYSTEM_PROMPT no longer cites BSN as an Auxiliary Workshop', () => {
+  // Every "Auxiliary Workshop" mention of BSN should be gone, EXCEPT for
+  // the wrong-label warning that explicitly tells the model not to use it.
+  const occurrences: number[] = [];
+  let from = 0;
+  while (from < SYSTEM_PROMPT.length) {
+    const i = SYSTEM_PROMPT.indexOf('Auxiliary Workshop', from);
+    if (i === -1) break;
+    occurrences.push(i);
+    from = i + 1;
+  }
+  for (const i of occurrences) {
+    const slice = SYSTEM_PROMPT.slice(i, i + 80);
+    if (slice.includes('Building a Support Network')) {
+      // Must be wrapped in a banning / warning context (the one allowed mention).
+      const window = SYSTEM_PROMPT.slice(Math.max(0, i - 120), i + 200);
+      expect(window).toMatch(/wrong|never cite|labeling error|not Auxiliary/i);
+    }
+  }
+});
+
+test('outgoing user prompt carries the pass-#5 directory and reminders', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  // Essential Workshops list ships in the directory.
+  expect(userContent).toContain('Essential Workshops (5 total');
+  expect(userContent).toContain('Auxiliary Workshops (20 total');
+
+  // NO PLACEHOLDERS reminder is present.
+  expect(userContent).toMatch(/NO PLACEHOLDERS/);
+  expect(userContent).toMatch(/Add the two-sentence sequence here/);
+
+  // WORKSHOP CATEGORIES reminder is present.
+  expect(userContent).toMatch(/WORKSHOP CATEGORIES/);
+  expect(userContent).toMatch(/"Building a Support Network" is ESSENTIAL/);
 });
 
 // ─── Claude Failure ───────────────────────────────────────────────────────────
