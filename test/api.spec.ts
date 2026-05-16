@@ -263,11 +263,19 @@ test('SYSTEM_PROMPT reflects Matthew refinements', () => {
     /conversation with the child comes AFTER these three/i,
   );
 
-  // 3. Soft search framing (not "don't search")
+  // 3. Soft search framing (not "don't search").
+  // Pass #6 rewrote the bullets in stronger terms — "WITHOUT THE CHILD
+  // PRESENT" replaced "without the child's knowledge"; "document anything
+  // relevant" replaced "document it". Either form of the privacy clause is
+  // acceptable as long as the rule itself is still present.
   expect(SYSTEM_PROMPT).toMatch(/soft search/i);
-  expect(SYSTEM_PROMPT).toMatch(/without the child's knowledge/i);
+  expect(SYSTEM_PROMPT).toMatch(
+    /without the child's knowledge|without your child present|WITHOUT THE CHILD PRESENT/i,
+  );
   expect(SYSTEM_PROMPT).toMatch(/room is left exactly as it was found/i);
-  expect(SYSTEM_PROMPT).toMatch(/document it, then remove it/i);
+  expect(SYSTEM_PROMPT).toMatch(
+    /document it, then remove it|document anything relevant, then remove it/i,
+  );
   expect(SYSTEM_PROMPT).toMatch(
     /boundary, not a punishment|boundary, not as punishment|clear boundary, not a punishment/i,
   );
@@ -706,6 +714,98 @@ test('outgoing user prompt carries the pass-#5 directory and reminders', async (
   // WORKSHOP CATEGORIES reminder is present.
   expect(userContent).toMatch(/WORKSHOP CATEGORIES/);
   expect(userContent).toMatch(/"Building a Support Network" is ESSENTIAL/);
+});
+
+// ─── Founder review pass #6 ───────────────────────────────────────────────────
+
+test('SYSTEM_PROMPT has explicit PRIVATE SEARCH hard rule with canonical sentence', () => {
+  // The hard rule must be named and scoped as universal.
+  expect(SYSTEM_PROMPT).toMatch(/PRIVATE SEARCH/);
+  expect(SYSTEM_PROMPT).toMatch(/every report, every tier/i);
+
+  // Backpack must be in the search-object list alongside room and phone.
+  expect(SYSTEM_PROMPT).toMatch(/room, backpack, or phone/);
+
+  // The canonical two-sentence line must appear verbatim — both sentences.
+  expect(SYSTEM_PROMPT).toContain(
+    "Conduct any search of your child's room, backpack, or phone privately and without your child present.",
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    'Leave the room as you found it and document anything relevant.',
+  );
+
+  // The non-negotiable words must be called out as non-negotiable.
+  expect(SYSTEM_PROMPT).toMatch(/non-negotiable/i);
+  expect(SYSTEM_PROMPT).toMatch(/not implied|must be written/i);
+});
+
+test('SOFT SEARCH block, WHAT TO AVOID, and DAY 2 all include backpack + canonical line', () => {
+  // SOFT SEARCH block header now includes BACKPACK.
+  expect(SYSTEM_PROMPT).toMatch(
+    /SOFT SEARCH — HOW TO FRAME ROOM \/ BACKPACK \/ PHONE CHECKS/,
+  );
+
+  // The old "room or phone" phrasing must not survive in the relevant
+  // anti-pattern sentence (WHAT TO AVOID + LANGUAGE PRECISION rule).
+  expect(SYSTEM_PROMPT).not.toMatch(
+    /Do not search your child's room or phone in a confrontational way/,
+  );
+  expect(SYSTEM_PROMPT).toMatch(
+    /Do not search your child's room, backpack, or phone in a confrontational way/,
+  );
+
+  // DAY 2 bullet must require the canonical two-sentence line in the soft-search bullet.
+  const d2Start = SYSTEM_PROMPT.indexOf(
+    'DAY 2 — BUILD THE SUPPORT GROUP + GATHER INFORMATION',
+  );
+  const d2End = SYSTEM_PROMPT.indexOf('DAY 3 — PREPARE FOR THE CONVERSATION');
+  expect(d2Start).toBeGreaterThan(-1);
+  expect(d2End).toBeGreaterThan(d2Start);
+  const d2 = SYSTEM_PROMPT.slice(d2Start, d2End);
+  expect(d2).toContain(
+    "Conduct any search of your child's room, backpack, or phone privately and without your child present.",
+  );
+  expect(d2).toContain(
+    'Leave the room as you found it and document anything relevant.',
+  );
+
+  // WHAT TO AVOID (the OUTPUT STRUCTURE section, not earlier in-prompt
+  // mentions like "anywhere in the output (WHAT TO AVOID, ...)") must
+  // reference backpack and the "privately and without your child present"
+  // requirement. Anchor on the newline-prefixed header form so the section
+  // body — not a routing-rule mention — is what we slice.
+  const wtaStart = SYSTEM_PROMPT.indexOf('\nWHAT TO AVOID\n');
+  const wtaEnd = SYSTEM_PROMPT.indexOf('\nFIRST 72 HOURS PLAN\n', wtaStart);
+  expect(wtaStart).toBeGreaterThan(-1);
+  expect(wtaEnd).toBeGreaterThan(wtaStart);
+  const wta = SYSTEM_PROMPT.slice(wtaStart, wtaEnd);
+  expect(wta).toMatch(/backpack/);
+  expect(wta).toMatch(/privately and without your child present/);
+});
+
+test('outgoing user prompt carries the pass-#6 PRIVATE SEARCH reminder', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  // PRIVATE SEARCH reminder is present.
+  expect(userContent).toMatch(/PRIVATE SEARCH/);
+  // The canonical two-sentence line is shipped in the reminder.
+  expect(userContent).toContain(
+    "Conduct any search of your child's room, backpack, or phone privately and without your child present.",
+  );
+  expect(userContent).toContain(
+    'Leave the room as you found it and document anything relevant.',
+  );
+
+  // The LANGUAGE reminder also updated to "room, backpack, or phone".
+  expect(userContent).toMatch(
+    /Do not search your child's room, backpack, or phone in a confrontational way/,
+  );
 });
 
 // ─── Claude Failure ───────────────────────────────────────────────────────────
