@@ -167,3 +167,57 @@ test('section-header constants are 7 unique entries in each language', () => {
   expect(new Set(SECTION_HEADERS_EN).size).toBe(7);
   expect(new Set(SECTION_HEADERS_ES).size).toBe(7);
 });
+
+// ─── Founder review pass #6 (ES) ─────────────────────────────────────────────
+
+test('SYSTEM_PROMPT_ES has PRIVATE SEARCH hard rule with Spanish canonical sentence', () => {
+  // Rule name (kept bilingual so it can be referenced consistently across passes).
+  expect(SYSTEM_PROMPT_ES).toMatch(/PRIVATE SEARCH/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/REVISIÓN EN PRIVADO/);
+
+  // Spanish canonical two-sentence line — both sentences must appear verbatim.
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente.',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante.',
+  );
+
+  // "mochila" must now be in the search-object list alongside cuarto + celular.
+  expect(SYSTEM_PROMPT_ES).toMatch(/cuarto, la mochila o el celular/);
+
+  // The old "cuarto o celular" anti-pattern must be replaced.
+  expect(SYSTEM_PROMPT_ES).not.toMatch(
+    /No revises el cuarto o el celular de tu hijo de manera confrontativa/,
+  );
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /No revises el cuarto, la mochila o el celular de tu hijo de manera confrontativa/,
+  );
+
+  // SOFT SEARCH block header updated.
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /SOFT SEARCH — CÓMO PRESENTAR LA REVISIÓN DEL CUARTO \/ LA MOCHILA \/ EL CELULAR/,
+  );
+});
+
+test('Spanish outgoing user prompt carries pass-#6 PRIVATE SEARCH reminder', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID, language: 'es' });
+  expect(res.status()).toBe(200);
+
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+
+  // Reminder header in Spanish (with the bilingual PRIVATE SEARCH token).
+  expect(userContent).toMatch(/PRIVATE SEARCH/);
+  expect(userContent).toMatch(/REVISIÓN EN PRIVADO/);
+
+  // Canonical Spanish two-sentence line shipped verbatim.
+  expect(userContent).toContain(
+    'Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente.',
+  );
+  expect(userContent).toContain(
+    'Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante.',
+  );
+});
