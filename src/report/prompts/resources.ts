@@ -151,17 +151,20 @@ export const AUXILIARY_WORKSHOPS: Array<{ title: string; summary: string }> = [
   },
 ];
 
+// Founder-approved discussion groups (pass #7): the plan may cite ONLY these two.
+// - "Monitoring and Intervention" — parent's primary peer-support group, every tier,
+//   used for BUILD THE SUPPORT GROUP in TOP 3 IMMEDIATE PRIORITIES.
+// - "Sustaining Recovery" — professional-help adjunct, only inside the PROFESSIONAL
+//   HELP SEQUENCE alongside an approved professional-help recommendation.
+// Discussion groups previously listed (Effective Communication, Parent Support Forum,
+// Building a Support Network, Creating Your Personal Prevention Program) are NOT
+// approved for parent-facing recommendations and must never appear in the output.
 export const DISCUSSION_GROUPS: string[] = [
   'Monitoring and Intervention',
   'Sustaining Recovery',
-  'Effective Communication',
-  'Building a Support Network',
-  'Parent Support Forum',
-  'Creating Your Personal Prevention Program',
 ];
 
 export function formatResourceDirectory(): string {
-  const articles = ARTICLES_OF_ACTION.map((t) => `- ${t}`).join('\n');
   const essential = ESSENTIAL_WORKSHOPS.map(
     (w) => `- ${w.title} — ${w.summary}`,
   ).join('\n');
@@ -170,13 +173,18 @@ export function formatResourceDirectory(): string {
   ).join('\n');
   const groups = DISCUSSION_GROUPS.map((g) => `- ${g}`).join('\n');
 
-  return `ASAP RESOURCE DIRECTORY — use these exact titles verbatim. Do not invent, rename, paraphrase, shorten, or number them. Do not cite chapters.
+  return `ASAP RESOURCE DIRECTORY — these are the ONLY parent-facing resources you may cite in the plan. Use these exact titles verbatim. Do not invent, rename, paraphrase, shorten, combine, or number them. If no directory title fits, omit the citation — never invent a workshop or group name that sounds like it should exist.
 
-Articles of Action (16 total — reference by title only):
-${articles}
+ARTICLES OF ACTION — DO NOT cite by title in the plan. Articles of Action are taught inside the workshops; the parent's reading recommendations come through the workshop curriculum, not through this plan. Banned in any form: "the Article of Action titled X", "Articles of Action: X", "read the Article of Action 'X'", "see Article of Action X". The plan recommends workshops and approved discussion groups — Articles by title are out of scope.
 
-ASAP Discussion Groups (6 total — primary support mechanism; tell the parent to join and actively post, not just be aware):
+ASAP Discussion Groups (2 approved — the ONLY discussion groups that may appear in the plan; tell the parent to join and actively post, not just be aware):
 ${groups}
+
+Approved discussion group usage:
+- "Monitoring and Intervention discussion group" — the parent's own peer-support group. Use for BUILD THE SUPPORT GROUP in TOP 3 IMMEDIATE PRIORITIES in every tier (MILD, MODERATE, SERIOUS), and for parent isolation / exhaustion / weak co-parent alignment / active intervention work.
+- "Sustaining Recovery discussion group" — the professional-help adjunct. Use ONLY inside the PROFESSIONAL HELP SEQUENCE, in a paragraph that also references professional help, with the approved verbatim wording.
+
+BANNED discussion group names — never appear in the output under any circumstances: "Effective Communication discussion group", "Parent Support Forum discussion group", "Building a Support Network discussion group", "Creating Your Personal Prevention Program discussion group", or any other unapproved or invented group name. For communication, prevention, or child-network topics, cite a workshop — not a discussion group.
 
 Essential Workshops (5 total — core ASAP curriculum; cite by exact title as 'Essential Workshop "X"'):
 ${essential}
