@@ -301,15 +301,20 @@ test('SYSTEM_PROMPT reflects Matthew refinements', () => {
     /parent \+ child vs (the problem|the substance use)/i,
   );
 
-  // 5. Articles of Action referenced by TITLE only — no "Chapter N" citations.
+  // 5. Articles of Action — pass #7 banned them as parent-facing
+  // recommendations. The term must still appear in the prompt (inside the
+  // hard rule that bans it), but no "Chapter N" citations.
   expect(SYSTEM_PROMPT).toMatch(/Articles of Action/);
-  expect(SYSTEM_PROMPT).toMatch(/by title only/i);
+  expect(SYSTEM_PROMPT).toMatch(/DO NOT CITE BY TITLE/);
   expect(SYSTEM_PROMPT).not.toMatch(/Chapter\s+\d+/);
   expect(SYSTEM_PROMPT).not.toMatch(/Articles of Action,?\s*Chapter/i);
 
-  // 6. ASAP Discussion Groups as primary support mechanism
+  // 6. ASAP Discussion Groups — pass #7 narrowed to two approved groups
+  // and reframed the descriptor as "live peer-support mechanism".
   expect(SYSTEM_PROMPT).toMatch(/ASAP Discussion Group/);
-  expect(SYSTEM_PROMPT).toMatch(/PRIMARY support mechanism/i);
+  expect(SYSTEM_PROMPT).toMatch(
+    /live peer-support mechanism|JOIN AND ACTIVELY POST|approved Discussion Groups/i,
+  );
   expect(SYSTEM_PROMPT).toMatch(/JOIN AND ACTIVELY POST/);
 
   // 7. Auxiliary workshops referenced by exact title
@@ -404,8 +409,15 @@ test('PARENT EMOTIONAL REGULATION bullet enforces normalize step', () => {
 // ─── ASAP Resource Directory (16 / 6 / 5 / 20 lists) ──────────────────────────
 
 test('resource directory module exposes the correct counts', () => {
+  // Pass #7 narrowed the approved discussion-group set to two: M&I and SR.
+  // The Articles-of-Action data array stays at 16 (for historical / topical
+  // reference) but is no longer rendered into the parent-facing directory.
   expect(ARTICLES_OF_ACTION).toHaveLength(16);
-  expect(DISCUSSION_GROUPS).toHaveLength(6);
+  expect(DISCUSSION_GROUPS).toHaveLength(2);
+  expect(DISCUSSION_GROUPS).toEqual([
+    'Monitoring and Intervention',
+    'Sustaining Recovery',
+  ]);
   expect(ESSENTIAL_WORKSHOPS).toHaveLength(5);
   expect(AUXILIARY_WORKSHOPS).toHaveLength(20);
 });
@@ -439,7 +451,7 @@ test('resource titles are unique', () => {
   );
 });
 
-test('outgoing user prompt ships every Article / Workshop / Discussion Group verbatim', async ({
+test('outgoing user prompt ships only the approved parent-facing resources', async ({
   request,
 }) => {
   const res = await post(request, { responses: SAMPLE });
@@ -448,18 +460,28 @@ test('outgoing user prompt ships every Article / Workshop / Discussion Group ver
   const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
   const userContent: string = captured.body.messages[1].content;
 
-  // Directory header
+  // Directory header — Articles-of-Action section is GONE (pass #7), and the
+  // discussion-group list is narrowed to the 2 approved groups.
   expect(userContent).toContain('ASAP RESOURCE DIRECTORY');
-  expect(userContent).toContain('Articles of Action (16 total');
-  expect(userContent).toContain('ASAP Discussion Groups (6 total');
+  expect(userContent).not.toContain('Articles of Action (16 total');
+  expect(userContent).toContain('ASAP Discussion Groups (2 approved');
   expect(userContent).toContain('Essential Workshops (5 total');
   expect(userContent).toContain('Auxiliary Workshops (20 total');
 
-  // Every article title appears verbatim
+  // The directory must NOT render any Article-of-Action title verbatim
+  // (the data array still exists in code but is not parent-facing).
+  // We filter out titles that happen to be substrings of approved workshop
+  // titles (e.g., the AoA "Partnering with Schools" is a substring of the
+  // workshop "Partnering with Schools for Your Child's Success").
+  const workshopBlob = [
+    ...ESSENTIAL_WORKSHOPS.map((w) => w.title),
+    ...AUXILIARY_WORKSHOPS.map((w) => w.title),
+  ].join(' | ');
   for (const title of ARTICLES_OF_ACTION) {
-    expect(userContent).toContain(title);
+    if (workshopBlob.includes(title)) continue;
+    expect(userContent).not.toContain(title);
   }
-  // Every discussion group appears verbatim
+  // Every approved discussion group appears verbatim
   for (const group of DISCUSSION_GROUPS) {
     expect(userContent).toContain(group);
   }
@@ -474,10 +496,10 @@ test('outgoing user prompt ships every Article / Workshop / Discussion Group ver
     expect(userContent).toContain(w.summary);
   }
 
-  // Reminder requires exact-title usage and bans chapter numbers
-  expect(userContent).toMatch(/cited by full exact title/i);
-  expect(userContent).toMatch(/never by chapter number/i);
-  expect(userContent).toMatch(/PRIMARY support mechanism/i);
+  // Reminder requires exact-title usage
+  expect(userContent).toMatch(/full exact title/i);
+  // Banned-group reminder must be present in the directory
+  expect(userContent).toMatch(/BANNED discussion group names/);
 });
 
 test('outgoing user prompt carries the new sequencing + resource order', async ({
@@ -489,11 +511,10 @@ test('outgoing user prompt carries the new sequencing + resource order', async (
   const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
   const userContent: string = captured.body.messages[1].content;
 
-  // Resource order reminder includes Discussion Groups as a primary step
+  // Resource order reminder still mentions Discussion Groups (the approved 2)
   expect(userContent).toMatch(/ASAP Discussion Groups/);
-  expect(userContent).toMatch(/primary support mechanism/i);
+  expect(userContent).toMatch(/PRIMARY support mechanism/);
   expect(userContent).toMatch(/soft search/i);
-  expect(userContent).toMatch(/never by chapter number/i);
 
   // Ordering sequence for the 72-hour plan appears in the reminder
   expect(userContent).toMatch(
@@ -549,9 +570,13 @@ test('SYSTEM_PROMPT has explicit TRUSTED ADULT hard rule banning generic recomme
     /Identify one trusted adult to confide in about your concerns/i,
   );
   // Child-network advice must be routed to the Building a Support Network workshop.
-  expect(SYSTEM_PROMPT).toMatch(/Building a Support Network[^.]*exclusive/i);
+  // Pass #7 reworded the relevant line — match either ordering of the
+  // workshop name and the exclusivity marker.
+  expect(SYSTEM_PROMPT).toMatch(
+    /Building a Support Network[^.]*exclusive|exclusive[^.]*Building a Support Network|EXCLUSIVE[^.]*Building a Support Network/i,
+  );
   // School engagement called out as a key component
-  expect(SYSTEM_PROMPT).toMatch(/engaging schools/i);
+  expect(SYSTEM_PROMPT).toMatch(/engaging schools|school engagement/i);
 });
 
 test('BUILD THE SUPPORT GROUP bullet is exclusively about the parent', () => {
@@ -806,6 +831,134 @@ test('outgoing user prompt carries the pass-#6 PRIVATE SEARCH reminder', async (
   expect(userContent).toMatch(
     /Do not search your child's room, backpack, or phone in a confrontational way/,
   );
+});
+
+// ─── Founder review pass #7 ───────────────────────────────────────────────────
+
+test('SYSTEM_PROMPT bans citing Articles of Action by title in the plan', () => {
+  // The hard rule must be named and scoped as universal.
+  expect(SYSTEM_PROMPT).toMatch(/ARTICLES OF ACTION — DO NOT CITE BY TITLE/);
+  expect(SYSTEM_PROMPT).toMatch(/every report, every tier, no exceptions/i);
+  expect(SYSTEM_PROMPT).toMatch(/never as a parent-facing reading recommendation/i);
+  // The banned patterns must be enumerated explicitly.
+  expect(SYSTEM_PROMPT).toMatch(/'the Article of Action titled "X"'/);
+  expect(SYSTEM_PROMPT).toMatch(/Article of Action: X/);
+
+  // The Resource Ladder rewrite — Articles of Action no longer #1.
+  expect(SYSTEM_PROMPT).toMatch(
+    /Priority of recommendation \(parent-facing resources only — Articles of Action are NOT recommended directly/,
+  );
+  expect(SYSTEM_PROMPT).toMatch(
+    /1\. Essential & Auxiliary Workshops — the parent's primary learning channel/,
+  );
+
+  // The OUTPUT STRUCTURE / KEY PRIORITIES rules must NOT offer Article of
+  // Action as one of the resource types the parent can be steered to.
+  expect(SYSTEM_PROMPT).toMatch(/NEVER cite an Article of Action by title in the plan/);
+
+  // No routing-table row may still pair "AND Article of Action ...".
+  expect(SYSTEM_PROMPT).not.toMatch(/AND Article of Action "/);
+  expect(SYSTEM_PROMPT).not.toMatch(/OR Article of Action "/);
+});
+
+test('SYSTEM_PROMPT restricts the approved discussion-group set to M&I + SR', () => {
+  // The approved list must be named explicitly.
+  expect(SYSTEM_PROMPT).toMatch(/DISCUSSION GROUPS — APPROVED LIST/);
+  expect(SYSTEM_PROMPT).toContain('"Monitoring and Intervention discussion group"');
+  expect(SYSTEM_PROMPT).toContain('"Sustaining Recovery discussion group"');
+
+  // The banned set must be enumerated.
+  expect(SYSTEM_PROMPT).toMatch(/BANNED DISCUSSION GROUP NAMES/);
+  expect(SYSTEM_PROMPT).toContain('"Effective Communication discussion group"');
+  expect(SYSTEM_PROMPT).toContain('"Parent Support Forum discussion group"');
+  expect(SYSTEM_PROMPT).toContain('"Building a Support Network discussion group"');
+  expect(SYSTEM_PROMPT).toContain(
+    '"Creating Your Personal Prevention Program discussion group"',
+  );
+
+  // No routing instruction may still recommend the banned groups as the
+  // primary recommendation. Every remaining mention must sit inside a ban
+  // context (BANNED, prohibited, etc.).
+  const bannedGroups = [
+    'Effective Communication discussion group',
+    'Parent Support Forum discussion group',
+    'Building a Support Network discussion group',
+    'Creating Your Personal Prevention Program discussion group',
+  ];
+  for (const g of bannedGroups) {
+    // Find each occurrence and assert it sits within a 500-char window that
+    // contains a banning verb. (500 is wide enough to span the enumeration
+    // of all four banned groups before the closing "is banned" clause.)
+    let from = 0;
+    while (from < SYSTEM_PROMPT.length) {
+      const i = SYSTEM_PROMPT.indexOf(g, from);
+      if (i === -1) break;
+      const window = SYSTEM_PROMPT.slice(Math.max(0, i - 500), i + 500);
+      expect(window).toMatch(/BANNED|banned|never|prohibited|wrong|labeling error/i);
+      from = i + 1;
+    }
+  }
+});
+
+test('SYSTEM_PROMPT bans indirect professional-help phrasing', () => {
+  expect(SYSTEM_PROMPT).toMatch(/INDIRECT PROFESSIONAL-HELP PHRASING — BANNED/);
+  expect(SYSTEM_PROMPT).toMatch(/"prepare to reach out"/);
+  expect(SYSTEM_PROMPT).toMatch(/"start preparing to seek"/);
+  expect(SYSTEM_PROMPT).toMatch(
+    /banned even when the SEQUENCE follows them/i,
+  );
+
+  // The MODERATE block's earlier wording — "still triggers the full sequence" —
+  // must be replaced. The new framing says these phrasings are BANNED.
+  expect(SYSTEM_PROMPT).not.toMatch(
+    /"Start preparing to seek an ASAP-endorsed therapist" is not a partial substitute; the sequence still applies\./,
+  );
+  expect(SYSTEM_PROMPT).toMatch(
+    /"Start preparing to seek an ASAP-endorsed therapist" and "prepare to reach out to an ASAP-endorsed therapist" are BANNED/,
+  );
+});
+
+test('SYSTEM_PROMPT enforces directory-only workshop titles', () => {
+  expect(SYSTEM_PROMPT).toMatch(/WORKSHOP TITLES — DIRECTORY-ONLY/);
+  expect(SYSTEM_PROMPT).toMatch(
+    /Cite a workshop ONLY if its title appears verbatim in the ASAP RESOURCE DIRECTORY/i,
+  );
+  expect(SYSTEM_PROMPT).toMatch(/Never invent a workshop name/i);
+});
+
+test('outgoing user prompt carries the pass-#7 reminders', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  // The "do not cite Articles of Action by title" reminder is shipped.
+  expect(userContent).toMatch(
+    /NEVER cite an Article of Action by title in the plan/,
+  );
+
+  // The "only 2 approved discussion groups" reminder is shipped — and the
+  // banned set is named.
+  expect(userContent).toMatch(/ONLY two are approved for the plan/);
+  expect(userContent).toMatch(
+    /BANNED in any form: "Effective Communication discussion group"/,
+  );
+
+  // The indirect-phrasing ban is shipped.
+  expect(userContent).toMatch(
+    /INDIRECT PROFESSIONAL-HELP PHRASING BANNED/,
+  );
+  expect(userContent).toMatch(/"prepare to reach out"/);
+  expect(userContent).toMatch(/"start preparing to seek"/);
+
+  // The workshop-titles directory-only reminder is shipped.
+  expect(userContent).toMatch(/WORKSHOP TITLES are directory-only/);
+
+  // The routing-table reminder no longer pairs AoA with the workshop.
+  expect(userContent).not.toMatch(/\+ Article of Action "/);
 });
 
 // ─── Claude Failure ───────────────────────────────────────────────────────────
