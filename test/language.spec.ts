@@ -82,10 +82,16 @@ test('Spanish user prompt emits Spanish section headers + Spanish framing, keeps
   expect(userContent).toMatch(/Recordatorios antes de escribir/);
   expect(userContent).toMatch(/Genera un Plan de Acción para Padres/);
 
-  // Resource titles stay verbatim in English
+  // Article-of-Action titles are NOT shipped in the directory anymore (pass #7),
+  // EXCEPT where an AoA title happens to be a substring of an approved workshop
+  // title (e.g., AoA "Partnering with Schools" lives inside the workshop
+  // "Partnering with Schools for Your Child's Success").
+  const workshopBlob = AUXILIARY_WORKSHOPS.map((w) => w.title).join(' | ');
   for (const title of ARTICLES_OF_ACTION) {
-    expect(userContent).toContain(title);
+    if (workshopBlob.includes(title)) continue;
+    expect(userContent).not.toContain(title);
   }
+  // Approved discussion-group names appear verbatim in English
   for (const group of DISCUSSION_GROUPS) {
     expect(userContent).toContain(group);
   }
@@ -220,4 +226,93 @@ test('Spanish outgoing user prompt carries pass-#6 PRIVATE SEARCH reminder', asy
   expect(userContent).toContain(
     'Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante.',
   );
+});
+
+// ─── Founder review pass #7 (ES) ─────────────────────────────────────────────
+
+test('SYSTEM_PROMPT_ES bans citing Articles of Action by title in the plan', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /ARTICLES OF ACTION — NO LOS CITES POR TÍTULO/,
+  );
+  expect(SYSTEM_PROMPT_ES).toMatch(/cada reporte, cada nivel, sin excepciones/i);
+  // Resource ladder rewrite — Workshops are #1, Articles of Action no longer #1.
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /1\. Essential & Auxiliary Workshops — el canal primario de aprendizaje del padre/,
+  );
+  // Routing table no longer pairs AoA "Y Article of Action ...".
+  expect(SYSTEM_PROMPT_ES).not.toMatch(/Y Article of Action "/);
+  expect(SYSTEM_PROMPT_ES).not.toMatch(/O el Article of Action "/);
+});
+
+test('SYSTEM_PROMPT_ES restricts approved discussion-group set to M&I + SR', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/DISCUSSION GROUPS — LISTA APROBADA/);
+  expect(SYSTEM_PROMPT_ES).toContain(
+    '"Monitoring and Intervention discussion group"',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    '"Sustaining Recovery discussion group"',
+  );
+  // Every other group name appears only inside a banning context.
+  const bannedGroups = [
+    'Effective Communication discussion group',
+    'Parent Support Forum discussion group',
+    'Building a Support Network discussion group',
+    'Creating Your Personal Prevention Program discussion group',
+  ];
+  for (const g of bannedGroups) {
+    let from = 0;
+    while (from < SYSTEM_PROMPT_ES.length) {
+      const i = SYSTEM_PROMPT_ES.indexOf(g, from);
+      if (i === -1) break;
+      const window = SYSTEM_PROMPT_ES.slice(Math.max(0, i - 500), i + 500);
+      expect(window).toMatch(
+        /PROHIBIDO|PROHIBIDA|prohibid|nunca|NUNCA|banned|wrong/i,
+      );
+      from = i + 1;
+    }
+  }
+});
+
+test('SYSTEM_PROMPT_ES bans indirect professional-help phrasing', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/INDIRECT PROFESSIONAL-HELP PHRASING/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/"Empieza a prepararte para buscar"/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/"prepare to reach out"/);
+  // The MODERATE block's prior "igual activa la secuencia" framing must be
+  // replaced by the BANNED framing.
+  expect(SYSTEM_PROMPT_ES).not.toMatch(
+    /"Empieza a prepararte para buscar un terapeuta ASAP-endorsed" no es un sustituto parcial; la secuencia sigue aplicando\./,
+  );
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /"Empieza a prepararte para buscar un terapeuta ASAP-endorsed" y "prepárate para acercarte a un terapeuta ASAP-endorsed" están PROHIBIDAS/,
+  );
+});
+
+test('SYSTEM_PROMPT_ES enforces directory-only workshop titles', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/WORKSHOP TITLES — SOLO LOS DEL DIRECTORIO/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/nunca inventes un nombre de workshop/i);
+});
+
+test('Spanish outgoing user prompt carries pass-#7 reminders', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID, language: 'es' });
+  expect(res.status()).toBe(200);
+
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+
+  // AoA-by-title banned reminder
+  expect(userContent).toMatch(
+    /NUNCA cites un Article of Action por título en el plan/,
+  );
+  // Approved discussion groups reminder + banned set named
+  expect(userContent).toMatch(/SOLO dos están aprobados para el plan/);
+  expect(userContent).toMatch(
+    /PROHIBIDOS en cualquier forma: "Effective Communication discussion group"/,
+  );
+  // Indirect-phrasing ban shipped
+  expect(userContent).toMatch(/INDIRECT PROFESSIONAL-HELP PHRASING PROHIBIDA/);
+  expect(userContent).toMatch(/"Empieza a prepararte para buscar"/);
+  // Workshop directory-only reminder
+  expect(userContent).toMatch(/WORKSHOP TITLES — solo los del directorio/);
 });

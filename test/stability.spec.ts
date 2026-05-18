@@ -187,10 +187,13 @@ test('resource validator flags invented Discussion Group names', () => {
 });
 
 test('resource validator accepts a real Discussion Group name', () => {
+  // Pass #7 narrowed the approved set to two discussion groups: M&I and SR.
+  // The validator follows the same list.
   const report = {
     headlineSummary: '',
     topImmediatePriorities: '',
-    keyPriorities: 'Join the ASAP Discussion Group: Effective Communication',
+    keyPriorities:
+      'Join the ASAP Discussion Group: Monitoring and Intervention',
     whatToAvoid: '',
     first72Hours: '',
     days4to7: '',
