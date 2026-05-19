@@ -292,6 +292,37 @@ test('SYSTEM_PROMPT_ES enforces directory-only workshop titles', () => {
   expect(SYSTEM_PROMPT_ES).toMatch(/nunca inventes un nombre de workshop/i);
 });
 
+// ─── Founder review pass #8 (ES) ─────────────────────────────────────────────
+
+test('SYSTEM_PROMPT_ES pins "Creating a Healthy Home Environment" as AUXILIARY (not Essential)', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /"Creating a Healthy Home Environment – The Power of Structure and Routine" es AUXILIARY, nunca Essential/,
+  );
+  // BSN must also be reaffirmed as Essential — the ES prompt previously had
+  // stale "Auxiliary Workshop 'Building a Support Network'" labels.
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /"Building a Support Network" es ESSENTIAL, nunca Auxiliary/,
+  );
+  // No remaining instructional copy may still call BSN an "Auxiliary Workshop".
+  expect(SYSTEM_PROMPT_ES).not.toMatch(
+    /Auxiliary Workshop "Building a Support Network"/,
+  );
+});
+
+test('Spanish outgoing user prompt carries pass-#8 CHHE-is-Auxiliary reminder', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID, language: 'es' });
+  expect(res.status()).toBe(200);
+
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+
+  expect(userContent).toMatch(
+    /"Creating a Healthy Home Environment – The Power of Structure and Routine" es AUXILIARY, nunca Essential/,
+  );
+});
+
 test('Spanish outgoing user prompt carries pass-#7 reminders', async ({
   request,
 }) => {
