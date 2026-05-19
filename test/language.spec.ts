@@ -167,11 +167,17 @@ test('SYSTEM_PROMPT_ES holds the core ASAP rules in Spanish', () => {
 
 // ─── Section-header constants uniqueness ─────────────────────────────────────
 
-test('section-header constants are 7 unique entries in each language', () => {
-  expect(SECTION_HEADERS_EN).toHaveLength(7);
-  expect(SECTION_HEADERS_ES).toHaveLength(7);
-  expect(new Set(SECTION_HEADERS_EN).size).toBe(7);
-  expect(new Set(SECTION_HEADERS_ES).size).toBe(7);
+test('section-header constants are 8 unique entries in each language (URGENT first, then 7 base)', () => {
+  // Milestone 6: the conditional URGENT CONCERN ACKNOWLEDGED header is the
+  // 8th constant. It is only rendered into the user-prompt template when the
+  // optional crisis field fires; the constant always exists at index 0 so
+  // the parser can find it when the model emits it.
+  expect(SECTION_HEADERS_EN).toHaveLength(8);
+  expect(SECTION_HEADERS_ES).toHaveLength(8);
+  expect(new Set(SECTION_HEADERS_EN).size).toBe(8);
+  expect(new Set(SECTION_HEADERS_ES).size).toBe(8);
+  expect(SECTION_HEADERS_EN[0]).toBe('URGENT CONCERN ACKNOWLEDGED');
+  expect(SECTION_HEADERS_ES[0]).toBe('PREOCUPACIÓN URGENTE RECONOCIDA');
 });
 
 // ─── Founder review pass #6 (ES) ─────────────────────────────────────────────
@@ -234,7 +240,9 @@ test('SYSTEM_PROMPT_ES bans citing Articles of Action by title in the plan', () 
   expect(SYSTEM_PROMPT_ES).toMatch(
     /ARTICLES OF ACTION — NO LOS CITES POR TÍTULO/,
   );
-  expect(SYSTEM_PROMPT_ES).toMatch(/cada reporte, cada nivel, sin excepciones/i);
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /cada reporte, cada nivel, sin excepciones/i,
+  );
   // Resource ladder rewrite — Workshops are #1, Articles of Action no longer #1.
   expect(SYSTEM_PROMPT_ES).toMatch(
     /1\. Essential & Auxiliary Workshops — el canal primario de aprendizaje del padre/,
@@ -249,9 +257,7 @@ test('SYSTEM_PROMPT_ES restricts approved discussion-group set to M&I + SR', () 
   expect(SYSTEM_PROMPT_ES).toContain(
     '"Monitoring and Intervention discussion group"',
   );
-  expect(SYSTEM_PROMPT_ES).toContain(
-    '"Sustaining Recovery discussion group"',
-  );
+  expect(SYSTEM_PROMPT_ES).toContain('"Sustaining Recovery discussion group"');
   // Every other group name appears only inside a banning context.
   const bannedGroups = [
     'Effective Communication discussion group',
@@ -346,4 +352,97 @@ test('Spanish outgoing user prompt carries pass-#7 reminders', async ({
   expect(userContent).toMatch(/"Empieza a prepararte para buscar"/);
   // Workshop directory-only reminder
   expect(userContent).toMatch(/WORKSHOP TITLES — solo los del directorio/);
+});
+
+// ─── Milestone 6 — ES crisis-field, answer labels, URGENT section ──────────
+
+test('Milestone 6 (ES): non-empty crisis auto-promotes to GRAVE in ES user prompt', async ({
+  request,
+}) => {
+  const VALID = Array(24).fill(2) as number[];
+  const res = await post(request, {
+    responses: VALID,
+    language: 'es',
+    crisis: 'Sospecha de fentanilo en su cuarto.',
+  });
+  expect(res.status()).toBe(200);
+
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+  // ES guidance uses GRAVE (not SERIOUS) in the severity-block string.
+  expect(userContent).toContain('SEVERITY LEVEL: GRAVE');
+  // The Spanish context-block header.
+  expect(userContent).toContain('PREOCUPACIÓN URGENTE — el padre marcó esto');
+  // Crisis text echoed verbatim.
+  expect(userContent).toContain('Sospecha de fentanilo en su cuarto.');
+});
+
+test('Milestone 6 (ES): user prompt template lists PREOCUPACIÓN URGENTE header when crisis fires', async ({
+  request,
+}) => {
+  const VALID = Array(24).fill(2) as number[];
+  await post(request, {
+    responses: VALID,
+    language: 'es',
+    crisis: 'amenazas de autolesión',
+  });
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('ocho encabezados de sección');
+  expect(userContent).toMatch(
+    /PREOCUPACIÓN URGENTE RECONOCIDA\nRESUMEN INICIAL/,
+  );
+});
+
+test('Milestone 6 (ES): user prompt template omits PREOCUPACIÓN URGENTE when no crisis', async ({
+  request,
+}) => {
+  const VALID = Array(24).fill(2) as number[];
+  await post(request, { responses: VALID, language: 'es' });
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('siete encabezados de sección');
+  expect(userContent).not.toMatch(
+    /PREOCUPACIÓN URGENTE RECONOCIDA\nRESUMEN INICIAL/,
+  );
+});
+
+test('Milestone 6 (ES): user prompt carries Spanish per-question answer labels', async ({
+  request,
+}) => {
+  const responses = Array(24).fill(2);
+  responses[0] = 4; // Q1 concern: ES label 3 = "Confirmado o he visto evidencia directa"
+  responses[3] = 1; // Q4 strength: ES label 0 = "Rara vez o nunca"
+
+  await post(request, { responses, language: 'es' });
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+
+  // Concerns block uses Spanish prefix + Spanish label.
+  expect(userContent).toContain(
+    'Respuesta del padre: Confirmado o he visto evidencia directa',
+  );
+  // Strengths block uses Spanish prefix + Spanish label.
+  expect(userContent).toContain('Respuesta del padre: Rara vez o nunca');
+});
+
+test('Milestone 6 (ES): SYSTEM_PROMPT_ES has the URGENT CONCERN rule mirrored in Spanish', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/URGENT CONCERN — CAMPO OPCIONAL DE CRISIS/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/PREOCUPACIÓN URGENTE RECONOCIDA/);
+  // Trigger-keyword resource anchors (numbers stay verbatim).
+  expect(SYSTEM_PROMPT_ES).toMatch(/988 Suicide & Crisis Lifeline/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/Poison Control at 1-800-222-1222/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/Narcan/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/1-800-799-7233/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/2–3 oraciones cortas, calmadas/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/NUNCA alarmistas/);
+});
+
+test('Milestone 6 (ES): SYSTEM_PROMPT (EN) and SYSTEM_PROMPT_ES both flag the URGENT header as conditional', () => {
+  // EN: emits the URGENT header "ONLY when the user message included an URGENT CONCERN block".
+  expect(SYSTEM_PROMPT).toMatch(
+    /ONLY when the user message included an URGENT CONCERN block/,
+  );
+  // ES: emits the URGENT header "Si y SOLO si ese bloque está presente".
+  expect(SYSTEM_PROMPT_ES).toMatch(/Si y SOLO si ese bloque está presente/);
 });

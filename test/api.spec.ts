@@ -159,7 +159,11 @@ const DOMAIN_NAMES = [
   'Support & Professional Engagement',
 ];
 
-const REPORT_KEYS = [
+// Milestone 6 added urgentConcern as the conditional 8th section. It is
+// always present on the parsed shape, but is the empty string in any plan
+// where the optional crisis field was not supplied (the model never emits
+// the URGENT CONCERN ACKNOWLEDGED header in that case).
+const REPORT_KEYS_ALWAYS_NON_EMPTY = [
   'headlineSummary',
   'topImmediatePriorities',
   'keyPriorities',
@@ -189,8 +193,10 @@ test('success response has correct shape', async ({ request }) => {
     expect(DOMAIN_NAMES).toContain(d);
   }
 
-  expect(Object.keys(body.report)).toHaveLength(7);
-  for (const key of REPORT_KEYS) {
+  expect(Object.keys(body.report)).toHaveLength(8);
+  // urgentConcern is a string but is empty when no crisis field was supplied.
+  expect(typeof body.report.urgentConcern).toBe('string');
+  for (const key of REPORT_KEYS_ALWAYS_NON_EMPTY) {
     expect(typeof body.report[key]).toBe('string');
     expect(body.report[key].length).toBeGreaterThan(0);
   }
@@ -839,7 +845,9 @@ test('SYSTEM_PROMPT bans citing Articles of Action by title in the plan', () => 
   // The hard rule must be named and scoped as universal.
   expect(SYSTEM_PROMPT).toMatch(/ARTICLES OF ACTION — DO NOT CITE BY TITLE/);
   expect(SYSTEM_PROMPT).toMatch(/every report, every tier, no exceptions/i);
-  expect(SYSTEM_PROMPT).toMatch(/never as a parent-facing reading recommendation/i);
+  expect(SYSTEM_PROMPT).toMatch(
+    /never as a parent-facing reading recommendation/i,
+  );
   // The banned patterns must be enumerated explicitly.
   expect(SYSTEM_PROMPT).toMatch(/'the Article of Action titled "X"'/);
   expect(SYSTEM_PROMPT).toMatch(/Article of Action: X/);
@@ -854,7 +862,9 @@ test('SYSTEM_PROMPT bans citing Articles of Action by title in the plan', () => 
 
   // The OUTPUT STRUCTURE / KEY PRIORITIES rules must NOT offer Article of
   // Action as one of the resource types the parent can be steered to.
-  expect(SYSTEM_PROMPT).toMatch(/NEVER cite an Article of Action by title in the plan/);
+  expect(SYSTEM_PROMPT).toMatch(
+    /NEVER cite an Article of Action by title in the plan/,
+  );
 
   // No routing-table row may still pair "AND Article of Action ...".
   expect(SYSTEM_PROMPT).not.toMatch(/AND Article of Action "/);
@@ -864,14 +874,18 @@ test('SYSTEM_PROMPT bans citing Articles of Action by title in the plan', () => 
 test('SYSTEM_PROMPT restricts the approved discussion-group set to M&I + SR', () => {
   // The approved list must be named explicitly.
   expect(SYSTEM_PROMPT).toMatch(/DISCUSSION GROUPS — APPROVED LIST/);
-  expect(SYSTEM_PROMPT).toContain('"Monitoring and Intervention discussion group"');
+  expect(SYSTEM_PROMPT).toContain(
+    '"Monitoring and Intervention discussion group"',
+  );
   expect(SYSTEM_PROMPT).toContain('"Sustaining Recovery discussion group"');
 
   // The banned set must be enumerated.
   expect(SYSTEM_PROMPT).toMatch(/BANNED DISCUSSION GROUP NAMES/);
   expect(SYSTEM_PROMPT).toContain('"Effective Communication discussion group"');
   expect(SYSTEM_PROMPT).toContain('"Parent Support Forum discussion group"');
-  expect(SYSTEM_PROMPT).toContain('"Building a Support Network discussion group"');
+  expect(SYSTEM_PROMPT).toContain(
+    '"Building a Support Network discussion group"',
+  );
   expect(SYSTEM_PROMPT).toContain(
     '"Creating Your Personal Prevention Program discussion group"',
   );
@@ -894,7 +908,9 @@ test('SYSTEM_PROMPT restricts the approved discussion-group set to M&I + SR', ()
       const i = SYSTEM_PROMPT.indexOf(g, from);
       if (i === -1) break;
       const window = SYSTEM_PROMPT.slice(Math.max(0, i - 500), i + 500);
-      expect(window).toMatch(/BANNED|banned|never|prohibited|wrong|labeling error/i);
+      expect(window).toMatch(
+        /BANNED|banned|never|prohibited|wrong|labeling error/i,
+      );
       from = i + 1;
     }
   }
@@ -904,9 +920,7 @@ test('SYSTEM_PROMPT bans indirect professional-help phrasing', () => {
   expect(SYSTEM_PROMPT).toMatch(/INDIRECT PROFESSIONAL-HELP PHRASING — BANNED/);
   expect(SYSTEM_PROMPT).toMatch(/"prepare to reach out"/);
   expect(SYSTEM_PROMPT).toMatch(/"start preparing to seek"/);
-  expect(SYSTEM_PROMPT).toMatch(
-    /banned even when the SEQUENCE follows them/i,
-  );
+  expect(SYSTEM_PROMPT).toMatch(/banned even when the SEQUENCE follows them/i);
 
   // The MODERATE block's earlier wording — "still triggers the full sequence" —
   // must be replaced. The new framing says these phrasings are BANNED.
@@ -948,9 +962,7 @@ test('outgoing user prompt carries the pass-#7 reminders', async ({
   );
 
   // The indirect-phrasing ban is shipped.
-  expect(userContent).toMatch(
-    /INDIRECT PROFESSIONAL-HELP PHRASING BANNED/,
-  );
+  expect(userContent).toMatch(/INDIRECT PROFESSIONAL-HELP PHRASING BANNED/);
   expect(userContent).toMatch(/"prepare to reach out"/);
   expect(userContent).toMatch(/"start preparing to seek"/);
 
@@ -982,9 +994,7 @@ test('SYSTEM_PROMPT pins "Creating a Healthy Home Environment" as AUXILIARY (not
   expect(SYSTEM_PROMPT).toMatch(
     /"Creating a Healthy Home Environment – The Power of Structure and Routine" is an AUXILIARY Workshop, not Essential/,
   );
-  expect(SYSTEM_PROMPT).toMatch(
-    /Creating Your Personalized Prevention Plan/,
-  );
+  expect(SYSTEM_PROMPT).toMatch(/Creating Your Personalized Prevention Plan/);
 });
 
 test('outgoing user prompt carries the pass-#8 CHHE-is-Auxiliary reminder', async ({
@@ -1058,4 +1068,263 @@ test('returns 500 when OpenAI API fails', async () => {
     failApp.kill();
     await new Promise<void>((r) => errorServer.close(() => r()));
   }
+});
+
+// ─── Milestone 6 — Crisis field + severity recalibration + answer labels ────
+
+test('Milestone 6: DTO accepts an optional crisis string', async ({
+  request,
+}) => {
+  const res = await post(request, {
+    responses: VALID,
+    crisis: 'Found pills in the bedroom. Worried about fentanyl.',
+  });
+  expect(res.status()).toBe(200);
+  const body = await res.json();
+  expect(body.success).toBe(true);
+});
+
+test('Milestone 6: DTO accepts a missing crisis field (treated as no crisis)', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID });
+  expect(res.status()).toBe(200);
+});
+
+test('Milestone 6: DTO rejects a non-string crisis field with 400', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID, crisis: 12345 });
+  expect(res.status()).toBe(400);
+  const json = await res.json();
+  expect(json.success).toBe(false);
+  expect(typeof json.error).toBe('string');
+});
+
+test('Milestone 6: DTO rejects an oversized crisis field with 400', async ({
+  request,
+}) => {
+  const res = await post(request, {
+    responses: VALID,
+    crisis: 'x'.repeat(501),
+  });
+  expect(res.status()).toBe(400);
+  const json = await res.json();
+  expect(json.success).toBe(false);
+});
+
+test('Milestone 6: non-empty crisis auto-promotes severity to SERIOUS in user prompt', async ({
+  request,
+}) => {
+  // VALID is all 2s — without crisis this would be MODERATE/MILD. With the
+  // crisis field non-empty, the hard escalator forces SERIOUS regardless.
+  const res = await post(request, {
+    responses: VALID,
+    crisis: 'Suspected fentanyl exposure.',
+  });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('SEVERITY LEVEL: SERIOUS');
+  expect(userContent).toContain('URGENT CONCERN');
+  expect(userContent).toContain('Suspected fentanyl exposure.');
+});
+
+test('Milestone 6: whitespace-only crisis does NOT auto-promote', async ({
+  request,
+}) => {
+  // The hard escalator only fires for non-empty trimmed input. A whitespace
+  // string is treated as no crisis.
+  const res = await post(request, {
+    responses: VALID,
+    crisis: '   \n\t  ',
+  });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+  // All 2s + no crisis → MODERATE per the current bands.
+  expect(userContent).toContain('SEVERITY LEVEL: MODERATE');
+  // The context-block header (which only fires when crisis is non-empty)
+  // must NOT appear. The literal phrase "URGENT CONCERN ACKNOWLEDGED"
+  // appears in the closing instruction in both branches, so we anchor on
+  // the parent-flagged context-block header specifically.
+  expect(userContent).not.toContain('URGENT CONCERN — parent flagged this');
+});
+
+test('Milestone 6: Q23=4 + Q24=4 alone do NOT trigger SERIOUS (parent internal-state demotion)', async ({
+  request,
+}) => {
+  // Child-safety subset (Q1, Q2, Q10) all = 2; only the two parent-internal
+  // questions are 4. Per the Milestone 6 demotion, SERIOUS no longer fires
+  // from parent worry/readiness alone — this should land in MODERATE.
+  const responses = Array(24).fill(2);
+  responses[22] = 4; // Q23
+  responses[23] = 4; // Q24
+
+  const res = await post(request, { responses });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).not.toContain('SEVERITY LEVEL: SERIOUS');
+  expect(userContent).toContain('SEVERITY LEVEL: MODERATE');
+});
+
+test('Milestone 6: 3+ fours on conflict/household with child-safety low does NOT trigger SERIOUS', async ({
+  request,
+}) => {
+  // Three fours spread across conflict / household / co-parent — none in
+  // child-safety. Old gate would fire SERIOUS via fours>=3 && safetyFour>=1
+  // because Q23/Q24 used to count; new gate requires a child-safety four.
+  const responses = Array(24).fill(2);
+  responses[4] = 4; // Q5 — conflict intensity
+  responses[10] = 4; // Q11 — co-parent alignment
+  responses[22] = 4; // Q23 — parent worry (no longer counts toward safetyFours)
+
+  const res = await post(request, { responses });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).not.toContain('SEVERITY LEVEL: SERIOUS');
+});
+
+test('Milestone 6: child-safety four (Q1=4) keeps SERIOUS path open when fours>=3', async ({
+  request,
+}) => {
+  // Mirror of the previous test but with Q1=4 instead of Q23=4 — at least
+  // one of the three fours is now in the child-safety subset, so SERIOUS
+  // fires via the fours-count pathway.
+  const responses = Array(24).fill(2);
+  responses[0] = 4; // Q1 — confirmed/strongly-suspected use (child-safety)
+  responses[4] = 4; // Q5 — conflict intensity
+  responses[10] = 4; // Q11 — co-parent alignment
+
+  const res = await post(request, { responses });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('SEVERITY LEVEL: SERIOUS');
+});
+
+test('Milestone 6: user prompt carries per-question answer labels for scored 4s and 1s', async ({
+  request,
+}) => {
+  // SAMPLE has Q1=4 (concern) and Q4=2 — no strengths, plenty of concerns.
+  // Use a mix of 1s and 4s to verify both blocks render labels.
+  const responses = [...SAMPLE];
+  responses[3] = 1; // Q4 — strength
+  responses[19] = 1; // Q20 — strength
+
+  const res = await post(request, { responses });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  // Concerns block: each scored 4 is followed by the parent's chosen label.
+  // Q1=4 → "Confirmed or seen direct evidence"
+  expect(userContent).toContain(
+    "Parent's answer: Confirmed or seen direct evidence",
+  );
+  // Q3=4 → "Constantly — will not engage at all"
+  expect(userContent).toContain(
+    "Parent's answer: Constantly — will not engage at all",
+  );
+
+  // Strengths block: each scored 1 is followed by the parent's chosen label.
+  // Q4=1 → "Rarely or never" (the Q4 label index 0)
+  expect(userContent).toContain('Strengths (scored 1');
+  expect(userContent).toContain("Parent's answer: Rarely or never");
+  // Q20=1 → "Strong routine — sleep, school, meals, activities"
+  expect(userContent).toContain(
+    "Parent's answer: Strong routine — sleep, school, meals, activities",
+  );
+});
+
+test('Milestone 6: user prompt template lists URGENT header when crisis fires, omits it otherwise', async ({
+  request,
+}) => {
+  // No crisis — header list must NOT include URGENT CONCERN ACKNOWLEDGED.
+  await post(request, { responses: VALID });
+  const captured1 = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent1: string = captured1.body.messages[1].content;
+  // Look at the tail of the user prompt (the explicit "Use EXACTLY these…" list).
+  expect(userContent1).toContain('seven section headers');
+  expect(userContent1).not.toMatch(
+    /URGENT CONCERN ACKNOWLEDGED\nHEADLINE SUMMARY/,
+  );
+
+  // With crisis — header list MUST include URGENT CONCERN ACKNOWLEDGED.
+  await post(request, { responses: VALID, crisis: 'suspected overdose' });
+  const captured2 = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent2: string = captured2.body.messages[1].content;
+  expect(userContent2).toContain('eight section headers');
+  expect(userContent2).toMatch(/URGENT CONCERN ACKNOWLEDGED\nHEADLINE SUMMARY/);
+});
+
+test('Milestone 6: URGENT CONCERN ACKNOWLEDGED section parses into report.urgentConcern when crisis fires', async ({
+  request,
+}) => {
+  // The mock server's smart-response branches on the URGENT CONCERN block and
+  // emits a real URGENT CONCERN ACKNOWLEDGED section ahead of HEADLINE SUMMARY.
+  const res = await post(request, {
+    responses: VALID,
+    crisis: 'Threats of self-harm last night.',
+  });
+  expect(res.status()).toBe(200);
+
+  const body = await res.json();
+  expect(body.success).toBe(true);
+  expect(typeof body.report.urgentConcern).toBe('string');
+  expect(body.report.urgentConcern.length).toBeGreaterThan(0);
+  expect(body.report.urgentConcern).toMatch(/flagged something acute/);
+  // The other 7 sections still populate.
+  expect(body.report.headlineSummary.length).toBeGreaterThan(0);
+  expect(body.report.encouragement.length).toBeGreaterThan(0);
+});
+
+test('Milestone 6: URGENT CONCERN section is empty in report when no crisis was supplied', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID });
+  expect(res.status()).toBe(200);
+  const body = await res.json();
+  expect(body.report.urgentConcern).toBe('');
+});
+
+test('Milestone 6: SYSTEM_PROMPT has the URGENT CONCERN hard rule with trigger-keyword resource map', () => {
+  expect(SYSTEM_PROMPT).toMatch(
+    /URGENT CONCERN — OPTIONAL CRISIS FIELD \(HARD RULE/,
+  );
+  // Trigger-keyword anchors.
+  expect(SYSTEM_PROMPT).toMatch(/988 Suicide & Crisis Lifeline/);
+  expect(SYSTEM_PROMPT).toMatch(/Poison Control at 1-800-222-1222/);
+  expect(SYSTEM_PROMPT).toMatch(/Narcan/);
+  expect(SYSTEM_PROMPT).toMatch(/1-800-799-7233/); // National DV Hotline
+  expect(SYSTEM_PROMPT).toMatch(/1-800-786-2929/); // Runaway Safeline
+  expect(SYSTEM_PROMPT).toMatch(/2–3 short, calm, direction-giving sentences/);
+  expect(SYSTEM_PROMPT).toMatch(/NEVER alarmist/);
+  // Conditional emission: only when the URGENT CONCERN block is present.
+  expect(SYSTEM_PROMPT).toMatch(
+    /ONLY when the user message included an URGENT CONCERN block/,
+  );
+});
+
+test('Milestone 6: ANSWER_LABELS arrays are 24 × 4 in both languages and monotonically 1=strength → 4=concern by stem', async () => {
+  const { ANSWER_LABELS } = await import('../src/report/prompts/questions');
+  const { ANSWER_LABELS_ES } =
+    await import('../src/report/prompts/questions.es');
+  expect(ANSWER_LABELS).toHaveLength(24);
+  expect(ANSWER_LABELS_ES).toHaveLength(24);
+  for (const labels of ANSWER_LABELS) expect(labels).toHaveLength(4);
+  for (const labels of ANSWER_LABELS_ES) expect(labels).toHaveLength(4);
+  // Spot-check: Q1 score=4 label is the strongest concern, score=1 is the
+  // strongest strength.
+  expect(ANSWER_LABELS[0][0]).toMatch(/have not/i);
+  expect(ANSWER_LABELS[0][3]).toMatch(/Confirmed/);
+  expect(ANSWER_LABELS_ES[0][3]).toMatch(/Confirmado/);
 });
