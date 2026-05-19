@@ -37,12 +37,14 @@ export class ClaudeService {
     topDomains: string[],
     responses?: number[],
     language: Language = 'en',
+    crisis?: string,
   ): Promise<ReportSections> {
     const userPrompt = buildUserPrompt(
       domainScores,
       topDomains,
       responses,
       language,
+      crisis,
     );
 
     try {
@@ -80,12 +82,14 @@ export class ClaudeService {
     topDomains: string[],
     responses?: number[],
     language: Language = 'en',
+    crisis?: string,
   ): AsyncGenerator<string, void, void> {
     const userPrompt = buildUserPrompt(
       domainScores,
       topDomains,
       responses,
       language,
+      crisis,
     );
 
     const response = await fetch(this.apiUrl, {
@@ -148,6 +152,7 @@ export class ClaudeService {
   private parseSections(text: string, language: Language): ReportSections {
     const headers = getSectionHeaders(language);
     const [
+      urgentConcern,
       headlineSummary,
       topImmediatePriorities,
       keyPriorities,
@@ -169,6 +174,7 @@ export class ClaudeService {
     };
 
     return {
+      urgentConcern: extract(urgentConcern),
       headlineSummary: extract(headlineSummary),
       topImmediatePriorities: extract(topImmediatePriorities),
       keyPriorities: extract(keyPriorities),

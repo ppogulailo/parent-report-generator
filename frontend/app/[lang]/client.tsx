@@ -3,16 +3,19 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
+  ANSWER_LABELS,
   Language,
   QUESTIONS,
-  SCALE_LABELS,
   SECTION_LABELS_BY_LANG,
   SECTION_MARKERS_BY_LANG,
   STRINGS,
   domainLabel,
 } from '../i18n';
 
+const CRISIS_MAX_LENGTH = 500;
+
 type ReportSections = {
+  urgentConcern: string;
   headlineSummary: string;
   topImmediatePriorities: string;
   keyPriorities: string;
@@ -30,6 +33,7 @@ type Scores = {
 type Stage = 'idle' | 'scoring' | 'writing' | 'done';
 
 const EMPTY_REPORT: ReportSections = {
+  urgentConcern: '',
   headlineSummary: '',
   topImmediatePriorities: '',
   keyPriorities: '',
@@ -108,6 +112,7 @@ export default function PageClient({ language }: Props) {
   const [responses, setResponses] = useState<Array<number | null>>(
     Array(24).fill(null),
   );
+  const [crisis, setCrisis] = useState<string>('');
   const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
   const [scores, setScores] = useState<Scores | null>(null);
@@ -121,7 +126,7 @@ export default function PageClient({ language }: Props) {
 
   const t = STRINGS[language];
   const questions = QUESTIONS[language];
-  const scaleLabels = SCALE_LABELS[language];
+  const answerLabels = ANSWER_LABELS[language];
   const sectionLabels = SECTION_LABELS_BY_LANG[language];
   const sectionMarkers = SECTION_MARKERS_BY_LANG[language];
 
@@ -153,10 +158,18 @@ export default function PageClient({ language }: Props) {
     });
 
     try {
+      const trimmedCrisis = crisis.trim();
+      const payload: {
+        responses: Array<number | null>;
+        language: Language;
+        crisis?: string;
+      } = { responses, language };
+      if (trimmedCrisis.length > 0) payload.crisis = trimmedCrisis;
+
       const res = await fetch('/api/report/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ responses, language }),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok || !res.body) {
@@ -376,9 +389,9 @@ export default function PageClient({ language }: Props) {
           <label className="question-label">
             <strong>Q{i + 1}.</strong> {q}
           </label>
-          <div className="scale">
+          <div className="scale scale-vertical">
             {[1, 2, 3, 4].map((v) => (
-              <label key={v}>
+              <label key={v} className="scale-option">
                 <input
                   type="radio"
                   name={`q-${i}`}
@@ -386,12 +399,45 @@ export default function PageClient({ language }: Props) {
                   checked={responses[i] === v}
                   onChange={() => setAnswer(i, v)}
                 />
-                <span>{scaleLabels[v]}</span>
+                <span className="scale-option-text">
+                  <span className="scale-option-num">{v}</span>
+                  <span className="scale-option-label">
+                    {answerLabels[i][v - 1]}
+                  </span>
+                </span>
               </label>
             ))}
           </div>
         </div>
       ))}
+
+      <section className="crisis-section" id="crisis-field">
+        <h2 className="section-heading">{t.crisisHeading}</h2>
+        <p className="section-sub">{t.crisisIntro}</p>
+        <label className="crisis-label" htmlFor="crisis-textarea">
+          {t.crisisLabel}
+        </label>
+        <textarea
+          id="crisis-textarea"
+          className="crisis-textarea"
+          value={crisis}
+          onChange={(e) =>
+            setCrisis(e.target.value.slice(0, CRISIS_MAX_LENGTH))
+          }
+          placeholder={t.crisisPlaceholder}
+          maxLength={CRISIS_MAX_LENGTH}
+          rows={4}
+          disabled={loading}
+        />
+        <div className="crisis-meta">
+          <span className="crisis-hint">
+            {t.crisisHint(CRISIS_MAX_LENGTH - crisis.length)}
+          </span>
+        </div>
+        <p className="crisis-safety-notice" role="note">
+          {t.crisisSafetyNotice}
+        </p>
+      </section>
 
       <button
         type="button"
@@ -486,9 +532,15 @@ export default function PageClient({ language }: Props) {
           <h2>{t.actionPlanHeading}</h2>
           {sectionLabels.map(([key, label]) => {
             const body = report[key as keyof ReportSections];
+            // The URGENT CONCERN ACKNOWLEDGED section only exists in plans
+            // where the parent supplied the optional crisis field. Skip it
+            // entirely when no body has arrived — no placeholder, no header.
+            if (key === 'urgentConcern' && body.length === 0) return null;
             const isActive = stage === 'writing' && body.length > 0;
+            const sectionClass =
+              key === 'urgentConcern' ? 'section section-urgent' : 'section';
             return (
-              <div className="section" key={key}>
+              <div className={sectionClass} key={key}>
                 <div className="section-title">{label}</div>
                 {body.length === 0 ? (
                   <p className="section-placeholder">

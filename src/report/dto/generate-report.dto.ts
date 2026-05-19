@@ -5,7 +5,9 @@ import {
   IsIn,
   IsInt,
   IsOptional,
+  IsString,
   Max,
+  MaxLength,
   Min,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
@@ -13,6 +15,9 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 const ERROR_MESSAGE =
   'responses must be an array of 24 integers between 1 and 4';
 const LANGUAGE_ERROR = 'language must be "en" or "es"';
+const CRISIS_ERROR = 'crisis must be a string of at most 500 characters';
+
+export const CRISIS_MAX_LENGTH = 500;
 
 export type Language = 'en' | 'es';
 
@@ -47,4 +52,17 @@ export class GenerateReportDto {
   @IsOptional()
   @IsIn(['en', 'es'], { message: LANGUAGE_ERROR })
   language?: Language;
+
+  @ApiPropertyOptional({
+    description:
+      'Optional free-text crisis field for urgent concerns (e.g., suspected fentanyl exposure, overdose history, suicidality, violence in the home). When any non-empty value is supplied, the report is generated at SERIOUS severity regardless of the 24 scores, and an URGENT CONCERN ACKNOWLEDGED section is added to the plan.',
+    type: String,
+    maxLength: CRISIS_MAX_LENGTH,
+    example:
+      'Found a pill press in the bedroom last week. Worried about fentanyl.',
+  })
+  @IsOptional()
+  @IsString({ message: CRISIS_ERROR })
+  @MaxLength(CRISIS_MAX_LENGTH, { message: CRISIS_ERROR })
+  crisis?: string;
 }

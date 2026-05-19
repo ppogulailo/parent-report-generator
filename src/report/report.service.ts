@@ -27,6 +27,7 @@ export class ReportService {
       topDomains,
       dto.responses,
       language,
+      dto.crisis,
     );
 
     const warnings = validateReportResources(report);
@@ -68,6 +69,7 @@ export class ReportService {
       topDomains,
       dto.responses,
       language,
+      dto.crisis,
     )) {
       yield { type: 'text', text: chunk };
     }
