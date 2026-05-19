@@ -34,8 +34,8 @@ export const QUESTIONS: string[] = [
 export const ANSWER_LABELS: string[][] = [
   // Q1 — certainty of use
   [
-    'Confident they have not',
-    'Not sure, but I do not think so',
+    "Confident they haven't",
+    "Not sure, but I don't think so",
     'Strongly suspect',
     'Confirmed or seen direct evidence',
   ],
@@ -46,7 +46,7 @@ export const ANSWER_LABELS: string[][] = [
     'No — open and honest',
     'Occasionally evasive',
     'Often secretive or avoidant',
-    'Constantly — will not engage at all',
+    "Constantly — won't engage at all",
   ],
   // Q4 — exposure to environments
   [
@@ -116,7 +116,7 @@ export const ANSWER_LABELS: string[][] = [
     'Very comfortable — talks openly',
     'Sometimes shares',
     'Rarely shares',
-    'Shuts down completely — will not engage',
+    "Shuts down completely — won't engage",
   ],
   // Q14 — monitoring whereabouts (inverted stem)
   [
@@ -136,8 +136,8 @@ export const ANSWER_LABELS: string[][] = [
   [
     'Yes, currently working with one',
     'Reached out, exploring options',
-    'Considered but have not yet',
-    'No — would not know where to start',
+    "Considered but haven't yet",
+    "No — wouldn't know where to start",
   ],
   // Q17 — exhausted / fearful / overwhelmed
   [
@@ -179,7 +179,7 @@ export const ANSWER_LABELS: string[][] = [
     'Fully prepared',
     'Somewhat prepared',
     'Uncertain how to balance firm and supportive',
-    'Do not know where to begin',
+    "Don't know where to begin",
   ],
   // Q23 — worry about long-term consequences
   [
@@ -193,6 +193,6 @@ export const ANSWER_LABELS: string[][] = [
     'Ready now — committed to act',
     'Mostly ready',
     'Hesitant',
-    'Stuck — do not know what to do',
+    "Stuck — don't know what to do",
   ],
 ];

@@ -1230,9 +1230,9 @@ test('Milestone 6: user prompt carries per-question answer labels for scored 4s 
   expect(userContent).toContain(
     "Parent's answer: Confirmed or seen direct evidence",
   );
-  // Q3=4 → "Constantly — will not engage at all"
+  // Q3=4 → "Constantly — won't engage at all"
   expect(userContent).toContain(
-    "Parent's answer: Constantly — will not engage at all",
+    "Parent's answer: Constantly — won't engage at all",
   );
 
   // Strengths block: each scored 1 is followed by the parent's chosen label.
@@ -1324,7 +1324,30 @@ test('Milestone 6: ANSWER_LABELS arrays are 24 × 4 in both languages and monoto
   for (const labels of ANSWER_LABELS_ES) expect(labels).toHaveLength(4);
   // Spot-check: Q1 score=4 label is the strongest concern, score=1 is the
   // strongest strength.
-  expect(ANSWER_LABELS[0][0]).toMatch(/have not/i);
+  expect(ANSWER_LABELS[0][0]).toMatch(/haven['’]t/i);
   expect(ANSWER_LABELS[0][3]).toMatch(/Confirmed/);
   expect(ANSWER_LABELS_ES[0][3]).toMatch(/Confirmado/);
+});
+
+test('Milestone 6 polish: URGENT section has ANTI-HEDGE close rule (EN+ES)', () => {
+  expect(SYSTEM_PROMPT).toMatch(/ANTI-HEDGE close \(HARD RULE\)/);
+  expect(SYSTEM_PROMPT).toMatch(/when you feel ready/);
+  expect(SYSTEM_PROMPT).toMatch(/if you feel safe enough/);
+  expect(SYSTEM_PROMPT).toMatch(/The action is now\./);
+});
+
+test('Milestone 6 polish: PERSONALIZATION has ANSWER-LABEL VERBATIM BAN', () => {
+  expect(SYSTEM_PROMPT).toMatch(/ANSWER-LABEL VERBATIM BAN \(HARD RULE\)/);
+  expect(SYSTEM_PROMPT).toMatch(/intake-form options, not natural speech/);
+  // Concrete BAD example must be cited so the model has a template to avoid.
+  expect(SYSTEM_PROMPT).toMatch(/Near-daily — running on empty/);
+  // Concrete GOOD example must follow.
+  expect(SYSTEM_PROMPT).toMatch(/the near-daily exhaustion you described/);
+});
+
+test('Milestone 6 polish: extended disclaimer ban (CYA hedges)', () => {
+  // The URGENT section now bans the most common CYA disclaimers in addition
+  // to the original two.
+  expect(SYSTEM_PROMPT).toMatch(/we cannot guarantee/);
+  expect(SYSTEM_PROMPT).toMatch(/every situation is different/);
 });
