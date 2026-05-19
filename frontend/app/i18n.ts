@@ -55,19 +55,351 @@ export const QUESTIONS: Record<Language, string[]> = {
   ],
 };
 
-export const SCALE_LABELS: Record<Language, Record<number, string>> = {
-  en: {
-    1: '1 — Strong',
-    2: '2',
-    3: '3',
-    4: '4 — Concerning',
-  },
-  es: {
-    1: '1 — Sólido',
-    2: '2',
-    3: '3',
-    4: '4 — Preocupante',
-  },
+// Per-question behavior anchors, mirroring src/report/prompts/questions{,.es}.ts.
+// ANSWER_LABELS[lang][questionIndex][scoreIndex - 1] gives the label for that
+// question + chosen score. 1 always = strength end, 4 always = concern end —
+// the labels carry the direction so the parent never has to translate.
+export const ANSWER_LABELS: Record<Language, string[][]> = {
+  en: [
+    // Q1
+    [
+      'Confident they have not',
+      'Not sure, but I do not think so',
+      'Strongly suspect',
+      'Confirmed or seen direct evidence',
+    ],
+    // Q2
+    [
+      'Never',
+      'Once or twice, isolated',
+      'A few times a month',
+      'Weekly or more',
+    ],
+    // Q3
+    [
+      'No — open and honest',
+      'Occasionally evasive',
+      'Often secretive or avoidant',
+      'Constantly — will not engage at all',
+    ],
+    // Q4
+    [
+      'Rarely or never',
+      'Occasionally',
+      'Often — most weekends',
+      'Most of their free time',
+    ],
+    // Q5
+    [
+      'Calm — disagreements resolve easily',
+      'Occasional tension',
+      'Frequent arguments',
+      'Yelling, slamming doors, near-daily',
+    ],
+    // Q6
+    [
+      'Confident — I know what to say',
+      'Somewhat confident',
+      'Unsure how to approach it',
+      'Avoid it entirely — dread the conversation',
+    ],
+    // Q7
+    [
+      'Always consistent',
+      'Mostly consistent',
+      'Inconsistent',
+      'Rules rarely or never enforced',
+    ],
+    // Q8
+    [
+      'Almost never',
+      'Occasionally',
+      'Often — second-guess most of the time',
+      'Constantly — paralyzed by doubt',
+    ],
+    // Q9
+    [
+      'No noticeable change',
+      'Mild changes',
+      'Clear and frequent changes',
+      'Dramatic or near-daily changes',
+    ],
+    // Q10
+    [
+      'Not concerned',
+      'Mildly concerned',
+      'Serious concern',
+      'Active fear — lose sleep over it',
+    ],
+    // Q11
+    [
+      'Fully aligned — same page on rules and tone',
+      'Mostly aligned',
+      'Disagree often',
+      'Pulling in opposite directions, or no co-parent contact',
+    ],
+    // Q12
+    [
+      'Rarely or never',
+      'Some peers I worry about',
+      'Most of their friends are concerning',
+      'Almost exclusively with peers I distrust',
+    ],
+    // Q13
+    [
+      'Very comfortable — talks openly',
+      'Sometimes shares',
+      'Rarely shares',
+      'Shuts down completely — will not engage',
+    ],
+    // Q14
+    [
+      'Consistently — always know',
+      'Most of the time',
+      'Often unsure',
+      'Rarely know where they are',
+    ],
+    // Q15
+    [
+      'Very supported — actively in touch with school / coaches',
+      'Some support',
+      'Limited support',
+      'Feel alone — no school or community contact',
+    ],
+    // Q16
+    [
+      'Yes, currently working with one',
+      'Reached out, exploring options',
+      'Considered but have not yet',
+      'No — would not know where to start',
+    ],
+    // Q17
+    [
+      'Rarely or never',
+      'Occasionally',
+      'Often — most weeks',
+      'Near-daily — running on empty',
+    ],
+    // Q18
+    [
+      'Very clear — written plan aligned with co-parent',
+      'Some idea, not detailed',
+      'Unsure what to do next',
+      'No plan at all',
+    ],
+    // Q19
+    [
+      'Owns mistakes consistently',
+      'Sometimes',
+      'Rarely',
+      'Never — blames others or denies',
+    ],
+    // Q20
+    [
+      'Strong routine — sleep, school, meals, activities',
+      'Some structure, gaps in places',
+      'Inconsistent',
+      'Little or no structure',
+    ],
+    // Q21
+    [
+      'Very confident — clear rules, no access, aligned messaging',
+      'Mostly confident',
+      'Unsure',
+      'Concerned — access, exposure, or mixed messages at home',
+    ],
+    // Q22
+    [
+      'Fully prepared',
+      'Somewhat prepared',
+      'Uncertain how to balance firm and supportive',
+      'Do not know where to begin',
+    ],
+    // Q23
+    [
+      'Rarely',
+      'Occasionally',
+      'Often',
+      'Constantly — affects sleep, work, or daily mood',
+    ],
+    // Q24
+    [
+      'Ready now — committed to act',
+      'Mostly ready',
+      'Hesitant',
+      'Stuck — do not know what to do',
+    ],
+  ],
+  es: [
+    // Q1
+    [
+      'Seguro que no',
+      'No estoy seguro, pero creo que no',
+      'Lo sospecho fuertemente',
+      'Confirmado o he visto evidencia directa',
+    ],
+    // Q2
+    [
+      'Nunca',
+      'Una o dos veces, aislado',
+      'Varias veces al mes',
+      'Semanalmente o más',
+    ],
+    // Q3
+    [
+      'No — abierto y honesto',
+      'A veces evasivo',
+      'Frecuentemente secretista o evasivo',
+      'Constantemente — no se abre en absoluto',
+    ],
+    // Q4
+    [
+      'Rara vez o nunca',
+      'Ocasionalmente',
+      'A menudo — la mayoría de los fines de semana',
+      'La mayor parte de su tiempo libre',
+    ],
+    // Q5
+    [
+      'Calmados — los desacuerdos se resuelven fácilmente',
+      'Tensión ocasional',
+      'Discusiones frecuentes',
+      'Gritos, portazos, casi a diario',
+    ],
+    // Q6
+    [
+      'Preparado — sé qué decir',
+      'Algo preparado',
+      'No sé cómo abordarlo',
+      'Lo evito — me angustia la conversación',
+    ],
+    // Q7
+    [
+      'Siempre consistentes',
+      'Casi siempre consistentes',
+      'Inconsistentes',
+      'Rara vez o nunca se aplican',
+    ],
+    // Q8
+    [
+      'Casi nunca',
+      'Ocasionalmente',
+      'A menudo — dudo la mayor parte del tiempo',
+      'Constantemente — paralizado por la duda',
+    ],
+    // Q9
+    [
+      'Sin cambios notables',
+      'Cambios leves',
+      'Cambios claros y frecuentes',
+      'Cambios dramáticos o casi a diario',
+    ],
+    // Q10
+    [
+      'No me preocupa',
+      'Levemente preocupado',
+      'Preocupación seria',
+      'Miedo activo — pierdo el sueño',
+    ],
+    // Q11
+    [
+      'Totalmente alineados — mismo criterio en reglas y tono',
+      'Mayormente alineados',
+      'En desacuerdo a menudo',
+      'Cada uno por su lado, o sin contacto con el co-padre',
+    ],
+    // Q12
+    [
+      'Rara vez o nunca',
+      'Algunos compañeros me preocupan',
+      'La mayoría de sus amigos son preocupantes',
+      'Casi exclusivamente con compañeros en los que no confío',
+    ],
+    // Q13
+    [
+      'Muy cómodo — habla abiertamente',
+      'A veces comparte',
+      'Rara vez comparte',
+      'Se cierra por completo — no se abre',
+    ],
+    // Q14
+    [
+      'Consistentemente — siempre sé',
+      'La mayor parte del tiempo',
+      'A menudo no estoy seguro',
+      'Rara vez sé dónde está',
+    ],
+    // Q15
+    [
+      'Muy apoyado — en contacto activo con la escuela / entrenadores',
+      'Algo de apoyo',
+      'Apoyo limitado',
+      'Me siento solo — sin contacto con la escuela ni la comunidad',
+    ],
+    // Q16
+    [
+      'Sí, trabajando con uno actualmente',
+      'He buscado, explorando opciones',
+      'Lo he considerado pero aún no',
+      'No — no sabría por dónde empezar',
+    ],
+    // Q17
+    [
+      'Rara vez o nunca',
+      'Ocasionalmente',
+      'A menudo — la mayoría de las semanas',
+      'Casi a diario — sin combustible',
+    ],
+    // Q18
+    [
+      'Muy claro — plan escrito alineado con el co-padre',
+      'Una idea, no detallada',
+      'No sé qué hacer',
+      'Sin plan alguno',
+    ],
+    // Q19
+    [
+      'Asume sus errores consistentemente',
+      'A veces',
+      'Rara vez',
+      'Nunca — culpa a otros o niega',
+    ],
+    // Q20
+    [
+      'Rutina sólida — sueño, escuela, comidas, actividades',
+      'Algo de estructura, con vacíos',
+      'Inconsistente',
+      'Poca o ninguna estructura',
+    ],
+    // Q21
+    [
+      'Muy seguro — reglas claras, sin acceso, mensaje alineado',
+      'Mayormente seguro',
+      'No estoy seguro',
+      'Preocupado — acceso, exposición o mensajes mixtos en casa',
+    ],
+    // Q22
+    [
+      'Totalmente preparado',
+      'Algo preparado',
+      'Inseguro de cómo equilibrar firmeza y apoyo',
+      'No sé por dónde empezar',
+    ],
+    // Q23
+    [
+      'Rara vez',
+      'Ocasionalmente',
+      'A menudo',
+      'Constantemente — me afecta el sueño, el trabajo o el ánimo',
+    ],
+    // Q24
+    [
+      'Listo ahora — comprometido a actuar',
+      'Mayormente listo',
+      'Vacilante',
+      'Atascado — no sé qué hacer',
+    ],
+  ],
 };
 
 // Backend always returns the 5 concern domains by their English names
@@ -99,6 +431,7 @@ export const SECTION_LABELS_BY_LANG: Record<
   Array<[string, string]>
 > = {
   en: [
+    ['urgentConcern', 'Urgent Concern Acknowledged'],
     ['headlineSummary', 'Headline Summary'],
     ['topImmediatePriorities', 'Top 3 Immediate Priorities'],
     ['keyPriorities', 'Key Priorities'],
@@ -108,6 +441,7 @@ export const SECTION_LABELS_BY_LANG: Record<
     ['encouragement', 'Encouragement & Direction'],
   ],
   es: [
+    ['urgentConcern', 'Preocupación urgente reconocida'],
     ['headlineSummary', 'Resumen inicial'],
     ['topImmediatePriorities', '3 Prioridades inmediatas'],
     ['keyPriorities', 'Prioridades clave'],
@@ -125,6 +459,7 @@ export const SECTION_MARKERS_BY_LANG: Record<
   Array<[string, string]>
 > = {
   en: [
+    ['urgentConcern', 'URGENT CONCERN ACKNOWLEDGED'],
     ['headlineSummary', 'HEADLINE SUMMARY'],
     ['topImmediatePriorities', 'TOP 3 IMMEDIATE PRIORITIES'],
     ['keyPriorities', 'KEY PRIORITIES'],
@@ -134,6 +469,7 @@ export const SECTION_MARKERS_BY_LANG: Record<
     ['encouragement', 'ENCOURAGEMENT AND DIRECTION'],
   ],
   es: [
+    ['urgentConcern', 'PREOCUPACIÓN URGENTE RECONOCIDA'],
     ['headlineSummary', 'RESUMEN INICIAL'],
     ['topImmediatePriorities', '3 PRIORIDADES INMEDIATAS'],
     ['keyPriorities', 'PRIORIDADES CLAVE'],
@@ -174,6 +510,12 @@ export type UIStrings = {
   actionPlanHeading: string;
   writingPlaceholder: string;
   languageLabel: string;
+  crisisHeading: string;
+  crisisIntro: string;
+  crisisLabel: string;
+  crisisPlaceholder: string;
+  crisisHint: (remaining: number) => string;
+  crisisSafetyNotice: string;
 };
 
 export const STRINGS: Record<Language, UIStrings> = {
@@ -215,6 +557,15 @@ export const STRINGS: Record<Language, UIStrings> = {
     actionPlanHeading: 'Action Plan',
     writingPlaceholder: 'Writing…',
     languageLabel: 'Language',
+    crisisHeading: 'Anything urgent we should know? (optional)',
+    crisisIntro:
+      'If something acute is happening — suspected fentanyl exposure, overdose, threats of self-harm, or violence at home — write a short note here. The plan will open with that concern and pin the right emergency resource. Skip this if it does not apply.',
+    crisisLabel: 'Urgent concern',
+    crisisPlaceholder:
+      'e.g. Found a pill press in the bedroom last week. Worried about fentanyl.',
+    crisisHint: (remaining) => `${remaining} characters left`,
+    crisisSafetyNotice:
+      'If your child is in immediate danger, call 911. For a suicide or mental-health crisis, call or text 988. For suspected overdose or poisoning, Poison Control: 1-800-222-1222.',
   },
   es: {
     title: 'Un plan claro y con los pies en la tierra, cuando más lo necesitas',
@@ -254,5 +605,14 @@ export const STRINGS: Record<Language, UIStrings> = {
     actionPlanHeading: 'Plan de acción',
     writingPlaceholder: 'Escribiendo…',
     languageLabel: 'Idioma',
+    crisisHeading: '¿Hay algo urgente que deberíamos saber? (opcional)',
+    crisisIntro:
+      'Si está pasando algo agudo — sospecha de fentanilo, sobredosis, amenazas de autolesión o violencia en casa — escribe una nota corta aquí. El plan abrirá con esa preocupación y fijará el recurso de emergencia correspondiente. Deja vacío si no aplica.',
+    crisisLabel: 'Preocupación urgente',
+    crisisPlaceholder:
+      'p. ej. Encontré una prensa de pastillas en su cuarto la semana pasada. Me preocupa el fentanilo.',
+    crisisHint: (remaining) => `Quedan ${remaining} caracteres`,
+    crisisSafetyNotice:
+      'Si tu hijo está en peligro inmediato, llama al 911. Para crisis suicida o de salud mental, llama o envía un mensaje al 988 (también atiende en español). Para sospecha de sobredosis o envenenamiento, Poison Control: 1-800-222-1222.',
   },
 };

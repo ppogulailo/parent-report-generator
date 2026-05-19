@@ -7,6 +7,7 @@ export interface DomainScores {
 }
 
 export interface ReportSections {
+  urgentConcern: string;
   headlineSummary: string;
   topImmediatePriorities: string;
   keyPriorities: string;

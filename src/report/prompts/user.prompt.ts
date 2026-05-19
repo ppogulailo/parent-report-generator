@@ -1,9 +1,10 @@
-import { QUESTIONS } from './questions';
-import { QUESTIONS_ES } from './questions.es';
+import { ANSWER_LABELS, QUESTIONS } from './questions';
+import { ANSWER_LABELS_ES, QUESTIONS_ES } from './questions.es';
 import { formatResourceDirectory } from './resources';
 import type { Language } from '../dto/generate-report.dto';
 
 export const SECTION_HEADERS_EN = [
+  'URGENT CONCERN ACKNOWLEDGED',
   'HEADLINE SUMMARY',
   'TOP 3 IMMEDIATE PRIORITIES',
   'KEY PRIORITIES',
@@ -14,6 +15,7 @@ export const SECTION_HEADERS_EN = [
 ] as const;
 
 export const SECTION_HEADERS_ES = [
+  'PREOCUPACIÓN URGENTE RECONOCIDA',
   'RESUMEN INICIAL',
   '3 PRIORIDADES INMEDIATAS',
   'PRIORIDADES CLAVE',
@@ -32,16 +34,18 @@ export function buildUserPrompt(
   topDomains: string[],
   responses?: number[],
   language: Language = 'en',
+  crisis?: string,
 ): string {
   return language === 'es'
-    ? buildUserPromptEs(domainScores, topDomains, responses)
-    : buildUserPromptEn(domainScores, topDomains, responses);
+    ? buildUserPromptEs(domainScores, topDomains, responses, crisis)
+    : buildUserPromptEn(domainScores, topDomains, responses, crisis);
 }
 
 function buildUserPromptEn(
   domainScores: Record<string, number>,
   topDomains: string[],
   responses?: number[],
+  crisis?: string,
 ): string {
   const scoreLines = [
     `- Immediate Safety & Urgency: ${domainScores['Immediate Safety & Urgency'].toFixed(2)}`,
@@ -55,10 +59,18 @@ function buildUserPromptEn(
 
   if (responses && responses.length === 24) {
     const concerns = responses
-      .map((val, i) => (val === 4 ? `- ${QUESTIONS[i]}` : null))
+      .map((val, i) =>
+        val === 4
+          ? `- ${QUESTIONS[i]}\n  Parent's answer: ${ANSWER_LABELS[i][3]}`
+          : null,
+      )
       .filter(Boolean);
     const strengths = responses
-      .map((val, i) => (val === 1 ? `- ${QUESTIONS[i]}` : null))
+      .map((val, i) =>
+        val === 1
+          ? `- ${QUESTIONS[i]}\n  Parent's answer: ${ANSWER_LABELS[i][0]}`
+          : null,
+      )
       .filter(Boolean);
 
     if (concerns.length > 0) {
@@ -69,7 +81,12 @@ function buildUserPromptEn(
     }
   }
 
-  const severity = classifySeverityEn(responses, domainScores);
+  const trimmedCrisis = (crisis ?? '').trim();
+  if (trimmedCrisis.length > 0) {
+    contextBlock += `\n\nURGENT CONCERN — parent flagged this in the optional crisis field (address it FIRST in an URGENT CONCERN ACKNOWLEDGED section above HEADLINE SUMMARY, then continue the rest of the plan at SERIOUS register):\n"${trimmedCrisis}"`;
+  }
+
+  const severity = classifySeverityEn(responses, domainScores, trimmedCrisis);
   const severityBlock = `\n\nSEVERITY LEVEL: ${severity.level}\n${severity.guidance}`;
 
   return `Domain Scores:
@@ -103,17 +120,18 @@ Reminders before you write:
 - TOP 3 IMMEDIATE PRIORITIES must be (in this order): (1) parent's own emotional regulation, (2) co-parent / caregiver alignment, (3) build the support group. The conversation with the child is NOT one of the top 3 priorities.
 - FIRST 72 HOURS PLAN sequencing is fixed: Day 1 = emotional regulation + co-parent alignment. Day 2 = build support group + gather information (soft search belongs here if secrecy or hidden use is indicated — done quietly, respectfully, with co-parent support, room left as found, evidence documented and removed as a clear boundary, not as punishment). Day 3 = prepare for the first real conversation — natural tone, not scripted lines.
 
-Generate a Parent Action Plan. Use EXACTLY these seven section headers, each on its own line, in this exact order, written in plain UPPERCASE text with no markdown (no #, no *, no numbering, no bold):
+Generate a Parent Action Plan. Use EXACTLY these ${trimmedCrisis.length > 0 ? 'eight' : 'seven'} section headers, each on its own line, in this exact order, written in plain UPPERCASE text with no markdown (no #, no *, no numbering, no bold):
 
-${SECTION_HEADERS_EN.join('\n')}
+${(trimmedCrisis.length > 0 ? SECTION_HEADERS_EN : SECTION_HEADERS_EN.filter((h) => h !== 'URGENT CONCERN ACKNOWLEDGED')).join('\n')}
 
-Place the body of each section on the lines immediately following its header. Do not add any other headers, titles, or preamble before HEADLINE SUMMARY.`;
+Place the body of each section on the lines immediately following its header. ${trimmedCrisis.length > 0 ? 'The URGENT CONCERN ACKNOWLEDGED section comes FIRST — open the plan by naming the specific urgent concern the parent supplied and pinning the matching emergency resource (988 Suicide & Crisis Lifeline for suicidality / self-harm, 911 + a local domestic-violence hotline for active violence in the home, Poison Control 1-800-222-1222 + naloxone / Narcan availability for suspected fentanyl or overdose, 911 for any immediate physical danger). Do this in 2–3 calm, direction-giving sentences — never alarmist. Then continue with HEADLINE SUMMARY.' : 'Do not add any other headers, titles, or preamble before HEADLINE SUMMARY. Do NOT emit an URGENT CONCERN ACKNOWLEDGED section — that section only appears when the parent supplies the optional crisis field.'}`;
 }
 
 function buildUserPromptEs(
   domainScores: Record<string, number>,
   topDomains: string[],
   responses?: number[],
+  crisis?: string,
 ): string {
   const scoreLines = [
     `- Immediate Safety & Urgency: ${domainScores['Immediate Safety & Urgency'].toFixed(2)}`,
@@ -127,10 +145,18 @@ function buildUserPromptEs(
 
   if (responses && responses.length === 24) {
     const concerns = responses
-      .map((val, i) => (val === 4 ? `- ${QUESTIONS_ES[i]}` : null))
+      .map((val, i) =>
+        val === 4
+          ? `- ${QUESTIONS_ES[i]}\n  Respuesta del padre: ${ANSWER_LABELS_ES[i][3]}`
+          : null,
+      )
       .filter(Boolean);
     const strengths = responses
-      .map((val, i) => (val === 1 ? `- ${QUESTIONS_ES[i]}` : null))
+      .map((val, i) =>
+        val === 1
+          ? `- ${QUESTIONS_ES[i]}\n  Respuesta del padre: ${ANSWER_LABELS_ES[i][0]}`
+          : null,
+      )
       .filter(Boolean);
 
     if (concerns.length > 0) {
@@ -141,7 +167,12 @@ function buildUserPromptEs(
     }
   }
 
-  const severity = classifySeverityEs(responses, domainScores);
+  const trimmedCrisis = (crisis ?? '').trim();
+  if (trimmedCrisis.length > 0) {
+    contextBlock += `\n\nPREOCUPACIÓN URGENTE — el padre marcó esto en el campo opcional de crisis (abórdalo PRIMERO en una sección PREOCUPACIÓN URGENTE RECONOCIDA arriba de RESUMEN INICIAL, luego continúa el resto del plan en registro GRAVE):\n"${trimmedCrisis}"`;
+  }
+
+  const severity = classifySeverityEs(responses, domainScores, trimmedCrisis);
   const severityBlock = `\n\nSEVERITY LEVEL: ${severity.level}\n${severity.guidance}`;
 
   return `Puntajes por dominio (nombres en inglés — no los traduzcas en la salida):
@@ -176,11 +207,11 @@ Recordatorios antes de escribir:
 - La secuencia del PLAN DE LAS PRIMERAS 72 HORAS es fija: Día 1 = regulación emocional + alineación con el co-padre. Día 2 = construir grupo de apoyo + reunir información (la soft search va aquí si hay secretismo o consumo oculto — en silencio, con respeto, con apoyo del co-padre, cuarto dejado como se encontró, evidencia documentada y retirada como límite claro, no como castigo). Día 3 = preparar la primera conversación real — tono natural, no líneas guionadas.
 - Escribe el plan completo en español natural, directo, con "tú". Los títulos oficiales de recursos ASAP quedan EN INGLÉS textual.
 
-Genera un Plan de Acción para Padres. Usa EXACTAMENTE estos siete encabezados de sección, cada uno en su propia línea, en este orden exacto, escritos en MAYÚSCULAS simples sin marcado (sin #, sin *, sin numeración antes, sin negrita):
+Genera un Plan de Acción para Padres. Usa EXACTAMENTE estos ${trimmedCrisis.length > 0 ? 'ocho' : 'siete'} encabezados de sección, cada uno en su propia línea, en este orden exacto, escritos en MAYÚSCULAS simples sin marcado (sin #, sin *, sin numeración antes, sin negrita):
 
-${SECTION_HEADERS_ES.join('\n')}
+${(trimmedCrisis.length > 0 ? SECTION_HEADERS_ES : SECTION_HEADERS_ES.filter((h) => h !== 'PREOCUPACIÓN URGENTE RECONOCIDA')).join('\n')}
 
-Coloca el cuerpo de cada sección en las líneas inmediatamente después de su encabezado. No añadas otros encabezados, títulos ni preámbulo antes de RESUMEN INICIAL.`;
+Coloca el cuerpo de cada sección en las líneas inmediatamente después de su encabezado. ${trimmedCrisis.length > 0 ? 'La sección PREOCUPACIÓN URGENTE RECONOCIDA va PRIMERO — abre el plan nombrando la preocupación urgente específica que el padre escribió y fijando el recurso de emergencia correspondiente (988 Suicide & Crisis Lifeline para ideación suicida / autolesión, 911 + línea local de violencia doméstica para violencia activa en casa, Poison Control 1-800-222-1222 + disponibilidad de naloxona / Narcan para sospecha de fentanilo o sobredosis, 911 para cualquier peligro físico inmediato). Hazlo en 2–3 oraciones calmadas y orientadas a la acción — nunca alarmistas. Luego continúa con RESUMEN INICIAL.' : 'No añadas otros encabezados, títulos ni preámbulo antes de RESUMEN INICIAL. NO emitas una sección PREOCUPACIÓN URGENTE RECONOCIDA — esa sección solo aparece cuando el padre llena el campo opcional de crisis.'}`;
 }
 
 type Severity = {
@@ -196,8 +227,9 @@ type SeverityEs = {
 function classifySeverityEn(
   responses: number[] | undefined,
   domainScores: Record<string, number>,
+  crisis?: string,
 ): Severity {
-  const tier = computeSeverityTier(responses, domainScores);
+  const tier = computeSeverityTier(responses, domainScores, crisis);
 
   if (tier === 'SERIOUS') {
     return {
@@ -223,8 +255,9 @@ function classifySeverityEn(
 function classifySeverityEs(
   responses: number[] | undefined,
   domainScores: Record<string, number>,
+  crisis?: string,
 ): SeverityEs {
-  const tier = computeSeverityTier(responses, domainScores);
+  const tier = computeSeverityTier(responses, domainScores, crisis);
 
   if (tier === 'SERIOUS') {
     return {
@@ -247,16 +280,31 @@ function classifySeverityEs(
   };
 }
 
-// Indices (0-based) of the five questions that map to the
-// Immediate Safety & Urgency domain — Q1, Q2, Q10, Q23, Q24.
-// Mirrors DOMAIN_MAP['Immediate Safety & Urgency'] in scoring/domain.map.ts.
-const SAFETY_QUESTION_INDICES = [0, 1, 9, 22, 23] as const;
+// Indices (0-based) of the three child-safety questions that drive the
+// severity gate: Q1 (certainty of use), Q2 (suspected frequency), Q10
+// (concern about driving / risky environments). Q23 (parent worry about
+// long-term consequences) and Q24 (parent readiness to act) still belong
+// to DOMAIN_MAP['Immediate Safety & Urgency'] for scoring and display, but
+// per Milestone 6 founder direction (2026-05-19) they are excluded from the
+// logic that *independently promotes* a report to SERIOUS — they reflect the
+// parent's internal state, not direct evidence of adolescent substance use
+// or immediate safety risk.
+const CHILD_SAFETY_INDICES = [0, 1, 9] as const;
 
 function computeSeverityTier(
   responses: number[] | undefined,
   domainScores: Record<string, number>,
+  crisis?: string,
 ): 'MILD' | 'MODERATE' | 'SERIOUS' {
-  const safety = domainScores['Immediate Safety & Urgency'] ?? 0;
+  // HARD ESCALATOR — any non-empty crisis input promotes the report to
+  // SERIOUS regardless of the 24 scores. A parent who completes a field
+  // labeled "urgent concerns" is by definition not in MILD territory.
+  if ((crisis ?? '').trim().length > 0) return 'SERIOUS';
+
+  const childSafetyVals = CHILD_SAFETY_INDICES.map((i) => responses?.[i] ?? 2);
+  const childSafetyAvg =
+    childSafetyVals.reduce((a, b) => a + b, 0) / childSafetyVals.length;
+
   const avg =
     Object.values(domainScores).reduce((a, b) => a + b, 0) /
     Math.max(Object.values(domainScores).length, 1);
@@ -264,16 +312,22 @@ function computeSeverityTier(
   const fours = responses?.filter((r) => r === 4).length ?? 0;
   const threes = responses?.filter((r) => r === 3).length ?? 0;
   // SERIOUS via the fours-count pathway requires at least one of those fours
-  // to be in the safety domain. This prevents promotion when 3+ fours land
-  // entirely on conflict / household / co-parent questions with no actual
-  // use or safety signal — a household-stress case that belongs in MODERATE.
-  const safetyFours = (responses ?? []).filter(
+  // to be in the child-safety subset. This prevents promotion when 3+ fours
+  // land entirely on conflict / household / co-parent / parent-internal
+  // questions with no actual use or safety signal — a household-stress case
+  // that belongs in MODERATE.
+  const childSafetyFours = (responses ?? []).filter(
     (v, i) =>
-      v === 4 && (SAFETY_QUESTION_INDICES as readonly number[]).includes(i),
+      v === 4 && (CHILD_SAFETY_INDICES as readonly number[]).includes(i),
   ).length;
 
-  if (safety >= 3 || avg >= 2.75 || (fours >= 3 && safetyFours >= 1))
+  if (
+    childSafetyAvg >= 3 ||
+    avg >= 2.75 ||
+    (fours >= 3 && childSafetyFours >= 1)
+  )
     return 'SERIOUS';
-  if (fours === 0 && threes <= 2 && avg <= 2.0 && safety < 2.0) return 'MILD';
+  if (fours === 0 && threes <= 2 && avg <= 2.0 && childSafetyAvg < 2.0)
+    return 'MILD';
   return 'MODERATE';
 }
