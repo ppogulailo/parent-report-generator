@@ -961,6 +961,46 @@ test('outgoing user prompt carries the pass-#7 reminders', async ({
   expect(userContent).not.toMatch(/\+ Article of Action "/);
 });
 
+// ─── Founder review pass #8 ───────────────────────────────────────────────────
+
+test('SYSTEM_PROMPT pins "Creating a Healthy Home Environment" as AUXILIARY (not Essential)', () => {
+  // The data must classify it as Auxiliary.
+  const essentialTitles = ESSENTIAL_WORKSHOPS.map((w) => w.title);
+  const auxiliaryTitles = AUXILIARY_WORKSHOPS.map((w) => w.title);
+  expect(essentialTitles).not.toContain(
+    'Creating a Healthy Home Environment – The Power of Structure and Routine',
+  );
+  expect(auxiliaryTitles).toContain(
+    'Creating a Healthy Home Environment – The Power of Structure and Routine',
+  );
+
+  // The system prompt must call this out explicitly — parallel to the
+  // existing "Building a Support Network is Essential, not Auxiliary"
+  // call-out — so the model stops mislabeling it. The call-out names the
+  // common confusion with the Essential Workshop "Creating Your
+  // Personalized Prevention Plan".
+  expect(SYSTEM_PROMPT).toMatch(
+    /"Creating a Healthy Home Environment – The Power of Structure and Routine" is an AUXILIARY Workshop, not Essential/,
+  );
+  expect(SYSTEM_PROMPT).toMatch(
+    /Creating Your Personalized Prevention Plan/,
+  );
+});
+
+test('outgoing user prompt carries the pass-#8 CHHE-is-Auxiliary reminder', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  expect(userContent).toMatch(
+    /"Creating a Healthy Home Environment – The Power of Structure and Routine" is AUXILIARY, never Essential/,
+  );
+});
+
 // ─── Claude Failure ───────────────────────────────────────────────────────────
 
 test('returns 500 when OpenAI API fails', async () => {
