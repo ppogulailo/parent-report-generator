@@ -446,3 +446,26 @@ test('Milestone 6 (ES): SYSTEM_PROMPT (EN) and SYSTEM_PROMPT_ES both flag the UR
   // ES: emits the URGENT header "Si y SOLO si ese bloque está presente".
   expect(SYSTEM_PROMPT_ES).toMatch(/Si y SOLO si ese bloque está presente/);
 });
+
+// ─── Milestone 6 polish (ES) ────────────────────────────────────────────────
+
+test('Milestone 6 polish (ES): URGENT section has ANTI-HEDGE close rule in Spanish', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/ANTI-HEDGE en el cierre \(REGLA DURA\)/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/cuando te sientas listo/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/si te sientes lo suficientemente seguro/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/La acción es ahora\./);
+});
+
+test('Milestone 6 polish (ES): PERSONALIZACIÓN has ANSWER-LABEL VERBATIM BAN', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/PROHIBICIÓN DE CITAR LA ETIQUETA TEXTUAL/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/opciones del formulario de intake/);
+  // Concrete BAD example (Spanish-localized Q17 score-4 label) must be cited.
+  expect(SYSTEM_PROMPT_ES).toMatch(/Casi a diario — sin combustible/);
+  // Concrete GOOD example must follow.
+  expect(SYSTEM_PROMPT_ES).toMatch(/el agotamiento casi diario que describiste/);
+});
+
+test('Milestone 6 polish (ES): extended disclaimer ban (CYA hedges) in Spanish', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/no podemos garantizar/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/cada situación es distinta/);
+});
