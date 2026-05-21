@@ -395,6 +395,32 @@ test('English UI keeps English domain labels', async ({ page }) => {
   await expect(page.getByText('Household Structure')).toBeVisible();
 });
 
+test('switching ES→EN after a Spanish report resets state to fresh EN form', async ({
+  page,
+}) => {
+  await gotoLang(page, 'es');
+  await stubStream(page, 'es');
+  await page
+    .getByRole('button', { name: 'Llenar con respuestas de ejemplo' })
+    .click();
+  await page.getByRole('button', { name: 'Generar plan de acción' }).click();
+  await expect(page.getByText('Tu plan está listo.')).toBeVisible({
+    timeout: 10000,
+  });
+
+  // Switch to English via the language pill (soft navigation).
+  await page.locator('.lang-pill', { hasText: 'EN' }).click();
+  await expect(page).toHaveURL(/\/en\/?$/);
+  await page.waitForFunction(
+    () => document.documentElement.getAttribute('data-hydrated') === 'true',
+  );
+
+  // State must be fully reset — no stale report, counter back to 0.
+  await expect(page.getByText('Answered 0 of 24')).toBeVisible();
+  await expect(page.getByText('Your plan is ready.')).not.toBeVisible();
+  await expect(page.locator('.results')).not.toBeVisible();
+});
+
 test('backend failure renders the retry error state', async ({ page }) => {
   await page.route('**/api/report/stream', (route) => {
     route.fulfill({

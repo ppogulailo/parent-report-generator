@@ -17,5 +17,5 @@ export default async function Page({
   if (!SUPPORTED.includes(lang as SupportedLang)) {
     redirect('/en');
   }
-  return <PageClient language={lang as SupportedLang} />;
+  return <PageClient key={lang} language={lang as SupportedLang} />;
 }
