@@ -257,11 +257,15 @@ test('SYSTEM_PROMPT reflects Matthew refinements', () => {
 
   // 2. Priority order: regulation → alignment → support → THEN conversation.
   // Anchor on the numbered bullet headers so unrelated in-prompt mentions
-  // of these phrases (e.g. routing rules referring to "BUILD THE SUPPORT GROUP")
-  // do not shadow the actual section anchors.
+  // of these phrases (e.g. routing rules referring to the support-group bullet)
+  // do not shadow the actual section anchors. Pass #9 (2026-05-27) renamed
+  // TOP 3 #3 from "BUILD THE SUPPORT GROUP" to "BUILD YOUR PERSONAL SUPPORT
+  // GROUP" per founder direction.
   const regIdx = SYSTEM_PROMPT.indexOf('1. PARENT EMOTIONAL REGULATION');
   const alignIdx = SYSTEM_PROMPT.indexOf('2. CO-PARENT / CAREGIVER ALIGNMENT');
-  const supportIdx = SYSTEM_PROMPT.indexOf('3. BUILD THE SUPPORT GROUP');
+  const supportIdx = SYSTEM_PROMPT.indexOf(
+    '3. BUILD YOUR PERSONAL SUPPORT GROUP',
+  );
   expect(regIdx).toBeGreaterThan(-1);
   expect(alignIdx).toBeGreaterThan(regIdx);
   expect(supportIdx).toBeGreaterThan(alignIdx);
@@ -289,12 +293,13 @@ test('SYSTEM_PROMPT reflects Matthew refinements', () => {
     /BEFORE the initial conversation|before the initial conversation/i,
   );
 
-  // 4. 72-hour plan sequencing
+  // 4. 72-hour plan sequencing — pass #9 renamed the DAY 2 anchor to add
+  // BUILD YOUR PERSONAL SUPPORT GROUP + the REVIEW RESOURCES requirement.
   const d1 = SYSTEM_PROMPT.indexOf(
     'DAY 1 — EMOTIONAL REGULATION + CO-PARENT ALIGNMENT',
   );
   const d2 = SYSTEM_PROMPT.indexOf(
-    'DAY 2 — BUILD THE SUPPORT GROUP + GATHER INFORMATION',
+    'DAY 2 — BUILD YOUR PERSONAL SUPPORT GROUP + GATHER INFORMATION + REVIEW RESOURCES',
   );
   const d3 = SYSTEM_PROMPT.indexOf('DAY 3 — PREPARE FOR THE CONVERSATION');
   expect(d1).toBeGreaterThan(-1);
@@ -418,25 +423,31 @@ test('resource directory module exposes the correct counts', () => {
   // Pass #7 narrowed the approved discussion-group set to two: M&I and SR.
   // The Articles-of-Action data array stays at 16 (for historical / topical
   // reference) but is no longer rendered into the parent-facing directory.
+  // Pass #9 (2026-05-27): dropped the hallucinated "Creating Your Personalized
+  // Prevention Plan" from ESSENTIAL_WORKSHOPS and added a hard rule banning
+  // both that title and the real-but-excluded "Creating Your Personal
+  // Prevention Program" from plan output. Essential count drops 5 → 4.
   expect(ARTICLES_OF_ACTION).toHaveLength(16);
   expect(DISCUSSION_GROUPS).toHaveLength(2);
   expect(DISCUSSION_GROUPS).toEqual([
     'Monitoring and Intervention',
     'Sustaining Recovery',
   ]);
-  expect(ESSENTIAL_WORKSHOPS).toHaveLength(5);
+  expect(ESSENTIAL_WORKSHOPS).toHaveLength(4);
   expect(AUXILIARY_WORKSHOPS).toHaveLength(20);
 });
 
-test('Essential Workshops list matches founder canon', () => {
+test('Essential Workshops list matches founder canon (post pass #9)', () => {
   const titles = ESSENTIAL_WORKSHOPS.map((w) => w.title);
   expect(titles).toEqual([
-    'Creating Your Personalized Prevention Plan',
     'Effective Communication: Building Trust and Engagement with Your Teen',
     'Monitoring and Intervention: Knowing When and How to Step In',
     'Building a Support Network',
     'Sustaining Recovery: Parental Oversight and Support for Adolescents Post-Treatment',
   ]);
+  // Both banned prevention-workshop titles must NOT appear in the citable list.
+  expect(titles).not.toContain('Creating Your Personalized Prevention Plan');
+  expect(titles).not.toContain('Creating Your Personal Prevention Program');
 });
 
 test('Building a Support Network is Essential, not Auxiliary', () => {
@@ -467,11 +478,12 @@ test('outgoing user prompt ships only the approved parent-facing resources', asy
   const userContent: string = captured.body.messages[1].content;
 
   // Directory header — Articles-of-Action section is GONE (pass #7), and the
-  // discussion-group list is narrowed to the 2 approved groups.
+  // discussion-group list is narrowed to the 2 approved groups. Pass #9
+  // (2026-05-27) dropped Essential from 5 → 4.
   expect(userContent).toContain('ASAP RESOURCE DIRECTORY');
   expect(userContent).not.toContain('Articles of Action (16 total');
   expect(userContent).toContain('ASAP Discussion Groups (2 approved');
-  expect(userContent).toContain('Essential Workshops (5 total');
+  expect(userContent).toContain('Essential Workshops (4 total');
   expect(userContent).toContain('Auxiliary Workshops (20 total');
 
   // The directory must NOT render any Article-of-Action title verbatim
@@ -585,8 +597,11 @@ test('SYSTEM_PROMPT has explicit TRUSTED ADULT hard rule banning generic recomme
   expect(SYSTEM_PROMPT).toMatch(/engaging schools|school engagement/i);
 });
 
-test('BUILD THE SUPPORT GROUP bullet is exclusively about the parent', () => {
-  const start = SYSTEM_PROMPT.indexOf('3. BUILD THE SUPPORT GROUP');
+test('BUILD YOUR PERSONAL SUPPORT GROUP bullet is exclusively about the parent', () => {
+  // Pass #9 renamed TOP 3 #3 from "BUILD THE SUPPORT GROUP" to
+  // "BUILD YOUR PERSONAL SUPPORT GROUP" and standardized the canonical
+  // opening line per founder direction.
+  const start = SYSTEM_PROMPT.indexOf('3. BUILD YOUR PERSONAL SUPPORT GROUP');
   const end = SYSTEM_PROMPT.indexOf(
     'The conversation with the child comes AFTER these three',
   );
@@ -597,6 +612,17 @@ test('BUILD THE SUPPORT GROUP bullet is exclusively about the parent', () => {
   // The bullet must explicitly scope itself to the parent.
   expect(bullet).toMatch(/EXCLUSIVELY about the parent/i);
   expect(bullet).toMatch(/NEVER ABOUT THE CHILD/i);
+
+  // Canonical opening line must appear verbatim.
+  expect(bullet).toContain(
+    "BUILD YOUR PERSONAL SUPPORT GROUP — Join and actively post in the 'Monitoring and Intervention discussion group.'",
+  );
+  expect(bullet).toContain('invaluable source of shared experience');
+
+  // The growth-with-severity list of who may join over time.
+  expect(bullet).toMatch(/GROW WITH SEVERITY/);
+  expect(bullet).toMatch(/school staff/);
+  expect(bullet).toMatch(/therapists/);
 
   // Banned child-network phrasings must be called out as banned.
   expect(bullet).toMatch(/surrounding the child with trusted adults/i);
@@ -611,11 +637,12 @@ test('BUILD THE SUPPORT GROUP bullet is exclusively about the parent', () => {
 
 test('CO-PARENT / DAY 1 / DAY 2 no longer rely on "trusted adult" as a co-parent surrogate', () => {
   // TOP 3 #2 uses the family-side phrasing instead of "trusted adult".
+  // Pass #9 renamed TOP 3 #3 to "BUILD YOUR PERSONAL SUPPORT GROUP".
   const coParentStart = SYSTEM_PROMPT.indexOf(
     '2. CO-PARENT / CAREGIVER ALIGNMENT',
   );
   const coParentEnd = SYSTEM_PROMPT.indexOf(
-    '3. BUILD THE SUPPORT GROUP',
+    '3. BUILD YOUR PERSONAL SUPPORT GROUP',
     coParentStart,
   );
   const coParent = SYSTEM_PROMPT.slice(coParentStart, coParentEnd);
@@ -628,7 +655,7 @@ test('CO-PARENT / DAY 1 / DAY 2 no longer rely on "trusted adult" as a co-parent
     'DAY 1 — EMOTIONAL REGULATION + CO-PARENT ALIGNMENT',
   );
   const d1End = SYSTEM_PROMPT.indexOf(
-    'DAY 2 — BUILD THE SUPPORT GROUP + GATHER INFORMATION',
+    'DAY 2 — BUILD YOUR PERSONAL SUPPORT GROUP + GATHER INFORMATION + REVIEW RESOURCES',
   );
   const d1 = SYSTEM_PROMPT.slice(d1Start, d1End);
   expect(d1).not.toMatch(/\(or trusted adult\)/i);
@@ -636,13 +663,16 @@ test('CO-PARENT / DAY 1 / DAY 2 no longer rely on "trusted adult" as a co-parent
 
   // DAY 2 must NOT start with "Identify one trusted adult to call".
   const d2Start = SYSTEM_PROMPT.indexOf(
-    'DAY 2 — BUILD THE SUPPORT GROUP + GATHER INFORMATION',
+    'DAY 2 — BUILD YOUR PERSONAL SUPPORT GROUP + GATHER INFORMATION + REVIEW RESOURCES',
   );
   const d2End = SYSTEM_PROMPT.indexOf('DAY 3 — PREPARE FOR THE CONVERSATION');
   const d2 = SYSTEM_PROMPT.slice(d2Start, d2End);
   expect(d2).not.toMatch(/Identify one trusted adult to call/i);
   // DAY 2 must explicitly call out M&I as the peer-support step.
   expect(d2).toMatch(/Monitoring and Intervention discussion group/);
+  // DAY 2 must include the REVIEW RESOURCES bullet directive (pass #9).
+  expect(d2).toMatch(/REVIEW RESOURCES BEFORE THE CONVERSATION/);
+  expect(d2).toMatch(/Auxiliary Workshop/);
 });
 
 test('outgoing user prompt carries the pass-#4 reminders', async ({
@@ -663,10 +693,11 @@ test('outgoing user prompt carries the pass-#4 reminders', async ({
   expect(userContent).toMatch(/TRUSTED ADULT/);
   expect(userContent).toMatch(/banned generic/i);
 
-  // BUILD THE SUPPORT GROUP scoping reminder is present.
+  // BUILD YOUR PERSONAL SUPPORT GROUP scoping reminder is present.
   expect(userContent).toMatch(
     /EXCLUSIVELY about the parent['’]s own peer support/i,
   );
+  expect(userContent).toMatch(/BUILD YOUR PERSONAL SUPPORT GROUP/);
 });
 
 // ─── Founder review pass #5 ───────────────────────────────────────────────────
@@ -682,21 +713,41 @@ test('SYSTEM_PROMPT has NO PLACEHOLDERS hard rule with banned placeholder phrase
   expect(SYSTEM_PROMPT).toMatch(/literal output|never a referenced label/i);
 });
 
-test('SYSTEM_PROMPT codifies Essential vs Auxiliary workshop categories', () => {
-  // Both categories must be named with their counts.
-  expect(SYSTEM_PROMPT).toMatch(/5 Essential Workshops/);
+test('SYSTEM_PROMPT codifies Essential vs Auxiliary workshop categories (post pass #9)', () => {
+  // Both categories must be named with their counts. Pass #9 dropped Essential
+  // 5 → 4 (removed "Creating Your Personalized Prevention Plan" — hallucinated).
+  expect(SYSTEM_PROMPT).toMatch(/4 total — citable in plan output/);
   expect(SYSTEM_PROMPT).toMatch(/20 Auxiliary Workshops/);
-  // The 5 Essential titles must all appear by exact name.
-  expect(SYSTEM_PROMPT).toContain('Creating Your Personalized Prevention Plan');
+  // The 4 citable Essential titles must all appear by exact name.
   expect(SYSTEM_PROMPT).toContain(
     'Effective Communication: Building Trust and Engagement with Your Teen',
   );
   expect(SYSTEM_PROMPT).toContain(
     'Monitoring and Intervention: Knowing When and How to Step In',
   );
+  expect(SYSTEM_PROMPT).toContain('Building a Support Network');
   expect(SYSTEM_PROMPT).toContain(
     'Sustaining Recovery: Parental Oversight and Support for Adolescents Post-Treatment',
   );
+  // Both banned prevention-workshop titles must still appear in the prompt
+  // (inside the BANNED PREVENTION WORKSHOP TITLES hard rule) — but every
+  // mention must sit inside a banning context.
+  const bannedTitles = [
+    'Creating Your Personalized Prevention Plan',
+    'Creating Your Personal Prevention Program',
+  ];
+  for (const title of bannedTitles) {
+    let from = 0;
+    while (from < SYSTEM_PROMPT.length) {
+      const i = SYSTEM_PROMPT.indexOf(title, from);
+      if (i === -1) break;
+      const window = SYSTEM_PROMPT.slice(Math.max(0, i - 500), i + 500);
+      expect(window).toMatch(
+        /BANNED|banned|hallucinated|excluded|prohibit|do not cite|Do NOT|Never cite|never reference/i,
+      );
+      from = i + 1;
+    }
+  }
   // BSN is classified as Essential, not Auxiliary.
   expect(SYSTEM_PROMPT).toMatch(/"Building a Support Network" is an ESSENTIAL/);
   // The citation label format is taught.
@@ -734,8 +785,8 @@ test('outgoing user prompt carries the pass-#5 directory and reminders', async (
   const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
   const userContent: string = captured.body.messages[1].content;
 
-  // Essential Workshops list ships in the directory.
-  expect(userContent).toContain('Essential Workshops (5 total');
+  // Essential Workshops list ships in the directory (pass #9 dropped 5 → 4).
+  expect(userContent).toContain('Essential Workshops (4 total');
   expect(userContent).toContain('Auxiliary Workshops (20 total');
 
   // NO PLACEHOLDERS reminder is present.
@@ -786,8 +837,9 @@ test('SOFT SEARCH block, WHAT TO AVOID, and DAY 2 all include backpack + canonic
   );
 
   // DAY 2 bullet must require the canonical two-sentence line in the soft-search bullet.
+  // Pass #9 renamed the DAY 2 anchor.
   const d2Start = SYSTEM_PROMPT.indexOf(
-    'DAY 2 — BUILD THE SUPPORT GROUP + GATHER INFORMATION',
+    'DAY 2 — BUILD YOUR PERSONAL SUPPORT GROUP + GATHER INFORMATION + REVIEW RESOURCES',
   );
   const d2End = SYSTEM_PROMPT.indexOf('DAY 3 — PREPARE FOR THE CONVERSATION');
   expect(d2Start).toBeGreaterThan(-1);
@@ -988,13 +1040,10 @@ test('SYSTEM_PROMPT pins "Creating a Healthy Home Environment" as AUXILIARY (not
 
   // The system prompt must call this out explicitly — parallel to the
   // existing "Building a Support Network is Essential, not Auxiliary"
-  // call-out — so the model stops mislabeling it. The call-out names the
-  // common confusion with the Essential Workshop "Creating Your
-  // Personalized Prevention Plan".
+  // call-out — so the model stops mislabeling it.
   expect(SYSTEM_PROMPT).toMatch(
     /"Creating a Healthy Home Environment – The Power of Structure and Routine" is an AUXILIARY Workshop, not Essential/,
   );
-  expect(SYSTEM_PROMPT).toMatch(/Creating Your Personalized Prevention Plan/);
 });
 
 test('outgoing user prompt carries the pass-#8 CHHE-is-Auxiliary reminder', async ({
@@ -1350,4 +1399,148 @@ test('Milestone 6 polish: extended disclaimer ban (CYA hedges)', () => {
   // to the original two.
   expect(SYSTEM_PROMPT).toMatch(/we cannot guarantee/);
   expect(SYSTEM_PROMPT).toMatch(/every situation is different/);
+});
+
+// ─── Founder review pass #9 (2026-05-27) ─────────────────────────────────────
+
+test('Pass #9: SYSTEM_PROMPT pairs consequences with rewards as a hard rule', () => {
+  expect(SYSTEM_PROMPT).toMatch(/REWARDS PAIRED WITH CONSEQUENCES/);
+  // Canonical phrasings the model is told to use.
+  expect(SYSTEM_PROMPT).toMatch(/rules, rewards, and consequences/);
+  expect(SYSTEM_PROMPT).toMatch(
+    /clear expectations, rewards, and consequences/,
+  );
+  // Banned bullets that drop "rewards" must be called out explicitly.
+  expect(SYSTEM_PROMPT).toMatch(/set clear consequences/);
+  expect(SYSTEM_PROMPT).toMatch(/enforce consequences consistently/);
+  // The rule must be scoped to every report / every tier.
+  expect(SYSTEM_PROMPT).toMatch(
+    /REWARDS PAIRED WITH CONSEQUENCES \(HARD RULE, every report, every tier/,
+  );
+});
+
+test('Pass #9: SYSTEM_PROMPT bans "pills" in favor of "unknown substance"', () => {
+  expect(SYSTEM_PROMPT).toMatch(/UNKNOWN SUBSTANCE — NEVER "PILLS"/);
+  // The banned exact phrases the founder cited.
+  expect(SYSTEM_PROMPT).toContain(
+    "You found pills in your child's backpack",
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    "You found an unknown substance in your child's backpack",
+  );
+  // The rule must explain WHY (2026 substance mix).
+  expect(SYSTEM_PROMPT).toMatch(/fentanyl-laced pressed pills/);
+  expect(SYSTEM_PROMPT).toMatch(/powders, counterfeit prescriptions/);
+  // The exception for the literal Poison Control / pressed-pill medical-resource framing.
+  expect(SYSTEM_PROMPT).toMatch(/pressed-pill ingestion/);
+});
+
+test('Pass #9: EMOTIONAL REGULATION FIRST applies to every severity tier', () => {
+  expect(SYSTEM_PROMPT).toMatch(/EMOTIONAL REGULATION FIRST — EVERY TIER/);
+  // The rule must enumerate every tier.
+  expect(SYSTEM_PROMPT).toMatch(/MILD, MODERATE, SERIOUS/);
+  // Each severity block must explicitly carry the rule.
+  const mildIdx = SYSTEM_PROMPT.indexOf('MILD — mostly 1s and 2s');
+  const moderateIdx = SYSTEM_PROMPT.indexOf('MODERATE — a mix');
+  const seriousIdx = SYSTEM_PROMPT.indexOf(
+    'SERIOUS — multiple 4s, high Immediate Safety',
+  );
+  expect(mildIdx).toBeGreaterThan(-1);
+  expect(moderateIdx).toBeGreaterThan(mildIdx);
+  expect(seriousIdx).toBeGreaterThan(moderateIdx);
+  const mildBlock = SYSTEM_PROMPT.slice(mildIdx, moderateIdx);
+  const moderateBlock = SYSTEM_PROMPT.slice(moderateIdx, seriousIdx);
+  const seriousBlock = SYSTEM_PROMPT.slice(
+    seriousIdx,
+    SYSTEM_PROMPT.indexOf('SERIOUS — INTERVENTION DEPTH', seriousIdx),
+  );
+  expect(mildBlock).toMatch(/EMOTIONAL REGULATION FIRST/);
+  expect(moderateBlock).toMatch(/EMOTIONAL REGULATION FIRST/);
+  expect(seriousBlock).toMatch(/EMOTIONAL REGULATION FIRST/);
+});
+
+test('Pass #9: REVIEW RESOURCES BEFORE THE CONVERSATION applies to every tier', () => {
+  expect(SYSTEM_PROMPT).toMatch(/REVIEW RESOURCES BEFORE THE CONVERSATION/);
+  // The rule must be scoped universal.
+  expect(SYSTEM_PROMPT).toMatch(
+    /REVIEW RESOURCES BEFORE THE CONVERSATION \(HARD RULE, every report, every tier/,
+  );
+  // The phrasing pattern the model is told to use.
+  expect(SYSTEM_PROMPT).toMatch(
+    /Having the information in your head means you respond from facts, not fear/,
+  );
+  // DAY 2 in the OUTPUT STRUCTURE must include the resource-review bullet directive.
+  const d2Start = SYSTEM_PROMPT.indexOf(
+    'DAY 2 — BUILD YOUR PERSONAL SUPPORT GROUP + GATHER INFORMATION + REVIEW RESOURCES',
+  );
+  const d2End = SYSTEM_PROMPT.indexOf('DAY 3 — PREPARE FOR THE CONVERSATION');
+  expect(d2Start).toBeGreaterThan(-1);
+  const d2Block = SYSTEM_PROMPT.slice(d2Start, d2End);
+  expect(d2Block).toMatch(/REVIEW RESOURCES BEFORE THE CONVERSATION/);
+});
+
+test('Pass #9: BUILD YOUR PERSONAL SUPPORT GROUP canonical wording', () => {
+  // Section anchor uses the new name.
+  expect(SYSTEM_PROMPT).toMatch(/3\. BUILD YOUR PERSONAL SUPPORT GROUP/);
+  // Old name no longer used as the canonical bullet anchor (mentions inside
+  // explanatory copy are allowed, but no leading "3. BUILD THE SUPPORT GROUP"
+  // remains).
+  expect(SYSTEM_PROMPT).not.toMatch(/3\. BUILD THE SUPPORT GROUP/);
+  // The canonical verbatim opening line.
+  expect(SYSTEM_PROMPT).toContain(
+    "BUILD YOUR PERSONAL SUPPORT GROUP — Join and actively post in the 'Monitoring and Intervention discussion group.'",
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    'Connecting with other parents facing similar challenges',
+  );
+  expect(SYSTEM_PROMPT).toContain('invaluable source of shared experience');
+  // The growth-with-severity list.
+  expect(SYSTEM_PROMPT).toMatch(/GROW WITH SEVERITY/);
+  expect(SYSTEM_PROMPT).toMatch(/school staff \(teachers, counselors/);
+  expect(SYSTEM_PROMPT).toMatch(/doctors/);
+  expect(SYSTEM_PROMPT).toMatch(/community resources/);
+});
+
+test('Pass #9: BANNED PREVENTION WORKSHOP TITLES — both names banned', () => {
+  expect(SYSTEM_PROMPT).toMatch(/BANNED PREVENTION WORKSHOP TITLES/);
+  // Both titles must appear ONLY inside banning context.
+  const bannedTitles = [
+    'Creating Your Personalized Prevention Plan',
+    'Creating Your Personal Prevention Program',
+  ];
+  for (const title of bannedTitles) {
+    let from = 0;
+    let occurrences = 0;
+    while (from < SYSTEM_PROMPT.length) {
+      const i = SYSTEM_PROMPT.indexOf(title, from);
+      if (i === -1) break;
+      occurrences++;
+      const window = SYSTEM_PROMPT.slice(Math.max(0, i - 500), i + 500);
+      expect(window).toMatch(
+        /BANNED|banned|hallucinated|excluded|prohibit|do not|Do NOT|Never cite|never reference|never recommend|never mention/i,
+      );
+      from = i + 1;
+    }
+    expect(occurrences).toBeGreaterThan(0);
+  }
+});
+
+test('Pass #9: outgoing user prompt carries the new reminders', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+
+  // Five new reminder bullets ship in the EN user prompt.
+  expect(userContent).toMatch(/BANNED PREVENTION WORKSHOP TITLES/);
+  expect(userContent).toMatch(/REWARDS PAIRED WITH CONSEQUENCES/);
+  expect(userContent).toMatch(/UNKNOWN SUBSTANCE — NEVER "PILLS"/);
+  expect(userContent).toMatch(/EMOTIONAL REGULATION FIRST — EVERY TIER/);
+  expect(userContent).toMatch(/REVIEW RESOURCES BEFORE THE CONVERSATION/);
+  expect(userContent).toMatch(/BUILD YOUR PERSONAL SUPPORT GROUP/);
+  // The Essential Workshop count in the directory is now 4.
+  expect(userContent).toContain('4 citable total:');
 });

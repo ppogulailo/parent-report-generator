@@ -21,12 +21,14 @@ export const ARTICLES_OF_ACTION: string[] = [
   'The School Resource Officer (SRO)',
 ];
 
+// Founder review pass #9 (2026-05-27): "Creating Your Personalized Prevention
+// Plan" was a hallucinated title (never an actual workshop). The real workshop
+// is "Creating Your Personal Prevention Program" — but per founder direction
+// it is NOT recommended or referenced inside Parent Action Plan output for
+// separate methodological reasons. Both titles are banned from the output via
+// the BANNED PREVENTION WORKSHOP TITLES hard rule in system.prompt.ts; the
+// Essential Workshops list drops from 5 → 4.
 export const ESSENTIAL_WORKSHOPS: Array<{ title: string; summary: string }> = [
-  {
-    title: 'Creating Your Personalized Prevention Plan',
-    summary:
-      'Building a tailored, family-specific plan for preventing and responding to substance use — the foundational ASAP playbook every parent works from.',
-  },
   {
     title:
       'Effective Communication: Building Trust and Engagement with Your Teen',
@@ -153,7 +155,7 @@ export const AUXILIARY_WORKSHOPS: Array<{ title: string; summary: string }> = [
 
 // Founder-approved discussion groups (pass #7): the plan may cite ONLY these two.
 // - "Monitoring and Intervention" — parent's primary peer-support group, every tier,
-//   used for BUILD THE SUPPORT GROUP in TOP 3 IMMEDIATE PRIORITIES.
+//   used for BUILD YOUR PERSONAL SUPPORT GROUP in TOP 3 IMMEDIATE PRIORITIES.
 // - "Sustaining Recovery" — professional-help adjunct, only inside the PROFESSIONAL
 //   HELP SEQUENCE alongside an approved professional-help recommendation.
 // Discussion groups previously listed (Effective Communication, Parent Support Forum,
@@ -181,13 +183,18 @@ ASAP Discussion Groups (2 approved — the ONLY discussion groups that may appea
 ${groups}
 
 Approved discussion group usage:
-- "Monitoring and Intervention discussion group" — the parent's own peer-support group. Use for BUILD THE SUPPORT GROUP in TOP 3 IMMEDIATE PRIORITIES in every tier (MILD, MODERATE, SERIOUS), and for parent isolation / exhaustion / weak co-parent alignment / active intervention work.
+- "Monitoring and Intervention discussion group" — the parent's own peer-support group. Use for BUILD YOUR PERSONAL SUPPORT GROUP in TOP 3 IMMEDIATE PRIORITIES in every tier (MILD, MODERATE, SERIOUS), and for parent isolation / exhaustion / weak co-parent alignment / active intervention work.
 - "Sustaining Recovery discussion group" — the professional-help adjunct. Use ONLY inside the PROFESSIONAL HELP SEQUENCE, in a paragraph that also references professional help, with the approved verbatim wording.
 
 BANNED discussion group names — never appear in the output under any circumstances: "Effective Communication discussion group", "Parent Support Forum discussion group", "Building a Support Network discussion group", "Creating Your Personal Prevention Program discussion group", or any other unapproved or invented group name. For communication, prevention, or child-network topics, cite a workshop — not a discussion group.
 
-Essential Workshops (5 total — core ASAP curriculum; cite by exact title as 'Essential Workshop "X"'):
+Essential Workshops (4 total — core ASAP curriculum; cite by exact title as 'Essential Workshop "X"'):
 ${essential}
+
+BANNED PREVENTION WORKSHOP TITLES — never appear in the plan in any form, regardless of severity. Both names are off-limits as a recommendation, citation, or passing reference:
+- "Creating Your Personalized Prevention Plan" (hallucinated title — not a real workshop)
+- "Creating Your Personal Prevention Program" (real workshop, but excluded from Parent Action Plan output per founder direction)
+If you would have routed to either of these for prevention planning, route to the Essential Workshop "Building a Support Network" (for the family-side network and school engagement) and/or the Essential Workshop "Effective Communication: Building Trust and Engagement with Your Teen" (for parent-child dialogue) instead.
 
 Auxiliary Workshops (20 total — topic-matched; pick by topic match, name the exact title as 'Auxiliary Workshop "X"'):
 ${workshops}`;

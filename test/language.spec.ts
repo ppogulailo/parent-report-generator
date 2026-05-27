@@ -469,3 +469,125 @@ test('Milestone 6 polish (ES): extended disclaimer ban (CYA hedges) in Spanish',
   expect(SYSTEM_PROMPT_ES).toMatch(/no podemos garantizar/);
   expect(SYSTEM_PROMPT_ES).toMatch(/cada situación es distinta/);
 });
+
+// ─── Founder review pass #9 (2026-05-27) — Spanish mirrors ──────────────────
+
+test('Pass #9 (ES): SYSTEM_PROMPT_ES pairs consequences with rewards', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/REWARDS PAIRED WITH CONSEQUENCES/);
+  // Canonical Spanish phrasings.
+  expect(SYSTEM_PROMPT_ES).toMatch(/reglas, recompensas y consecuencias/);
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /expectativas claras, recompensas y consecuencias/,
+  );
+  // Banned bullet examples in Spanish.
+  expect(SYSTEM_PROMPT_ES).toMatch(/establece consecuencias claras/);
+});
+
+test('Pass #9 (ES): SYSTEM_PROMPT_ES bans "pastillas" in favor of "sustancia desconocida"', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /UNKNOWN SUBSTANCE \/ SUSTANCIA DESCONOCIDA — NUNCA "PASTILLAS"/,
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'Encontraste pastillas en la mochila de tu hijo',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'Encontraste una sustancia desconocida en la mochila de tu hijo',
+  );
+  expect(SYSTEM_PROMPT_ES).toMatch(/pastillas prensadas con fentanilo/);
+});
+
+test('Pass #9 (ES): EMOTIONAL REGULATION FIRST mirrored in every Spanish tier', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/EMOTIONAL REGULATION FIRST/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/REGULACIÓN EMOCIONAL PRIMERO/);
+  const leveIdx = SYSTEM_PROMPT_ES.indexOf('LEVE — mayoría de 1 y 2');
+  const moderadoIdx = SYSTEM_PROMPT_ES.indexOf('MODERADO — mezcla de 2 y 3');
+  const graveIdx = SYSTEM_PROMPT_ES.indexOf('GRAVE — múltiples 4');
+  expect(leveIdx).toBeGreaterThan(-1);
+  expect(moderadoIdx).toBeGreaterThan(leveIdx);
+  expect(graveIdx).toBeGreaterThan(moderadoIdx);
+  const leveBlock = SYSTEM_PROMPT_ES.slice(leveIdx, moderadoIdx);
+  const moderadoBlock = SYSTEM_PROMPT_ES.slice(moderadoIdx, graveIdx);
+  const graveBlock = SYSTEM_PROMPT_ES.slice(
+    graveIdx,
+    SYSTEM_PROMPT_ES.indexOf('GRAVE — PROFUNDIDAD', graveIdx),
+  );
+  expect(leveBlock).toMatch(/EMOTIONAL REGULATION FIRST/);
+  expect(moderadoBlock).toMatch(/EMOTIONAL REGULATION FIRST/);
+  expect(graveBlock).toMatch(/EMOTIONAL REGULATION FIRST/);
+});
+
+test('Pass #9 (ES): REVIEW RESOURCES BEFORE THE CONVERSATION mirrored', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /REVIEW RESOURCES BEFORE THE CONVERSATION \/ REVISAR RECURSOS ANTES DE LA CONVERSACIÓN/,
+  );
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /Tener la información en la cabeza significa que respondes desde los hechos, no desde el miedo/,
+  );
+});
+
+test('Pass #9 (ES): CONSTRUIR TU GRUPO PERSONAL DE APOYO canonical wording', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/3\. CONSTRUIR TU GRUPO PERSONAL DE APOYO/);
+  expect(SYSTEM_PROMPT_ES).not.toMatch(/3\. CONSTRUIR EL GRUPO DE APOYO/);
+  expect(SYSTEM_PROMPT_ES).toContain(
+    "CONSTRUIR TU GRUPO PERSONAL DE APOYO — Únete y publica activamente en el 'Monitoring and Intervention discussion group.'",
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'Conectar con otros padres que enfrentan retos similares',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain('fuente invaluable de experiencia compartida');
+  // Growth-with-severity list in Spanish.
+  expect(SYSTEM_PROMPT_ES).toMatch(/CRECE CON LA SEVERIDAD/);
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /personal escolar \(maestros, consejeros, entrenadores, decanos\)/,
+  );
+});
+
+test('Pass #9 (ES): "Entiendo que" openings explicitly banned in Spanish', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/APERTURAS DIRECTAS — NO "ENTIENDO QUE"/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/Entiendo que estás pasando por/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/Estás pasando por/);
+  expect(SYSTEM_PROMPT_ES).toMatch(/Lo que describes es/);
+});
+
+test('Pass #9 (ES): BANNED PREVENTION WORKSHOP TITLES mirrored', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(/BANNED PREVENTION WORKSHOP TITLES/);
+  const bannedTitles = [
+    'Creating Your Personalized Prevention Plan',
+    'Creating Your Personal Prevention Program',
+  ];
+  for (const title of bannedTitles) {
+    let from = 0;
+    let occurrences = 0;
+    while (from < SYSTEM_PROMPT_ES.length) {
+      const i = SYSTEM_PROMPT_ES.indexOf(title, from);
+      if (i === -1) break;
+      occurrences++;
+      const window = SYSTEM_PROMPT_ES.slice(Math.max(0, i - 500), i + 500);
+      expect(window).toMatch(
+        /PROHIBID|prohibid|BANNED|banned|inventado|excluido|NO enrutes|nunca/i,
+      );
+      from = i + 1;
+    }
+    expect(occurrences).toBeGreaterThan(0);
+  }
+});
+
+test('Pass #9 (ES): Spanish outgoing user prompt carries the new reminders', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID, language: 'es' });
+  expect(res.status()).toBe(200);
+
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+
+  expect(userContent).toMatch(/BANNED PREVENTION WORKSHOP TITLES/);
+  expect(userContent).toMatch(/REWARDS PAIRED WITH CONSEQUENCES/);
+  expect(userContent).toMatch(/UNKNOWN SUBSTANCE \/ SUSTANCIA DESCONOCIDA/);
+  expect(userContent).toMatch(/EMOTIONAL REGULATION FIRST — EN CADA NIVEL/);
+  expect(userContent).toMatch(/REVIEW RESOURCES BEFORE THE CONVERSATION/);
+  expect(userContent).toMatch(/CONSTRUIR TU GRUPO PERSONAL DE APOYO/);
+  expect(userContent).toMatch(/APERTURAS DIRECTAS — NO "ENTIENDO QUE"/);
+  // 4 citable Essential.
+  expect(userContent).toContain('4 citables:');
+});
