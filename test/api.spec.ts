@@ -215,7 +215,7 @@ test('outgoing OpenAI request uses verbatim SYSTEM_PROMPT and includes scores + 
   expect(captured.headers['authorization']).toBe('Bearer mock-key');
 
   const { body } = captured;
-  expect(body.model).toBe('gpt-4o-mini');
+  expect(body.model).toBe('gpt-4.1');
 
   expect(Array.isArray(body.messages)).toBe(true);
   expect(body.messages).toHaveLength(2);

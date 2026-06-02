@@ -69,9 +69,13 @@ export default async function globalSetup() {
       return;
     }
 
-    let raw = '';
-    req.on('data', (chunk) => (raw += chunk));
+    // Buffer the raw bytes and decode once at the end. Concatenating
+    // chunk.toString() corrupts multi-byte UTF-8 chars (e.g. "número") when
+    // one straddles a TCP chunk boundary.
+    const chunks: Buffer[] = [];
+    req.on('data', (chunk: Buffer) => chunks.push(chunk));
     req.on('end', () => {
+      const raw = Buffer.concat(chunks).toString('utf8');
       let userMessage = '';
       try {
         const parsed = raw ? JSON.parse(raw) : null;
