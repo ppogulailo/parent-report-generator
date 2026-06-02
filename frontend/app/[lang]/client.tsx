@@ -368,7 +368,10 @@ export default function PageClient({ language }: Props) {
         <div className="progress-bar-fill" />
       </div>
       <div className="progress-label">
-        {t.answeredOf(answeredCount)}
+        {/* Element-wrapped for the same translation-safety reason as the
+            submit label below: keeps the conditional jump button from being
+            inserted next to a relocated bare text node. */}
+        <span>{t.answeredOf(answeredCount)}</span>
         {!allAnswered && answeredCount > 0 && (
           <button
             type="button"
@@ -447,7 +450,11 @@ export default function PageClient({ language }: Props) {
         aria-busy={loading}
       >
         {loading && <span className="spinner" aria-hidden />}
-        {submitLabel}
+        {/* Wrap the label in an element so a browser translation extension
+            (which relocates bare text nodes into <font> wrappers) can't leave
+            React inserting the spinner before a node that is no longer a child
+            of the button — the "insertBefore … not a child" crash. */}
+        <span className="submit-label">{submitLabel}</span>
       </button>
 
       {!allAnswered && <p className="submit-hint">{t.submitHint}</p>}
