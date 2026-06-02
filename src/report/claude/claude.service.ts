@@ -15,7 +15,14 @@ import type { Language } from '../dto/generate-report.dto';
 export class ClaudeService {
   private readonly apiKey: string;
   private readonly apiUrl: string;
-  private readonly model = 'gpt-4o-mini';
+  // gpt-4o-mini was too small for this rule-dense prompt — it produced
+  // degenerate fragments and leaked prompt scaffolding. gpt-4.1 follows the
+  // dense instruction set (banned-phrase lists, verbatim sequences) most
+  // strictly of the OpenAI models.
+  private readonly model = 'gpt-4.1';
+  // The full 8-section plan with its verbatim sequences runs long; 2000 was
+  // truncating reports mid-section. 8192 is a ceiling, not a target.
+  private readonly maxTokens = 8192;
 
   constructor(
     private readonly httpService: HttpService,
@@ -53,7 +60,7 @@ export class ClaudeService {
           this.apiUrl,
           {
             model: this.model,
-            max_tokens: 2000,
+            max_tokens: this.maxTokens,
             messages: [
               { role: 'system', content: this.systemFor(language) },
               { role: 'user', content: userPrompt },
@@ -100,7 +107,7 @@ export class ClaudeService {
       },
       body: JSON.stringify({
         model: this.model,
-        max_tokens: 2000,
+        max_tokens: this.maxTokens,
         stream: true,
         messages: [
           { role: 'system', content: this.systemFor(language) },
