@@ -1,7 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { GenerateReportDto } from './dto/generate-report.dto';
 import { ScoringService } from './scoring/scoring.service';
-import { ClaudeService } from './claude/claude.service';
+import {
+  ClaudeService,
+  RetryableGenerationError,
+} from './claude/claude.service';
 import {
   DomainScores,
   GenerateReportResponse,
@@ -55,6 +58,7 @@ export class ReportService {
         language: 'en' | 'es';
       }
     | { type: 'text'; text: string }
+    | { type: 'reset' }
     | { type: 'done' }
   > {
     const language = dto.language ?? 'en';
@@ -64,14 +68,33 @@ export class ReportService {
 
     yield { type: 'scores', domainScores, topDomains, language };
 
-    for await (const chunk of this.claudeService.generateReportStream(
-      domainScores,
-      topDomains,
-      dto.responses,
-      language,
-      dto.crisis,
-    )) {
-      yield { type: 'text', text: chunk };
+    // If a stream drops mid-generation, the text already sent is incomplete.
+    // Emit a `reset` so the client clears the partial plan, wait, then
+    // regenerate from scratch — the user never sees a truncated report.
+    const maxAttempts = 3;
+    for (let attempt = 1; ; attempt++) {
+      try {
+        for await (const chunk of this.claudeService.generateReportStream(
+          domainScores,
+          topDomains,
+          dto.responses,
+          language,
+          dto.crisis,
+        )) {
+          yield { type: 'text', text: chunk };
+        }
+        break;
+      } catch (err) {
+        if (err instanceof RetryableGenerationError && attempt < maxAttempts) {
+          this.logger.warn(
+            `Stream ended incomplete (attempt ${attempt}); resetting and retrying`,
+          );
+          yield { type: 'reset' };
+          await new Promise((r) => setTimeout(r, err.retryAfterMs));
+          continue;
+        }
+        throw err;
+      }
     }
 
     yield { type: 'done' };

@@ -77,16 +77,22 @@ function parsePartialSections(
 }
 
 function renderSectionBody(body: string): React.ReactNode {
-  const lines = body.split('\n').map((l) => l.trim()).filter(Boolean);
-  const bulletLines = lines.filter((l) => /^[-•*]\s+/.test(l));
-  const isMostlyBullets =
-    lines.length > 1 && bulletLines.length >= Math.ceil(lines.length * 0.6);
+  const lines = body
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean)
+    // Drop orphan bare numbers (e.g. "2." / "3") left by an interrupted stream.
+    .filter((l) => !/^\d+[.)]?\s*$/.test(l));
+  // Treat dash/bullet AND numbered ("1." / "2)") lines as list items.
+  const listLines = lines.filter((l) => /^([-•*]|\d+[.)])\s+/.test(l));
+  const isMostlyList =
+    lines.length > 1 && listLines.length >= Math.ceil(lines.length * 0.6);
 
-  if (isMostlyBullets) {
+  if (isMostlyList) {
     return (
       <ul className="section-list">
         {lines.map((l, i) => {
-          const m = l.match(/^[-•*]\s+(.*)$/);
+          const m = l.match(/^(?:[-•*]|\d+[.)])\s+(.*)$/);
           return <li key={i}>{m ? m[1] : l}</li>;
         })}
       </ul>
@@ -206,7 +212,15 @@ export default function PageClient({ language }: Props) {
         } else if (eventName === 'text') {
           accumulatedText += data.text ?? '';
           setReport(parsePartialSections(accumulatedText, sectionMarkers));
+        } else if (eventName === 'reset') {
+          // A stream dropped mid-generation; the server is regenerating from
+          // scratch. Discard the incomplete plan so it never shows as final.
+          accumulatedText = '';
+          setReport(EMPTY_REPORT);
         } else if (eventName === 'error') {
+          // Never leave a partial/corrupted plan on screen as if it were done.
+          accumulatedText = '';
+          setReport(EMPTY_REPORT);
           setError(data.error ?? 'Report generation failed.');
           setStage('idle');
         } else if (eventName === 'done') {

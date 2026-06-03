@@ -11,6 +11,25 @@ import {
 import { ReportSections } from '../interfaces/report.interface';
 import type { Language } from '../dto/generate-report.dto';
 
+/** Thrown when generation failed in a way that is worth retrying (OpenAI 429
+ *  rate limit, or a stream that ended before the model signalled completion). */
+export class RetryableGenerationError extends Error {
+  constructor(public readonly retryAfterMs: number) {
+    super('retryable-generation-error');
+  }
+}
+
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+/** OpenAI 429 bodies say "Please try again in 48.616s". Honour that hint,
+ *  capped, so we wait long enough for the TPM window to free up. */
+function parseRetryMs(body: string, fallback = 5000): number {
+  const m = body.match(/try again in ([\d.]+)\s*s/i);
+  const ms = m ? Math.ceil(parseFloat(m[1]) * 1000) : fallback;
+  return Math.min(Math.max(ms, 1000), 60000);
+}
+
 @Injectable()
 export class ClaudeService {
   private readonly apiKey: string;
@@ -23,6 +42,10 @@ export class ClaudeService {
   // The full 8-section plan with its verbatim sequences runs long; 2000 was
   // truncating reports mid-section. 8192 is a ceiling, not a target.
   private readonly maxTokens = 8192;
+  // Each report is ~27k tokens; on a tight OpenAI TPM tier, back-to-back
+  // requests get 429'd. Retry honouring OpenAI's suggested wait so a throttle
+  // becomes a slower success instead of a truncated, corrupted report.
+  private readonly maxRetries = 3;
 
   constructor(
     private readonly httpService: HttpService,
@@ -54,33 +77,44 @@ export class ClaudeService {
       crisis,
     );
 
-    try {
-      const response = await firstValueFrom(
-        this.httpService.post(
-          this.apiUrl,
-          {
-            model: this.model,
-            max_tokens: this.maxTokens,
-            messages: [
-              { role: 'system', content: this.systemFor(language) },
-              { role: 'user', content: userPrompt },
-            ],
-          },
-          {
-            headers: {
-              authorization: `Bearer ${this.apiKey}`,
-              'content-type': 'application/json',
+    for (let attempt = 1; ; attempt++) {
+      try {
+        const response = await firstValueFrom(
+          this.httpService.post(
+            this.apiUrl,
+            {
+              model: this.model,
+              max_tokens: this.maxTokens,
+              messages: [
+                { role: 'system', content: this.systemFor(language) },
+                { role: 'user', content: userPrompt },
+              ],
             },
-          },
-        ),
-      );
+            {
+              headers: {
+                authorization: `Bearer ${this.apiKey}`,
+                'content-type': 'application/json',
+              },
+            },
+          ),
+        );
 
-      const text: string = response.data.choices[0].message.content;
-      return this.parseSections(text, language);
-    } catch {
-      throw new InternalServerErrorException(
-        'Report generation failed. Please try again.',
-      );
+        const text: string = response.data.choices[0].message.content;
+        return this.parseSections(text, language);
+      } catch (err: unknown) {
+        const status = (err as { response?: { status?: number } })?.response
+          ?.status;
+        if (status === 429 && attempt <= this.maxRetries) {
+          const data = (err as { response?: { data?: unknown } })?.response
+            ?.data;
+          const body = typeof data === 'string' ? data : JSON.stringify(data);
+          await sleep(parseRetryMs(body));
+          continue;
+        }
+        throw new InternalServerErrorException(
+          'Report generation failed. Please try again.',
+        );
+      }
     }
   }
 
@@ -99,22 +133,35 @@ export class ClaudeService {
       crisis,
     );
 
-    const response = await fetch(this.apiUrl, {
-      method: 'POST',
-      headers: {
-        authorization: `Bearer ${this.apiKey}`,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: this.model,
-        max_tokens: this.maxTokens,
-        stream: true,
-        messages: [
-          { role: 'system', content: this.systemFor(language) },
-          { role: 'user', content: userPrompt },
-        ],
-      }),
+    const requestBody = JSON.stringify({
+      model: this.model,
+      max_tokens: this.maxTokens,
+      stream: true,
+      messages: [
+        { role: 'system', content: this.systemFor(language) },
+        { role: 'user', content: userPrompt },
+      ],
     });
+
+    // Pre-flight: a 429 here happens BEFORE any text is yielded, so retrying is
+    // fully transparent to the client (it just waits longer for the first token).
+    let response: globalThis.Response;
+    for (let attempt = 1; ; attempt++) {
+      response = await fetch(this.apiUrl, {
+        method: 'POST',
+        headers: {
+          authorization: `Bearer ${this.apiKey}`,
+          'content-type': 'application/json',
+        },
+        body: requestBody,
+      });
+      if (response.status === 429 && attempt <= this.maxRetries) {
+        const errBody = await response.text().catch(() => '');
+        await sleep(parseRetryMs(errBody));
+        continue;
+      }
+      break;
+    }
 
     if (!response.ok || !response.body) {
       throw new InternalServerErrorException(
@@ -125,6 +172,7 @@ export class ClaudeService {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let buffer = '';
+    let completed = false;
 
     try {
       while (true) {
@@ -139,13 +187,20 @@ export class ClaudeService {
           const trimmed = line.trim();
           if (!trimmed.startsWith('data:')) continue;
           const data = trimmed.slice(5).trim();
-          if (data === '[DONE]') return;
+          if (data === '[DONE]') {
+            completed = true;
+            return;
+          }
           try {
             const parsed = JSON.parse(data) as {
-              choices?: Array<{ delta?: { content?: string } }>;
+              choices?: Array<{
+                delta?: { content?: string };
+                finish_reason?: string | null;
+              }>;
             };
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) yield content;
+            if (parsed.choices?.[0]?.finish_reason === 'stop') completed = true;
           } catch {
             /* ignore malformed SSE chunks */
           }
@@ -153,6 +208,13 @@ export class ClaudeService {
       }
     } finally {
       reader.releaseLock();
+    }
+
+    // Stream ended without the model signalling completion (dropped connection,
+    // mid-stream throttle). The partial text already streamed is incomplete —
+    // signal a retry so the caller can reset and regenerate from scratch.
+    if (!completed) {
+      throw new RetryableGenerationError(2000);
     }
   }
 
