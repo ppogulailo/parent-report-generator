@@ -487,8 +487,23 @@ export default function PageClient({ language }: Props) {
         </div>
       )}
 
+      {/* Browser auto-translation (Chrome/Google Translate) rewrites text
+          nodes by detaching them and re-inserting <font> wrappers. While the
+          plan is still STREAMING, React is mutating these very same nodes on
+          every chunk — the two race, React updates land on nodes the
+          translator already replaced, and sentence tails silently vanish
+          (and identical phrases get re-translated inconsistently). The same
+          race previously caused the insertBefore crash. So we forbid the
+          translator from touching this subtree until the stream is finished
+          and the DOM is stable (translate="no" until `done`); once done,
+          React no longer mutates it and the browser can translate the
+          complete plan safely. */}
       {hasAnyReport && (
-        <div className="results" ref={resultsRef}>
+        <div
+          className="results"
+          translate={stage === 'done' ? 'yes' : 'no'}
+          ref={resultsRef}
+        >
           <div className="results-status" aria-live="polite">
             {stage === 'scoring' && (
               <div className="status-card">
