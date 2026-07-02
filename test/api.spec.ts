@@ -1060,6 +1060,62 @@ test('outgoing user prompt carries the pass-#8 CHHE-is-Auxiliary reminder', asyn
   );
 });
 
+// ─── Founder review pass #11 ──────────────────────────────────────────────────
+
+test('pass #11: OPIOIDS OVER HEROIN — no parent-facing "heroin" default', () => {
+  expect(SYSTEM_PROMPT).toMatch(
+    /OPIOIDS OVER HEROIN \(HARD RULE, throughout the program/,
+  );
+  // Parent-facing acute-risk phrasing no longer defaults to heroin.
+  expect(SYSTEM_PROMPT).not.toContain('suspected fentanyl/heroin');
+  // URGENT opening names opioids, not heroin.
+  expect(SYSTEM_PROMPT).toContain(
+    'admitted to using opioids, fentanyl, or another drug that can cause serious harm',
+  );
+  expect(SYSTEM_PROMPT).not.toContain('admitted to using heroin, fentanyl');
+});
+
+test('pass #11: "Parent Emotional Regulation" is banned from ever reading "for the Father"', () => {
+  expect(SYSTEM_PROMPT).toContain(
+    'NEVER "Emotional Regulation for the Father"',
+  );
+  // The existing TOP 3 label pin is still present.
+  expect(SYSTEM_PROMPT).toContain(
+    'The label for this priority is exactly "PARENT EMOTIONAL REGULATION"',
+  );
+});
+
+test('pass #11: COMPLETE ROOM SEARCH replaces soft search at SERIOUS + CRITICAL', () => {
+  expect(SYSTEM_PROMPT).toMatch(
+    /COMPLETE ROOM SEARCH — SERIOUS AND CRITICAL \(HARD RULE/,
+  );
+  // The founder's six emphasized points.
+  expect(SYSTEM_PROMPT).toContain('This is a fact-finding mission, not a punishment.');
+  expect(SYSTEM_PROMPT).toContain('Do not conduct the search while angry or emotional.');
+  expect(SYSTEM_PROMPT).toContain('Never conduct the search with your child present.');
+  expect(SYSTEM_PROMPT).toContain('Conduct the search with the co-parent whenever possible.');
+  expect(SYSTEM_PROMPT).toContain(
+    'If drugs or paraphernalia are discovered, document them, confiscate them, and safely discard them.',
+  );
+  expect(SYSTEM_PROMPT).toContain('Auxiliary Workshop "How and When to Search a Room"');
+  // Soft search is preserved for the lower tiers.
+  expect(SYSTEM_PROMPT).toMatch(/soft-search framing above is for MILD and MODERATE/);
+});
+
+test('pass #11: SERIOUS user prompt carries the complete-room-search rule', async ({
+  request,
+}) => {
+  // SAMPLE forces SERIOUS (child-safety avg ≥ 3).
+  const res = await post(request, { responses: SAMPLE });
+  expect(res.status()).toBe(200);
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('HARD RULE 8 (COMPLETE ROOM SEARCH)');
+  expect(userContent).toContain('document them, confiscate them, and safely discard them');
+  // heroin removed from the SERIOUS severity guidance.
+  expect(userContent).not.toContain('suspected fentanyl/heroin');
+});
+
 // ─── Claude Failure ───────────────────────────────────────────────────────────
 
 test('returns 500 when OpenAI API fails', async () => {

@@ -41,11 +41,11 @@ console.log('\n## ENGLISH SERIOUS');
 check('PARENT EMOTIONAL REGULATION label pinned', SYSTEM_PROMPT, 'The label for this priority is exactly "PARENT EMOTIONAL REGULATION"');
 check('gendered "FOR THE FATHER" label banned', SYSTEM_PROMPT, 'Never label it "EMOTIONAL REGULATION FOR THE FATHER,"');
 check('ambiguous-pronoun "He arrives clear" banned', SYSTEM_PROMPT, 'A sentence like "He arrives clear and calm"');
-check('"Name this straight" / disadvantage banned', SYSTEM_PROMPT, 'do not open a sentence with "Name this straight"');
+check('"Name this straight" / disadvantage banned', SYSTEM_PROMPT, 'do not open a sentence with "Name this straight,"');
 
 console.log('\n## ENGLISH CRITICAL (crisis path)');
 check('URGENT opening drops vape', SYSTEM_PROMPT, 'do NOT list "vape," "vaping," or "vape cartridge"');
-check('URGENT opening heroin/fentanyl framing', SYSTEM_PROMPT, 'admitted to using heroin, fentanyl, or another drug that can cause serious harm');
+check('URGENT opening opioids/fentanyl framing (pass #11: heroin→opioids)', SYSTEM_PROMPT, 'admitted to using opioids, fentanyl, or another drug that can cause serious harm');
 check('closing: residential + IOP', SYSTEM_PROMPT, "ASAP's preferred residential treatment centers and IOP (intensive outpatient) programs");
 check('closing: may affect their life', SYSTEM_PROMPT, "may significantly affect your child's safety, health, and potentially their life");
 check('CRITICAL CLOSING only fires with crisis block (present in crit user prompt)', enCrit, 'URGENT CONCERN');
@@ -65,10 +65,31 @@ console.log('\n## SPANISH CRITICAL (crisis path)');
 check('ES label gender-neutral (DE LOS PADRES)', SYSTEM_PROMPT_ES, 'REGULACIÓN EMOCIONAL DE LOS PADRES');
 check('ES old gendered label removed (DEL PADRE as #1 heading)', SYSTEM_PROMPT_ES, '1. REGULACIÓN EMOCIONAL DEL PADRE —', false);
 check('ES URGENT opening drops vape', SYSTEM_PROMPT_ES, 'NO menciones "vape", "vapeo" ni "cartucho de vape"');
-check('ES URGENT heroin/fentanyl framing', SYSTEM_PROMPT_ES, 'admitió haber usado heroína, fentanilo u otra droga que puede causar daño grave');
+check('ES URGENT opioides/fentanyl framing (pass #11: heroína→opioides)', SYSTEM_PROMPT_ES, 'admitió haber usado opioides, fentanilo u otra droga que puede causar daño grave');
 check('ES naloxone home/vehicle/caregivers', SYSTEM_PROMPT_ES, 'mantener naloxona (Narcan) accesible en la casa, en el vehículo y con los cuidadores');
 check('ES closing residential + IOP', SYSTEM_PROMPT_ES, 'centros de tratamiento residencial y los programas IOP');
 check('ES crisis build carries GRAVE drug-testing rule', esCrit, 'REGLA DURA 8 (PRUEBAS DE DROGAS');
+
+console.log('\n## FOUNDER REVIEW PASS #11 (2026-07-02)');
+// Opioids over heroin (throughout)
+check('EN OPIOIDS OVER HEROIN hard rule', SYSTEM_PROMPT, 'OPIOIDS OVER HEROIN (HARD RULE, throughout the program');
+check('EN no parent-facing "fentanyl/heroin" phrase', SYSTEM_PROMPT, 'suspected fentanyl/heroin', false);
+check('ES OPIOIDES ANTES QUE HEROÍNA hard rule', SYSTEM_PROMPT_ES, 'OPIOIDS OVER HEROIN / OPIOIDES ANTES QUE HEROÍNA');
+check('ES no parent-facing "fentanilo/heroína" phrase', SYSTEM_PROMPT_ES, 'sospecha de fentanilo/heroína', false);
+// Parent Emotional Regulation — never "for the Father" (universal)
+check('EN "for the Father" banned universally', SYSTEM_PROMPT, 'NEVER "Emotional Regulation for the Father"');
+check('ES gender-neutral label applies every report incl CRITICAL', SYSTEM_PROMPT_ES, 'aplica en cada sección y en cada reporte, incluido el reporte URGENT / de crisis (CRÍTICO)');
+// Complete room search — SERIOUS + CRITICAL
+check('EN COMPLETE ROOM SEARCH block', SYSTEM_PROMPT, 'COMPLETE ROOM SEARCH — SERIOUS AND CRITICAL (HARD RULE');
+check('EN complete search: fact-finding not punishment', SYSTEM_PROMPT, 'This is a fact-finding mission, not a punishment.');
+check('EN complete search: not while angry/emotional', SYSTEM_PROMPT, 'Do not conduct the search while angry or emotional.');
+check('EN complete search: document/confiscate/discard', SYSTEM_PROMPT, 'document them, confiscate them, and safely discard them');
+check('EN complete search in SERIOUS user prompt', enSerious, 'HARD RULE 8 (COMPLETE ROOM SEARCH)');
+check('EN complete search NOT in MILD-tier severity block (esLeve proxy uses ES; check EN crit has it)', enCrit, 'HARD RULE 8 (COMPLETE ROOM SEARCH)');
+check('ES COMPLETE ROOM SEARCH block', SYSTEM_PROMPT_ES, 'COMPLETE ROOM SEARCH — GRAVE Y CRÍTICO (REGLA DURA');
+check('ES complete search: document/confiscate/discard', SYSTEM_PROMPT_ES, 'documéntalas, confíscalas y deséchalas de forma segura');
+check('ES complete search in GRAVE user prompt', esGrave, 'REGLA DURA 11 (COMPLETE ROOM SEARCH');
+check('ES complete search in crisis user prompt', esCrit, 'REGLA DURA 11 (COMPLETE ROOM SEARCH');
 
 console.log(`\n=== ${pass} passed, ${fail} failed ===`);
 process.exit(fail ? 1 : 0);

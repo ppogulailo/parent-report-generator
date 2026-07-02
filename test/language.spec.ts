@@ -591,3 +591,44 @@ test('Pass #9 (ES): Spanish outgoing user prompt carries the new reminders', asy
   // 4 citable Essential.
   expect(userContent).toContain('4 citables:');
 });
+
+// ─── Founder review pass #11 (ES) ─────────────────────────────────────────────
+
+const SAMPLE_SERIOUS = [
+  4, 3, 4, 2, 3, 2, 3, 3, 4, 4, 2, 3, 2, 2, 3, 2, 4, 2, 2, 2, 2, 2, 4, 3,
+];
+
+test('pass #11 (ES): OPIOIDES ANTES QUE HEROÍNA — no parent-facing heroína default', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'OPIOIDS OVER HEROIN / OPIOIDES ANTES QUE HEROÍNA',
+  );
+  expect(SYSTEM_PROMPT_ES).not.toContain('sospecha de fentanilo/heroína');
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'admitió haber usado opioides, fentanilo u otra droga que puede causar daño grave',
+  );
+});
+
+test('pass #11 (ES): gender-neutral regulation label applies to every report incl CRÍTICO', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'aplica en cada sección y en cada reporte, incluido el reporte URGENT / de crisis (CRÍTICO)',
+  );
+});
+
+test('pass #11 (ES): COMPLETE ROOM SEARCH for GRAVE + CRÍTICO', () => {
+  expect(SYSTEM_PROMPT_ES).toContain('COMPLETE ROOM SEARCH — GRAVE Y CRÍTICO (REGLA DURA');
+  expect(SYSTEM_PROMPT_ES).toContain('Esto es una misión de recolección de hechos, no un castigo.');
+  expect(SYSTEM_PROMPT_ES).toContain('documéntalas, confíscalas y deséchalas de forma segura');
+  expect(SYSTEM_PROMPT_ES).toContain('Auxiliary Workshop "How and When to Search a Room"');
+});
+
+test('pass #11 (ES): GRAVE user prompt carries REGLA DURA 11 complete search', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: SAMPLE_SERIOUS, language: 'es' });
+  expect(res.status()).toBe(200);
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('REGLA DURA 11 (COMPLETE ROOM SEARCH');
+  expect(userContent).toContain('documéntalas, confíscalas y deséchalas de forma segura');
+  expect(userContent).not.toContain('sospecha de fentanilo/heroína');
+});
