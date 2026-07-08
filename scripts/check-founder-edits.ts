@@ -38,8 +38,8 @@ check('"with your child" on DAY 3 review (EN user reminder)', enSerious, "Before
 check('co-parent alignment names "you and your co-parent"', SYSTEM_PROMPT, 'Make sure you and your co-parent are clear on the household rules');
 
 console.log('\n## ENGLISH SERIOUS');
-check('PARENT EMOTIONAL REGULATION label pinned', SYSTEM_PROMPT, 'The label for this priority is exactly "PARENT EMOTIONAL REGULATION"');
-check('gendered "FOR THE FATHER" label banned', SYSTEM_PROMPT, 'Never label it "EMOTIONAL REGULATION FOR THE FATHER,"');
+check('PARENT EMOTIONAL REGULATION label pinned', SYSTEM_PROMPT, 'label for this priority is exactly "PARENT EMOTIONAL REGULATION"');
+check('gendered "FOR THE FATHER" label banned', SYSTEM_PROMPT, '"EMOTIONAL REGULATION FOR THE FATHER,"');
 check('ambiguous-pronoun "He arrives clear" banned', SYSTEM_PROMPT, 'A sentence like "He arrives clear and calm"');
 check('"Name this straight" / disadvantage banned', SYSTEM_PROMPT, 'do not open a sentence with "Name this straight,"');
 
@@ -80,16 +80,52 @@ check('ES no parent-facing "fentanilo/heroína" phrase', SYSTEM_PROMPT_ES, 'sosp
 check('EN "for the Father" banned universally', SYSTEM_PROMPT, 'NEVER "Emotional Regulation for the Father"');
 check('ES gender-neutral label applies every report incl CRITICAL', SYSTEM_PROMPT_ES, 'aplica en cada sección y en cada reporte, incluido el reporte URGENT / de crisis (CRÍTICO)');
 // Complete room search — SERIOUS + CRITICAL
-check('EN COMPLETE ROOM SEARCH block', SYSTEM_PROMPT, 'COMPLETE ROOM SEARCH — SERIOUS AND CRITICAL (HARD RULE');
+check('EN COMPLETE ROOM SEARCH block', SYSTEM_PROMPT, 'COMPLETE ROOM SEARCH — MODERATE, SERIOUS, AND CRITICAL (HARD RULE');
 check('EN complete search: fact-finding not punishment', SYSTEM_PROMPT, 'This is a fact-finding mission, not a punishment.');
 check('EN complete search: not while angry/emotional', SYSTEM_PROMPT, 'Do not conduct the search while angry or emotional.');
 check('EN complete search: document/confiscate/discard', SYSTEM_PROMPT, 'document them, confiscate them, and safely discard them');
 check('EN complete search in SERIOUS user prompt', enSerious, 'HARD RULE 8 (COMPLETE ROOM SEARCH)');
 check('EN complete search NOT in MILD-tier severity block (esLeve proxy uses ES; check EN crit has it)', enCrit, 'HARD RULE 8 (COMPLETE ROOM SEARCH)');
-check('ES COMPLETE ROOM SEARCH block', SYSTEM_PROMPT_ES, 'COMPLETE ROOM SEARCH — GRAVE Y CRÍTICO (REGLA DURA');
+check('ES COMPLETE ROOM SEARCH block', SYSTEM_PROMPT_ES, 'COMPLETE ROOM SEARCH — MODERADO, GRAVE Y CRÍTICO (REGLA DURA');
 check('ES complete search: document/confiscate/discard', SYSTEM_PROMPT_ES, 'documéntalas, confíscalas y deséchalas de forma segura');
 check('ES complete search in GRAVE user prompt', esGrave, 'REGLA DURA 11 (COMPLETE ROOM SEARCH');
 check('ES complete search in crisis user prompt', esCrit, 'REGLA DURA 11 (COMPLETE ROOM SEARCH');
+
+console.log('\n## FOUNDER REVIEW PASS #12 (2026-07-03)');
+// Build a MODERATE user prompt (all-2s → MODERATE tier).
+const MOD_RESP = Array(24).fill(2);
+const MOD_SCORES = {
+  'Immediate Safety & Urgency': 2,
+  'Household Structure': 2,
+  'Boundary Consistency': 2,
+  'Communication & Conflict': 2,
+  'Support & Professional Engagement': 2,
+};
+const enMod = buildUserPrompt(MOD_SCORES, TOP, MOD_RESP, 'en');
+const esMod = buildUserPrompt(MOD_SCORES, TOP, MOD_RESP, 'es');
+// Soft search scoped to MILD only; MODERATE joins complete room search.
+check('EN complete-search header now MODERATE+', SYSTEM_PROMPT, 'COMPLETE ROOM SEARCH — MODERATE, SERIOUS, AND CRITICAL');
+check('EN soft search is MILD-only', SYSTEM_PROMPT, 'The soft-search framing above is for MILD reports ONLY.');
+check('ES complete-search header now MODERADO+', SYSTEM_PROMPT_ES, 'COMPLETE ROOM SEARCH — MODERADO, GRAVE Y CRÍTICO');
+check('ES soft search is LEVE-only', SYSTEM_PROMPT_ES, 'El encuadre de soft search de arriba es solo para reportes LEVE.');
+check('EN MODERATE user prompt uses complete room search', enMod, 'MODERATE now uses the complete room search');
+check('ES MODERADO user prompt uses complete room search', esMod, 'MODERADO ahora usa la revisión completa del cuarto');
+// "give a drug test", not "take a drug test".
+check('EN drug-test give-not-take rule', SYSTEM_PROMPT, 'DRUG TEST — "GIVE," NOT "TAKE"');
+// Parent Emotional Regulation label reinforced.
+check('EN PER label reinforced (most-reported error)', SYSTEM_PROMPT, 'this is the single most-reported error');
+check('EN PER label reminder in user prompt', enSerious, 'PARENT EMOTIONAL REGULATION LABEL (most-reported error');
+// WHAT TO AVOID simplified (no confusing negative constructions).
+check('EN WHAT TO AVOID drops confusing "confrontational manner" framing', SYSTEM_PROMPT, 'no "never in a confrontational manner" / "don\'t announce it beforehand"', false);
+check('EN WHAT TO AVOID keeps room-search guidance SIMPLE AND DIRECT', SYSTEM_PROMPT, 'keep the room-search guidance SIMPLE AND DIRECT');
+// Root cause — understand why (MODERATE/SERIOUS/CRITICAL closing).
+check('EN ROOT CAUSE hard rule', SYSTEM_PROMPT, 'ROOT CAUSE — UNDERSTAND WHY (HARD RULE');
+check('EN ROOT CAUSE canonical message', SYSTEM_PROMPT, 'the ultimate goal is to understand WHY the child is using');
+check('EN ROOT CAUSE in SERIOUS user prompt', enSerious, 'HARD RULE 9 (ROOT CAUSE — UNDERSTAND WHY)');
+check('EN ROOT CAUSE in MODERATE user prompt', enMod, 'ROOT CAUSE — UNDERSTAND WHY');
+check('ES ROOT CAUSE hard rule', SYSTEM_PROMPT_ES, 'ROOT CAUSE — ENTENDER EL PORQUÉ (REGLA DURA');
+check('ES ROOT CAUSE in GRAVE user prompt', esGrave, 'REGLA DURA 12 (ROOT CAUSE — ENTENDER EL PORQUÉ)');
+check('ES ROOT CAUSE in MODERADO user prompt', esMod, 'ROOT CAUSE — ENTENDER EL PORQUÉ');
 
 console.log(`\n=== ${pass} passed, ${fail} failed ===`);
 process.exit(fail ? 1 : 0);

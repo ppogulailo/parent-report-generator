@@ -615,7 +615,7 @@ test('pass #11 (ES): gender-neutral regulation label applies to every report inc
 });
 
 test('pass #11 (ES): COMPLETE ROOM SEARCH for GRAVE + CRÍTICO', () => {
-  expect(SYSTEM_PROMPT_ES).toContain('COMPLETE ROOM SEARCH — GRAVE Y CRÍTICO (REGLA DURA');
+  expect(SYSTEM_PROMPT_ES).toContain('COMPLETE ROOM SEARCH — MODERADO, GRAVE Y CRÍTICO (REGLA DURA');
   expect(SYSTEM_PROMPT_ES).toContain('Esto es una misión de recolección de hechos, no un castigo.');
   expect(SYSTEM_PROMPT_ES).toContain('documéntalas, confíscalas y deséchalas de forma segura');
   expect(SYSTEM_PROMPT_ES).toContain('Auxiliary Workshop "How and When to Search a Room"');
@@ -631,4 +631,33 @@ test('pass #11 (ES): GRAVE user prompt carries REGLA DURA 11 complete search', a
   expect(userContent).toContain('REGLA DURA 11 (COMPLETE ROOM SEARCH');
   expect(userContent).toContain('documéntalas, confíscalas y deséchalas de forma segura');
   expect(userContent).not.toContain('sospecha de fentanilo/heroína');
+});
+
+// ─── Founder review pass #12 (ES) ─────────────────────────────────────────────
+
+test('pass #12 (ES): MODERADO joins complete room search; soft search LEVE-only', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'COMPLETE ROOM SEARCH — MODERADO, GRAVE Y CRÍTICO',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'El encuadre de soft search de arriba es solo para reportes LEVE.',
+  );
+});
+
+test('pass #12 (ES): ROOT CAUSE — entender el porqué (cierre MODERADO/GRAVE/CRÍTICO)', () => {
+  expect(SYSTEM_PROMPT_ES).toContain('ROOT CAUSE — ENTENDER EL PORQUÉ (REGLA DURA');
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'el objetivo último es entender POR QUÉ el hijo está consumiendo',
+  );
+});
+
+test('pass #12 (ES): MODERADO user prompt carries complete search + root cause', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID, language: 'es' });
+  expect(res.status()).toBe(200);
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('MODERADO ahora usa la revisión completa del cuarto');
+  expect(userContent).toContain('ROOT CAUSE — ENTENDER EL PORQUÉ');
 });

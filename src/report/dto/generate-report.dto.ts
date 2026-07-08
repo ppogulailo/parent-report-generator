@@ -15,9 +15,12 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 const ERROR_MESSAGE =
   'responses must be an array of 24 integers between 1 and 4';
 const LANGUAGE_ERROR = 'language must be "en" or "es"';
-const CRISIS_ERROR = 'crisis must be a string of at most 500 characters';
+const CRISIS_ERROR = 'crisis must be a string of at most 1500 characters';
 
-export const CRISIS_MAX_LENGTH = 500;
+// Raised 500 → 1500 (founder testing, 2026-07-03): Spanish needs meaningfully
+// more characters than English to describe the same emergency, and testers hit
+// the old cap sooner than expected on Critical scenarios. Still a "brief note".
+export const CRISIS_MAX_LENGTH = 1500;
 
 export type Language = 'en' | 'es';
 

@@ -9,6 +9,11 @@ import {
   ESSENTIAL_WORKSHOPS,
 } from '../src/report/prompts/resources';
 
+// Mirrors CRISIS_MAX_LENGTH in src/report/dto/generate-report.dto.ts. Imported
+// as a literal (not from the DTO) because pulling the decorated DTO class into
+// the Playwright/ts-node context breaks on class-validator decorator eval.
+const CRISIS_MAX_LENGTH = 1500;
+
 const KEY = 'test-secret';
 const MOCK_BASE = 'http://localhost:4001';
 const VALID = Array(24).fill(2) as number[];
@@ -863,7 +868,11 @@ test('SOFT SEARCH block, WHAT TO AVOID, and DAY 2 all include backpack + canonic
   expect(wtaEnd).toBeGreaterThan(wtaStart);
   const wta = SYSTEM_PROMPT.slice(wtaStart, wtaEnd);
   expect(wta).toMatch(/backpack/);
-  expect(wta).toMatch(/privately and without your child present/);
+  // Pass #12: WHAT TO AVOID's room-search wording was simplified to the direct
+  // COMPLETE ROOM SEARCH framing (MODERATE/SERIOUS/CRITICAL) — no longer the
+  // canonical "privately and without your child present" two-sentence line.
+  expect(wta).toMatch(/never be conducted with your child present/);
+  expect(wta).toMatch(/fact-finding mission/);
 });
 
 test('outgoing user prompt carries the pass-#6 PRIVATE SEARCH reminder', async ({
@@ -1079,15 +1088,16 @@ test('pass #11: "Parent Emotional Regulation" is banned from ever reading "for t
   expect(SYSTEM_PROMPT).toContain(
     'NEVER "Emotional Regulation for the Father"',
   );
-  // The existing TOP 3 label pin is still present.
+  // The existing TOP 3 label pin is still present (pass #12 reworded the lead-in
+  // to "the label…", so match the stable substring).
   expect(SYSTEM_PROMPT).toContain(
-    'The label for this priority is exactly "PARENT EMOTIONAL REGULATION"',
+    'label for this priority is exactly "PARENT EMOTIONAL REGULATION"',
   );
 });
 
 test('pass #11: COMPLETE ROOM SEARCH replaces soft search at SERIOUS + CRITICAL', () => {
   expect(SYSTEM_PROMPT).toMatch(
-    /COMPLETE ROOM SEARCH — SERIOUS AND CRITICAL \(HARD RULE/,
+    /COMPLETE ROOM SEARCH — MODERATE, SERIOUS, AND CRITICAL \(HARD RULE/,
   );
   // The founder's six emphasized points.
   expect(SYSTEM_PROMPT).toContain('This is a fact-finding mission, not a punishment.');
@@ -1098,8 +1108,8 @@ test('pass #11: COMPLETE ROOM SEARCH replaces soft search at SERIOUS + CRITICAL'
     'If drugs or paraphernalia are discovered, document them, confiscate them, and safely discard them.',
   );
   expect(SYSTEM_PROMPT).toContain('Auxiliary Workshop "How and When to Search a Room"');
-  // Soft search is preserved for the lower tiers.
-  expect(SYSTEM_PROMPT).toMatch(/soft-search framing above is for MILD and MODERATE/);
+  // Pass #12: soft search is now preserved for MILD only (MODERATE moved up).
+  expect(SYSTEM_PROMPT).toMatch(/soft-search framing above is for MILD reports ONLY/);
 });
 
 test('pass #11: SERIOUS user prompt carries the complete-room-search rule', async ({
@@ -1114,6 +1124,61 @@ test('pass #11: SERIOUS user prompt carries the complete-room-search rule', asyn
   expect(userContent).toContain('document them, confiscate them, and safely discard them');
   // heroin removed from the SERIOUS severity guidance.
   expect(userContent).not.toContain('suspected fentanyl/heroin');
+});
+
+// ─── Founder review pass #12 ──────────────────────────────────────────────────
+
+test('pass #12: soft search is MILD-only; MODERATE joins complete room search', () => {
+  expect(SYSTEM_PROMPT).toMatch(
+    /COMPLETE ROOM SEARCH — MODERATE, SERIOUS, AND CRITICAL/,
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    'The soft-search framing above is for MILD reports ONLY.',
+  );
+  expect(SYSTEM_PROMPT).toMatch(
+    /SOFT SEARCH — HOW TO FRAME ROOM \/ BACKPACK \/ PHONE CHECKS \(MILD REPORTS ONLY/,
+  );
+});
+
+test('pass #12: "give a drug test", never "take a drug test"', () => {
+  expect(SYSTEM_PROMPT).toContain('DRUG TEST — "GIVE," NOT "TAKE"');
+  expect(SYSTEM_PROMPT).toContain('Never write "Take a drug test" as the parent');
+});
+
+test('pass #12: Parent Emotional Regulation label reinforced (most-reported error)', () => {
+  expect(SYSTEM_PROMPT).toContain('this is the single most-reported error');
+  expect(SYSTEM_PROMPT).toContain('Never write "Emotional Regulation for the Father,"');
+});
+
+test('pass #12: ROOT CAUSE — understand why (MODERATE/SERIOUS/CRITICAL closing)', () => {
+  expect(SYSTEM_PROMPT).toMatch(/ROOT CAUSE — UNDERSTAND WHY \(HARD RULE/);
+  expect(SYSTEM_PROMPT).toContain(
+    'the ultimate goal is to understand WHY the child is using',
+  );
+  expect(SYSTEM_PROMPT).toContain('MILD reports do NOT include this root-cause closing');
+});
+
+test('pass #12: MODERATE user prompt carries complete room search + root cause', async ({
+  request,
+}) => {
+  // VALID is all-2s → MODERATE tier.
+  const res = await post(request, { responses: VALID });
+  expect(res.status()).toBe(200);
+  const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('SEVERITY LEVEL: MODERATE');
+  expect(userContent).toContain('MODERATE now uses the complete room search');
+  expect(userContent).toContain('ROOT CAUSE — UNDERSTAND WHY');
+});
+
+test('pass #12: WHAT TO AVOID room-search wording is simple and direct', () => {
+  const wtaStart = SYSTEM_PROMPT.indexOf('\nWHAT TO AVOID\n');
+  const wtaEnd = SYSTEM_PROMPT.indexOf('\nFIRST 72 HOURS PLAN\n', wtaStart);
+  const wta = SYSTEM_PROMPT.slice(wtaStart, wtaEnd);
+  expect(wta).toContain('keep the room-search guidance SIMPLE AND DIRECT');
+  expect(wta).toMatch(/fact-finding mission/);
+  // The confusing constructions the founder flagged are named as things not to use.
+  expect(wta).toMatch(/never in a confrontational manner/);
 });
 
 // ─── Claude Failure ───────────────────────────────────────────────────────────
@@ -1211,11 +1276,23 @@ test('Milestone 6: DTO rejects an oversized crisis field with 400', async ({
 }) => {
   const res = await post(request, {
     responses: VALID,
-    crisis: 'x'.repeat(501),
+    crisis: 'x'.repeat(CRISIS_MAX_LENGTH + 1),
   });
   expect(res.status()).toBe(400);
   const json = await res.json();
   expect(json.success).toBe(false);
+});
+
+test('crisis field at the raised max length is accepted (500 → 1500)', async ({
+  request,
+}) => {
+  // Founder testing (2026-07-03): the limit was raised so Spanish emergency
+  // notes are not cut off. A crisis at exactly the cap must still succeed.
+  const res = await post(request, {
+    responses: VALID,
+    crisis: 'x'.repeat(CRISIS_MAX_LENGTH),
+  });
+  expect(res.status()).toBe(200);
 });
 
 test('Milestone 6: non-empty crisis auto-promotes severity to SERIOUS in user prompt', async ({
