@@ -77,6 +77,18 @@ export class ClaudeService {
       crisis,
     );
 
+    const text = await this.complete(this.systemFor(language), userPrompt);
+    return this.parseSections(text, language);
+  }
+
+  /**
+   * Report-type-agnostic completion: POST a (system, user) message pair to the
+   * OpenAI Chat Completions endpoint and return the assistant text. Honours the
+   * 429 retry policy. Used by both the intervention plan (above) and the
+   * Sustaining Recovery plan, which supply their own prompts and parse the
+   * returned text against their own section headers.
+   */
+  async complete(systemPrompt: string, userPrompt: string): Promise<string> {
     for (let attempt = 1; ; attempt++) {
       try {
         const response = await firstValueFrom(
@@ -86,7 +98,7 @@ export class ClaudeService {
               model: this.model,
               max_tokens: this.maxTokens,
               messages: [
-                { role: 'system', content: this.systemFor(language) },
+                { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt },
               ],
             },
@@ -100,7 +112,7 @@ export class ClaudeService {
         );
 
         const text: string = response.data.choices[0].message.content;
-        return this.parseSections(text, language);
+        return text;
       } catch (err: unknown) {
         const status = (err as { response?: { status?: number } })?.response
           ?.status;
@@ -133,12 +145,25 @@ export class ClaudeService {
       crisis,
     );
 
+    yield* this.completeStream(this.systemFor(language), userPrompt);
+  }
+
+  /**
+   * Report-type-agnostic streaming completion. Streams assistant text deltas
+   * for a (system, user) message pair, retrying 429s before the first token
+   * (transparent to the caller) and throwing {@link RetryableGenerationError}
+   * if the stream ends without the model signalling completion.
+   */
+  async *completeStream(
+    systemPrompt: string,
+    userPrompt: string,
+  ): AsyncGenerator<string, void, void> {
     const requestBody = JSON.stringify({
       model: this.model,
       max_tokens: this.maxTokens,
       stream: true,
       messages: [
-        { role: 'system', content: this.systemFor(language) },
+        { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
       ],
     });
