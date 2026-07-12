@@ -10,6 +10,7 @@ import {
   GenerateReportResponse,
 } from './interfaces/report.interface';
 import { validateReportResources } from './validation/resource-validator';
+import { computeSeverityTier } from './prompts/user.prompt';
 
 @Injectable()
 export class ReportService {
@@ -56,6 +57,7 @@ export class ReportService {
         domainScores: Record<string, number>;
         topDomains: string[];
         language: 'en' | 'es';
+        severity: 'MILD' | 'MODERATE' | 'SERIOUS';
       }
     | { type: 'text'; text: string }
     | { type: 'reset' }
@@ -66,7 +68,8 @@ export class ReportService {
       dto.responses,
     );
 
-    yield { type: 'scores', domainScores, topDomains, language };
+    const severity = computeSeverityTier(dto.responses, domainScores, dto.crisis);
+    yield { type: 'scores', domainScores, topDomains, language, severity };
 
     // If a stream drops mid-generation, the text already sent is incomplete.
     // Emit a `reset` so the client clears the partial plan, wait, then

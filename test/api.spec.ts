@@ -432,14 +432,18 @@ test('resource directory module exposes the correct counts', () => {
   // Prevention Plan" from ESSENTIAL_WORKSHOPS and added a hard rule banning
   // both that title and the real-but-excluded "Creating Your Personal
   // Prevention Program" from plan output. Essential count drops 5 → 4.
+  // Beta Finalization (item 1, founder-approved): added a third discussion group
+  // ("Protecting Recovery") and a 21st Auxiliary Workshop for the standardized
+  // "Protecting Recovery" closing.
   expect(ARTICLES_OF_ACTION).toHaveLength(16);
-  expect(DISCUSSION_GROUPS).toHaveLength(2);
+  expect(DISCUSSION_GROUPS).toHaveLength(3);
   expect(DISCUSSION_GROUPS).toEqual([
     'Monitoring and Intervention',
     'Sustaining Recovery',
+    'Protecting Recovery',
   ]);
   expect(ESSENTIAL_WORKSHOPS).toHaveLength(4);
-  expect(AUXILIARY_WORKSHOPS).toHaveLength(20);
+  expect(AUXILIARY_WORKSHOPS).toHaveLength(21);
 });
 
 test('Essential Workshops list matches founder canon (post pass #9)', () => {
@@ -487,9 +491,9 @@ test('outgoing user prompt ships only the approved parent-facing resources', asy
   // (2026-05-27) dropped Essential from 5 → 4.
   expect(userContent).toContain('ASAP RESOURCE DIRECTORY');
   expect(userContent).not.toContain('Articles of Action (16 total');
-  expect(userContent).toContain('ASAP Discussion Groups (2 approved');
+  expect(userContent).toContain('ASAP Discussion Groups (3 approved');
   expect(userContent).toContain('Essential Workshops (4 total');
-  expect(userContent).toContain('Auxiliary Workshops (20 total');
+  expect(userContent).toContain('Auxiliary Workshops (21 total');
 
   // The directory must NOT render any Article-of-Action title verbatim
   // (the data array still exists in code but is not parent-facing).
@@ -792,7 +796,8 @@ test('outgoing user prompt carries the pass-#5 directory and reminders', async (
 
   // Essential Workshops list ships in the directory (pass #9 dropped 5 → 4).
   expect(userContent).toContain('Essential Workshops (4 total');
-  expect(userContent).toContain('Auxiliary Workshops (20 total');
+  // Beta Finalization item 1 (founder-approved): +1 Auxiliary Workshop → 21.
+  expect(userContent).toContain('Auxiliary Workshops (21 total');
 
   // NO PLACEHOLDERS reminder is present.
   expect(userContent).toMatch(/NO PLACEHOLDERS/);
@@ -1100,16 +1105,28 @@ test('pass #11: COMPLETE ROOM SEARCH replaces soft search at SERIOUS + CRITICAL'
     /COMPLETE ROOM SEARCH — MODERATE, SERIOUS, AND CRITICAL \(HARD RULE/,
   );
   // The founder's six emphasized points.
-  expect(SYSTEM_PROMPT).toContain('This is a fact-finding mission, not a punishment.');
-  expect(SYSTEM_PROMPT).toContain('Do not conduct the search while angry or emotional.');
-  expect(SYSTEM_PROMPT).toContain('Never conduct the search with your child present.');
-  expect(SYSTEM_PROMPT).toContain('Conduct the search with the co-parent whenever possible.');
+  expect(SYSTEM_PROMPT).toContain(
+    'This is a fact-finding mission, not a punishment.',
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    'Do not conduct the search while angry or emotional.',
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    'Never conduct the search with your child present.',
+  );
+  expect(SYSTEM_PROMPT).toContain(
+    'Conduct the search with the co-parent whenever possible.',
+  );
   expect(SYSTEM_PROMPT).toContain(
     'If drugs or paraphernalia are discovered, document them, confiscate them, and safely discard them.',
   );
-  expect(SYSTEM_PROMPT).toContain('Auxiliary Workshop "How and When to Search a Room"');
+  expect(SYSTEM_PROMPT).toContain(
+    'Auxiliary Workshop "How and When to Search a Room"',
+  );
   // Pass #12: soft search is now preserved for MILD only (MODERATE moved up).
-  expect(SYSTEM_PROMPT).toMatch(/soft-search framing above is for MILD reports ONLY/);
+  expect(SYSTEM_PROMPT).toMatch(
+    /soft-search framing above is for MILD reports ONLY/,
+  );
 });
 
 test('pass #11: SERIOUS user prompt carries the complete-room-search rule', async ({
@@ -1121,7 +1138,9 @@ test('pass #11: SERIOUS user prompt carries the complete-room-search rule', asyn
   const captured = await (await fetch(`${MOCK_BASE}/_last`)).json();
   const userContent: string = captured.body.messages[1].content;
   expect(userContent).toContain('HARD RULE 8 (COMPLETE ROOM SEARCH)');
-  expect(userContent).toContain('document them, confiscate them, and safely discard them');
+  expect(userContent).toContain(
+    'document them, confiscate them, and safely discard them',
+  );
   // heroin removed from the SERIOUS severity guidance.
   expect(userContent).not.toContain('suspected fentanyl/heroin');
 });
@@ -1142,12 +1161,16 @@ test('pass #12: soft search is MILD-only; MODERATE joins complete room search', 
 
 test('pass #12: "give a drug test", never "take a drug test"', () => {
   expect(SYSTEM_PROMPT).toContain('DRUG TEST — "GIVE," NOT "TAKE"');
-  expect(SYSTEM_PROMPT).toContain('Never write "Take a drug test" as the parent');
+  expect(SYSTEM_PROMPT).toContain(
+    'Never write "Take a drug test" as the parent',
+  );
 });
 
 test('pass #12: Parent Emotional Regulation label reinforced (most-reported error)', () => {
   expect(SYSTEM_PROMPT).toContain('this is the single most-reported error');
-  expect(SYSTEM_PROMPT).toContain('Never write "Emotional Regulation for the Father,"');
+  expect(SYSTEM_PROMPT).toContain(
+    'Never write "Emotional Regulation for the Father,"',
+  );
 });
 
 test('pass #12: ROOT CAUSE — understand why (MODERATE/SERIOUS/CRITICAL closing)', () => {
@@ -1155,7 +1178,9 @@ test('pass #12: ROOT CAUSE — understand why (MODERATE/SERIOUS/CRITICAL closing
   expect(SYSTEM_PROMPT).toContain(
     'the ultimate goal is to understand WHY the child is using',
   );
-  expect(SYSTEM_PROMPT).toContain('MILD reports do NOT include this root-cause closing');
+  expect(SYSTEM_PROMPT).toContain(
+    'MILD reports do NOT include this root-cause closing',
+  );
 });
 
 test('pass #12: MODERATE user prompt carries complete room search + root cause', async ({
@@ -1555,9 +1580,7 @@ test('Pass #9: SYSTEM_PROMPT pairs consequences with rewards as a hard rule', ()
 test('Pass #9: SYSTEM_PROMPT bans "pills" in favor of "unknown substance"', () => {
   expect(SYSTEM_PROMPT).toMatch(/UNKNOWN SUBSTANCE — NEVER "PILLS"/);
   // The banned exact phrases the founder cited.
-  expect(SYSTEM_PROMPT).toContain(
-    "You found pills in your child's backpack",
-  );
+  expect(SYSTEM_PROMPT).toContain("You found pills in your child's backpack");
   expect(SYSTEM_PROMPT).toContain(
     "You found an unknown substance in your child's backpack",
   );
