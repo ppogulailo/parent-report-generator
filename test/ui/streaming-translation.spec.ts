@@ -12,13 +12,10 @@ import { test, expect, Page } from '@playwright/test';
  * silently vanish and identical phrases get re-translated inconsistently
  * ("therapist ASAP-endorsed" vs "therapist-endorsed ASAP").
  *
- * Fix: the results region carries translate="no" permanently, so the browser
- * translator never touches it — not while React is streaming into it, and not
- * after. The plan is authored by the backend in the language the user selected
- * (EN or ES), so it must stay in that language start to finish and must never
- * be re-translated (which would both corrupt the stream and visibly flip the
- * completed plan's language). Real browsers honour translate="no" — these tests
- * install a faithful translator emulator that does the same.
+ * Fix: the streaming region carries translate="no" until the stream is done,
+ * so the translator can't touch it while React is mutating it. Real browsers
+ * honour translate="no" — these tests install a faithful translator emulator
+ * that does the same.
  */
 
 // Distinctive COMPLETE sentences from the streamed plan. Each maps to one of
@@ -156,16 +153,11 @@ test.describe('browser auto-translation vs. streaming report', () => {
     expect(gtTranslated).toBeGreaterThan(0);
     // ...but it NEVER entered the results region while it was streaming.
     expect(rec.sawFontInResultsWhileWriting).toBe(false);
-    // The gate is on during writing...
+    // The gate is on during writing and releases only once the DOM is stable.
     expect(rec.transitions.some((t) => /Escribiendo.*translate=no/.test(t))).toBe(
       true,
     );
-    // ...and STAYS on after completion. The plan is authored by the backend in
-    // the language the user selected, so it must display in that language start
-    // to finish and must never be re-translated by the browser (founder
-    // requirement — the completed plan used to visibly flip languages when the
-    // gate released to translate="yes"; that release is now gone).
-    expect(rec.transitions[rec.transitions.length - 1]).toMatch(/translate=no/);
+    expect(rec.transitions[rec.transitions.length - 1]).toMatch(/translate=yes/);
 
     // Every previously-truncated sentence is present in full.
     const text = await resultsPlainText(page);
@@ -173,9 +165,10 @@ test.describe('browser auto-translation vs. streaming report', () => {
       expect(text).toContain(sentence);
     }
 
-    // The translator never enters the results region — not even after the
-    // stream is done — so the plan stays in the selected/authored language.
-    expect(await fontsInResults(page)).toBe(0);
+    // ...and once the stream is done the gate releases, so the translator can
+    // safely translate the now-stable, complete plan. (The user still gets a
+    // translated report — just without the mid-stream corruption.)
+    expect(await fontsInResults(page)).toBeGreaterThan(0);
   });
 
   test('CONTROL: without the gate, the translator races React inside the live region', async ({
@@ -197,7 +190,7 @@ test.describe('browser auto-translation vs. streaming report', () => {
     // region, repeatedly, while the plan was still streaming. This is the exact
     // race that drops sentence tails and double-translates phrases in
     // production — and that previously caused the insertBefore crash. The fix
-    // (translate="no" always) makes this impossible; see the FIX test,
+    // (translate="no" until done) makes this impossible; see the FIX test,
     // where this same emulator never enters the region.
     expect(rec.sawFontInResultsWhileWriting).toBe(true);
     expect(rec.maxFontsWhileWriting).toBeGreaterThan(0);
