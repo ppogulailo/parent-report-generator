@@ -151,19 +151,32 @@ export const AUXILIARY_WORKSHOPS: Array<{ title: string; summary: string }> = [
     title: 'Legal Issues and Substance Use: Understanding the Consequences',
     summary: 'Awareness of legal risks and responses.',
   },
+  // Beta Finalization milestone (item 1, founder-approved) — added for the
+  // standardized "Protecting Recovery" closing on MODERATE/SERIOUS/CRITICAL plans.
+  // Cited ONLY inside the STANDARDIZED CLOSING hard rule.
+  {
+    title: 'Protecting Recovery: Preventing Relapse and Responding to Setbacks',
+    summary:
+      'Recognizing early relapse warning signs and responding to setbacks.',
+  },
 ];
 
-// Founder-approved discussion groups (pass #7): the plan may cite ONLY these two.
+// Founder-approved discussion groups. Pass #7 locked this to two; the Beta
+// Finalization milestone (item 1) adds a third, founder-approved entry.
 // - "Monitoring and Intervention" — parent's primary peer-support group, every tier,
 //   used for BUILD YOUR PERSONAL SUPPORT GROUP in TOP 3 IMMEDIATE PRIORITIES.
 // - "Sustaining Recovery" — professional-help adjunct, only inside the PROFESSIONAL
 //   HELP SEQUENCE alongside an approved professional-help recommendation.
+// - "Protecting Recovery" — recovery-maintenance peer group (Beta Finalization,
+//   founder-approved). Cited ONLY inside the STANDARDIZED CLOSING hard rule on
+//   MODERATE/SERIOUS/CRITICAL plans.
 // Discussion groups previously listed (Effective Communication, Parent Support Forum,
 // Building a Support Network, Creating Your Personal Prevention Program) are NOT
 // approved for parent-facing recommendations and must never appear in the output.
 export const DISCUSSION_GROUPS: string[] = [
   'Monitoring and Intervention',
   'Sustaining Recovery',
+  'Protecting Recovery',
 ];
 
 export function formatResourceDirectory(): string {
@@ -179,12 +192,13 @@ export function formatResourceDirectory(): string {
 
 ARTICLES OF ACTION — DO NOT cite by title in the plan. Articles of Action are taught inside the workshops; the parent's reading recommendations come through the workshop curriculum, not through this plan. Banned in any form: "the Article of Action titled X", "Articles of Action: X", "read the Article of Action 'X'", "see Article of Action X". The plan recommends workshops and approved discussion groups — Articles by title are out of scope.
 
-ASAP Discussion Groups (2 approved — the ONLY discussion groups that may appear in the plan; tell the parent to join and actively post, not just be aware):
+ASAP Discussion Groups (${DISCUSSION_GROUPS.length} approved — the ONLY discussion groups that may appear in the plan; tell the parent to join and actively post, not just be aware):
 ${groups}
 
 Approved discussion group usage:
 - "Monitoring and Intervention discussion group" — the parent's own peer-support group. Use for BUILD YOUR PERSONAL SUPPORT GROUP in TOP 3 IMMEDIATE PRIORITIES in every tier (MILD, MODERATE, SERIOUS), and for parent isolation / exhaustion / weak co-parent alignment / active intervention work.
 - "Sustaining Recovery discussion group" — the professional-help adjunct. Use ONLY inside the PROFESSIONAL HELP SEQUENCE, in a paragraph that also references professional help, with the approved verbatim wording.
+- "Protecting Recovery Discussion Group" — the recovery-maintenance peer group. Use ONLY inside the STANDARDIZED CLOSING (the "Protecting Recovery" closing on MODERATE / SERIOUS / CRITICAL plans). Do NOT cite it anywhere else, and do NOT use it in MILD.
 
 BANNED discussion group names — never appear in the output under any circumstances: "Effective Communication discussion group", "Parent Support Forum discussion group", "Building a Support Network discussion group", "Creating Your Personal Prevention Program discussion group", or any other unapproved or invented group name. For communication, prevention, or child-network topics, cite a workshop — not a discussion group.
 
@@ -196,6 +210,6 @@ BANNED PREVENTION WORKSHOP TITLES — never appear in the plan in any form, rega
 - "Creating Your Personal Prevention Program" (real workshop, but excluded from Parent Action Plan output per founder direction)
 If you would have routed to either of these for prevention planning, route to the Essential Workshop "Building a Support Network" (for the family-side network and school engagement) and/or the Essential Workshop "Effective Communication: Building Trust and Engagement with Your Teen" (for parent-child dialogue) instead.
 
-Auxiliary Workshops (20 total — topic-matched; pick by topic match, name the exact title as 'Auxiliary Workshop "X"'):
+Auxiliary Workshops (${AUXILIARY_WORKSHOPS.length} total — topic-matched; pick by topic match, name the exact title as 'Auxiliary Workshop "X"'):
 ${workshops}`;
 }

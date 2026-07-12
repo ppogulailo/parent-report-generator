@@ -426,6 +426,75 @@ export function domainLabel(lang: Language, englishName: string): string {
   return DOMAIN_LABELS[lang][englishName] ?? englishName;
 }
 
+// Plain-language descriptions per domain, keyed by the English API name.
+// From the "Redesign (1)" design; shown in the collapsible domain-score cards.
+export const DOMAIN_DESCRIPTIONS: Record<Language, Record<string, string>> = {
+  en: {
+    'Immediate Safety & Urgency':
+      'How close the risk feels right now — use, exposure, and safety concerns that may need prompt attention.',
+    'Household Structure':
+      'The routines, monitoring, and daily rhythm at home that give your child a steady footing.',
+    'Boundary Consistency':
+      'How clear and reliable your rules and consequences are, and how aligned caregivers stay.',
+    'Communication & Conflict':
+      'How conversations are going — openness, tension, and whether your child engages or shuts down.',
+    'Support & Professional Engagement':
+      'The support around you — school, community, professionals, and your own capacity to keep going.',
+  },
+  es: {
+    'Immediate Safety & Urgency':
+      'Qué tan cercano se siente el riesgo ahora — consumo, exposición y preocupaciones de seguridad que pueden requerir atención pronta.',
+    'Household Structure':
+      'Las rutinas, la supervisión y el ritmo diario en casa que le dan a tu hijo una base estable.',
+    'Boundary Consistency':
+      'Qué tan claras y confiables son tus reglas y consecuencias, y qué tan alineados están los cuidadores.',
+    'Communication & Conflict':
+      'Cómo van las conversaciones — apertura, tensión, y si tu hijo se abre o se cierra.',
+    'Support & Professional Engagement':
+      'El apoyo a tu alrededor — escuela, comunidad, profesionales, y tu propia capacidad de seguir adelante.',
+  },
+};
+
+export function domainDescription(lang: Language, englishName: string): string {
+  return DOMAIN_DESCRIPTIONS[lang][englishName] ?? '';
+}
+
+// Overall-level (severity) badge copy. Keyed by the backend severity tier.
+export type SeverityTier = 'MILD' | 'MODERATE' | 'SERIOUS';
+export const TIERS: Record<
+  Language,
+  Record<SeverityTier, { label: string; desc: string }>
+> = {
+  en: {
+    MILD: {
+      label: 'Mild',
+      desc: 'Signals are early and manageable. This plan focuses on staying ahead of them.',
+    },
+    MODERATE: {
+      label: 'Moderate',
+      desc: 'Several areas need attention. This plan gives you clear, prioritized next steps.',
+    },
+    SERIOUS: {
+      label: 'Serious',
+      desc: 'Concerns are pressing. This plan focuses on stabilizing the situation and getting support.',
+    },
+  },
+  es: {
+    MILD: {
+      label: 'Leve',
+      desc: 'Las señales son tempranas y manejables. Este plan busca adelantarse a ellas.',
+    },
+    MODERATE: {
+      label: 'Moderado',
+      desc: 'Varias áreas necesitan atención. Este plan te da próximos pasos claros y priorizados.',
+    },
+    SERIOUS: {
+      label: 'Serio',
+      desc: 'Las preocupaciones son urgentes. Este plan busca estabilizar la situación y conseguir apoyo.',
+    },
+  },
+};
+
 export const SECTION_LABELS_BY_LANG: Record<
   Language,
   Array<[string, string]>
@@ -516,6 +585,13 @@ export type UIStrings = {
   crisisPlaceholder: string;
   crisisHint: (remaining: number) => string;
   crisisSafetyNotice: string;
+  printButton: string;
+  startOverButton: string;
+  domainScoresHint: string;
+  planLevelLabel: string;
+  severityLegend: string;
+  severityLegendHigh: string;
+  trustLine: string;
 };
 
 export const STRINGS: Record<Language, UIStrings> = {
@@ -566,6 +642,13 @@ export const STRINGS: Record<Language, UIStrings> = {
     crisisHint: (remaining) => `${remaining} characters left`,
     crisisSafetyNotice:
       'If your child is in immediate danger, call 911. For a suicide or mental-health crisis, call or text 988. For suspected overdose or poisoning, Poison Control: 1-800-222-1222.',
+    printButton: 'Save / Print',
+    startOverButton: 'Start over',
+    domainScoresHint: 'Tap any area to see what it means.',
+    planLevelLabel: 'Overall level',
+    severityLegend: 'Steady',
+    severityLegendHigh: 'Needs attention',
+    trustLine: 'Part of the ASAP Community program · Private & confidential',
   },
   es: {
     title: 'Un plan claro y con los pies en la tierra, cuando más lo necesitas',
@@ -614,5 +697,12 @@ export const STRINGS: Record<Language, UIStrings> = {
     crisisHint: (remaining) => `Quedan ${remaining} caracteres`,
     crisisSafetyNotice:
       'Si tu hijo está en peligro inmediato, llama al 911. Para crisis suicida o de salud mental, llama o envía un mensaje al 988 (también atiende en español). Para sospecha de sobredosis o envenenamiento, Poison Control: 1-800-222-1222.',
+    printButton: 'Guardar / Imprimir',
+    startOverButton: 'Empezar de nuevo',
+    domainScoresHint: 'Toca cualquier área para ver qué significa.',
+    planLevelLabel: 'Nivel general',
+    severityLegend: 'Estable',
+    severityLegendHigh: 'Necesita atención',
+    trustLine: 'Parte del programa ASAP Community · Privado y confidencial',
   },
 };

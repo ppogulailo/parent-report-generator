@@ -58,3 +58,14 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Playwright
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
+# Design deliverables / scratch (kept locally, not part of the app)
+/ASAP Parent Action Plan Redesign*/
+/*.png
+/*.zip

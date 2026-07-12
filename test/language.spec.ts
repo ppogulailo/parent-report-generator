@@ -462,7 +462,9 @@ test('Milestone 6 polish (ES): PERSONALIZACIÓN has ANSWER-LABEL VERBATIM BAN', 
   // Concrete BAD example (Spanish-localized Q17 score-4 label) must be cited.
   expect(SYSTEM_PROMPT_ES).toMatch(/Casi a diario — sin combustible/);
   // Concrete GOOD example must follow.
-  expect(SYSTEM_PROMPT_ES).toMatch(/el agotamiento casi diario que describiste/);
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /el agotamiento casi diario que describiste/,
+  );
 });
 
 test('Milestone 6 polish (ES): extended disclaimer ban (CYA hedges) in Spanish', () => {
@@ -534,7 +536,9 @@ test('Pass #9 (ES): CONSTRUIR TU GRUPO PERSONAL DE APOYO canonical wording', () 
   expect(SYSTEM_PROMPT_ES).toContain(
     'Conectar con otros padres que enfrentan retos similares',
   );
-  expect(SYSTEM_PROMPT_ES).toContain('fuente invaluable de experiencia compartida');
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'fuente invaluable de experiencia compartida',
+  );
   // Growth-with-severity list in Spanish.
   expect(SYSTEM_PROMPT_ES).toMatch(/CRECE CON LA SEVERIDAD/);
   expect(SYSTEM_PROMPT_ES).toMatch(
@@ -590,4 +594,126 @@ test('Pass #9 (ES): Spanish outgoing user prompt carries the new reminders', asy
   expect(userContent).toMatch(/APERTURAS DIRECTAS — NO "ENTIENDO QUE"/);
   // 4 citable Essential.
   expect(userContent).toContain('4 citables:');
+});
+
+// ─── Founder review pass #11 (ES) ─────────────────────────────────────────────
+
+const SAMPLE_SERIOUS = [
+  4, 3, 4, 2, 3, 2, 3, 3, 4, 4, 2, 3, 2, 2, 3, 2, 4, 2, 2, 2, 2, 2, 4, 3,
+];
+
+test('pass #11 (ES): OPIOIDES ANTES QUE HEROÍNA — no parent-facing heroína default', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'OPIOIDS OVER HEROIN / OPIOIDES ANTES QUE HEROÍNA',
+  );
+  expect(SYSTEM_PROMPT_ES).not.toContain('sospecha de fentanilo/heroína');
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'admitió haber usado opioides, fentanilo u otra droga que puede causar daño grave',
+  );
+});
+
+test('pass #11 (ES): gender-neutral regulation label applies to every report incl CRÍTICO', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'aplica en cada sección y en cada reporte, incluido el reporte URGENT / de crisis (CRÍTICO)',
+  );
+});
+
+test('pass #11 (ES): COMPLETE ROOM SEARCH for GRAVE + CRÍTICO', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'COMPLETE ROOM SEARCH — MODERADO, GRAVE Y CRÍTICO (REGLA DURA',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'Esto es una misión de recolección de hechos, no un castigo.',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'documéntalas, confíscalas y deséchalas de forma segura',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'Auxiliary Workshop "How and When to Search a Room"',
+  );
+});
+
+test('pass #11 (ES): GRAVE user prompt carries REGLA DURA 11 complete search', async ({
+  request,
+}) => {
+  const res = await post(request, {
+    responses: SAMPLE_SERIOUS,
+    language: 'es',
+  });
+  expect(res.status()).toBe(200);
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain('REGLA DURA 11 (COMPLETE ROOM SEARCH');
+  expect(userContent).toContain(
+    'documéntalas, confíscalas y deséchalas de forma segura',
+  );
+  expect(userContent).not.toContain('sospecha de fentanilo/heroína');
+});
+
+// ─── Founder review pass #12 (ES) ─────────────────────────────────────────────
+
+test('pass #12 (ES): MODERADO joins complete room search; soft search LEVE-only', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'COMPLETE ROOM SEARCH — MODERADO, GRAVE Y CRÍTICO',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'El encuadre de soft search de arriba es solo para reportes LEVE.',
+  );
+});
+
+test('pass #12 (ES): ROOT CAUSE — entender el porqué (cierre MODERADO/GRAVE/CRÍTICO)', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'ROOT CAUSE — ENTENDER EL PORQUÉ (REGLA DURA',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'el objetivo último es entender POR QUÉ el hijo está consumiendo',
+  );
+});
+
+test('pass #12 (ES): MODERADO user prompt carries complete search + root cause', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID, language: 'es' });
+  expect(res.status()).toBe(200);
+  const captured = await getLastCaptured();
+  const userContent: string = captured.body.messages[1].content;
+  expect(userContent).toContain(
+    'MODERADO ahora usa la revisión completa del cuarto',
+  );
+  expect(userContent).toContain('ROOT CAUSE — ENTENDER EL PORQUÉ');
+  // Beta item 1: root cause is now delivered via the standardized closing.
+  expect(userContent).toContain('STANDARDIZED CLOSING');
+});
+
+// ─── Beta Finalization item 1: standardized "Protecting Recovery" closing ─────
+// Founder-approved (Beta Finalization scope).
+
+test('Beta item 1: standardized closing rule + resources wired (EN)', () => {
+  expect(DISCUSSION_GROUPS).toContain('Protecting Recovery');
+  expect(AUXILIARY_WORKSHOPS.map((w) => w.title)).toContain(
+    'Protecting Recovery: Preventing Relapse and Responding to Setbacks',
+  );
+  expect(SYSTEM_PROMPT).toContain('STANDARDIZED CLOSING — PROTECTING RECOVERY');
+  // Founder-provided text present verbatim (first + last paragraph anchors).
+  expect(SYSTEM_PROMPT).toContain('Recovery is a journey');
+  expect(SYSTEM_PROMPT).toContain('Protecting Recovery Discussion Group');
+  // Not offered in MILD.
+  expect(SYSTEM_PROMPT).toMatch(/MILD reports do NOT include it/);
+  // "early warning signs" is exempted from the SERIOUS awareness-framing ban here.
+  expect(SYSTEM_PROMPT).toMatch(
+    /EXEMPT from the SERIOUS awareness-framing ban/,
+  );
+});
+
+test('Beta item 1: standardized closing rule + verbatim ES text wired (ES)', () => {
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'STANDARDIZED CLOSING — PROTECTING RECOVERY',
+  );
+  // Spanish register is tú, and the workshop/group titles stay in English verbatim.
+  expect(SYSTEM_PROMPT_ES).toContain('La recuperación es un camino');
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'Protecting Recovery: Preventing Relapse and Responding to Setbacks',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain('Protecting Recovery Discussion Group');
+  expect(SYSTEM_PROMPT_ES).toMatch(/los reportes LEVE NO lo incluyen/);
 });

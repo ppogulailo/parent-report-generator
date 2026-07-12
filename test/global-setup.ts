@@ -37,15 +37,54 @@ const URGENT_BLOCK = [
   '',
 ];
 
+// Sustaining Recovery (post-treatment) plan — different section structure than
+// the early-intervention plan above. The mock returns these when the outgoing
+// user prompt identifies itself as the SUSTAINING RECOVERY plan.
+const SR_BASE_SECTIONS = [
+  'WELCOME HOME SUMMARY',
+  'Your child is home from treatment and the early weeks are the fragile part. This plan keeps the recovery line steady.',
+  '',
+  'TOP 3 IMMEDIATE PRIORITIES',
+  '- Regulate yourself first; the hypervigilance is doing some of the talking.',
+  '- Get aligned with your co-parent on the recovery plan.',
+  "- Join and actively post in the 'Monitoring and Intervention discussion group.'",
+  '',
+  'REBUILDING DAILY STRUCTURE',
+  'Rebuild a predictable routine and secure the home environment.',
+  '',
+  'RELAPSE WARNING SIGNS',
+  'Watch for the specific signals tied to your child and respond, do not panic.',
+  '',
+  'WHAT TO AVOID',
+  '- Avoid over-policing into secrecy, and do not drop aftercare once things seem fine.',
+  '',
+  'FIRST TWO WEEKS PLAN',
+  'Week 1: regulation, co-parent alignment, secure the environment, confirm aftercare.',
+  'Week 2: routine, accountability check-ins, first calm recovery check-in.',
+  '',
+  'ONGOING SUPPORT AND ENCOURAGEMENT',
+  'Recovery is long-term, and a setback does not erase the progress already made.',
+];
+
+const SR_URGENT_BLOCK = [
+  'URGENT CONCERN ACKNOWLEDGED',
+  'You flagged something acute since your child came home. Call the pinned emergency resource now. The rest of this plan picks up from there.',
+  '',
+];
+
 function buildResponseBody(userMessage: string): string {
   // Detect on the user-prompt context-block header that ONLY appears when
   // the parent supplied a non-empty crisis field. The static instruction
   // text mentions "URGENT CONCERN ACKNOWLEDGED" in both branches (firing
   // and non-firing), so a broader substring match would over-fire.
   const isCrisis = userMessage.includes('URGENT CONCERN — parent flagged this');
-  const content = (
-    isCrisis ? [...URGENT_BLOCK, ...BASE_SECTIONS] : BASE_SECTIONS
-  ).join('\n');
+  const isSustainingRecovery = userMessage.includes(
+    'SUSTAINING RECOVERY Parent Action Plan',
+  );
+
+  const base = isSustainingRecovery ? SR_BASE_SECTIONS : BASE_SECTIONS;
+  const urgent = isSustainingRecovery ? SR_URGENT_BLOCK : URGENT_BLOCK;
+  const content = (isCrisis ? [...urgent, ...base] : base).join('\n');
   return JSON.stringify({
     choices: [
       {
