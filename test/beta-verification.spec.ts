@@ -143,14 +143,18 @@ test('Beta verify: the two Protecting Recovery resources are registered', () => 
   );
 });
 
-test('Beta item 2 (PROVISIONAL): English readability & flow directive is present', () => {
-  // Provisional readability pass — additive flow guidance in the English system
-  // prompt, to be reconciled with the Founder's readability notes. Must not exist
-  // in the Spanish prompt (Spanish is the quality bar, left unchanged).
+test('Beta item 2: Founder readability directive is wired (EN only)', () => {
+  // Readability pass driven by the Founder's review notes. English system prompt
+  // only — Spanish is the quality bar and is left unchanged.
   expect(SYSTEM_PROMPT).toContain('ENGLISH READABILITY & FLOW');
   expect(SYSTEM_PROMPT).toMatch(
-    /same clarity, natural flow, and professionalism as the Spanish/,
+    /clarity, grammar, natural flow, and professionalism as the Spanish/,
   );
+  // Founder-specific points captured verbatim in the directive:
+  expect(SYSTEM_PROMPT).toContain('Emotional Regulation for Fathers'); // banned form named
+  expect(SYSTEM_PROMPT).toMatch(/use "co-parent" \(or "caregiver"/);
+  expect(SYSTEM_PROMPT).toContain("Don't warn your child beforehand.");
+  expect(SYSTEM_PROMPT).toContain('Let tiredness and fear speak first'); // banned example named
   expect(SYSTEM_PROMPT_ES).not.toContain('ENGLISH READABILITY & FLOW');
 });
 
