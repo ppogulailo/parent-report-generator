@@ -38,7 +38,10 @@ export class ClaudeService {
   // degenerate fragments and leaked prompt scaffolding. gpt-4.1 follows the
   // dense instruction set (banned-phrase lists, verbatim sequences) most
   // strictly of the OpenAI models.
-  private readonly model = 'gpt-4.1';
+  // gpt-4.1 is rate-limited to 30k TPM on the current OpenAI tier — too small for
+  // this ~30k-token prompt. gpt-5.1 (500k TPM) runs it and follows the dense
+  // rule-set at least as well. Reasoning model → use max_completion_tokens.
+  private readonly model = 'gpt-5.1';
   // The full 8-section plan with its verbatim sequences runs long; 2000 was
   // truncating reports mid-section. 8192 is a ceiling, not a target.
   private readonly maxTokens = 8192;
@@ -96,7 +99,7 @@ export class ClaudeService {
             this.apiUrl,
             {
               model: this.model,
-              max_tokens: this.maxTokens,
+              max_completion_tokens: this.maxTokens,
               messages: [
                 { role: 'system', content: systemPrompt },
                 { role: 'user', content: userPrompt },
@@ -160,7 +163,7 @@ export class ClaudeService {
   ): AsyncGenerator<string, void, void> {
     const requestBody = JSON.stringify({
       model: this.model,
-      max_tokens: this.maxTokens,
+      max_completion_tokens: this.maxTokens,
       stream: true,
       messages: [
         { role: 'system', content: systemPrompt },
