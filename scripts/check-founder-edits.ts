@@ -127,5 +127,31 @@ check('ES ROOT CAUSE hard rule', SYSTEM_PROMPT_ES, 'ROOT CAUSE — ENTENDER EL P
 check('ES ROOT CAUSE in GRAVE user prompt', esGrave, 'REGLA DURA 12 (ROOT CAUSE — ENTENDER EL PORQUÉ)');
 check('ES ROOT CAUSE in MODERADO user prompt', esMod, 'ROOT CAUSE — ENTENDER EL PORQUÉ');
 
+console.log('\n## BETA FINALIZATION — CONSIDERING INPATIENT TREATMENT (CRITICAL-only)');
+// EN system prompt: section defined with the four circumstances + reframe.
+check('EN inpatient section in OUTPUT STRUCTURE', SYSTEM_PROMPT, 'CONSIDERING INPATIENT TREATMENT  (conditional');
+check('EN inpatient circumstance: danger to self', SYSTEM_PROMPT, 'Your child is a danger to themselves.');
+check('EN inpatient circumstance: danger to others', SYSTEM_PROMPT, 'Your child is a danger to others.');
+check('EN inpatient circumstance: overdose/death risk', SYSTEM_PROMPT, 'significant risk of overdose or death');
+check('EN inpatient circumstance: outpatient exhausted', SYSTEM_PROMPT, 'exhausted reasonable outpatient interventions');
+check('EN inpatient reframe: not a failure', SYSTEM_PROMPT, "not a failure — it is an act of protecting your child's life and future");
+// EN gating: the emitted header list carries the inpatient header only when
+// the crisis field fires (the reminder text always names the section, so we
+// anchor on the newline-adjacent header-list form, not a bare mention).
+check('EN inpatient in CRITICAL header list', enCrit, 'DAYS 4 TO 7 CONTINUATION\nCONSIDERING INPATIENT TREATMENT\nENCOURAGEMENT AND DIRECTION');
+check('EN inpatient NOT in non-crisis SERIOUS header list', enSerious, 'DAYS 4 TO 7 CONTINUATION\nCONSIDERING INPATIENT TREATMENT', false);
+check('EN nine section headers in CRITICAL user prompt', enCrit, 'nine section headers');
+// ES system prompt: section defined with the four circumstances + reframe.
+check('ES inpatient section in ESTRUCTURA DE SALIDA', SYSTEM_PROMPT_ES, 'CONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL  (condicional');
+check('ES inpatient circumstance: peligro para sí mismo', SYSTEM_PROMPT_ES, 'Tu hijo es un peligro para sí mismo.');
+check('ES inpatient circumstance: peligro para otros', SYSTEM_PROMPT_ES, 'Tu hijo es un peligro para otros.');
+check('ES inpatient circumstance: sobredosis o muerte', SYSTEM_PROMPT_ES, 'riesgo significativo de sobredosis o muerte');
+check('ES inpatient circumstance: ambulatorias agotadas', SYSTEM_PROMPT_ES, 'agotado las intervenciones ambulatorias razonables');
+check('ES inpatient reframe: no es un fracaso', SYSTEM_PROMPT_ES, 'no es un fracaso — es un acto de protección de la vida y el futuro de tu hijo');
+// ES gating: same, on the Spanish emitted header list.
+check('ES inpatient in CRÍTICO header list', esCrit, 'DÍAS 4 A 7 — CONTINUACIÓN\nCONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL\nALIENTO Y DIRECCIÓN');
+check('ES inpatient NOT in non-crisis GRAVE header list', esGrave, 'DÍAS 4 A 7 — CONTINUACIÓN\nCONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL', false);
+check('ES nueve section headers in CRÍTICO user prompt', esCrit, 'nueve encabezados');
+
 console.log(`\n=== ${pass} passed, ${fail} failed ===`);
 process.exit(fail ? 1 : 0);

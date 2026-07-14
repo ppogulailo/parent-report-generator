@@ -65,6 +65,7 @@ type ReportSections = {
   whatToAvoid: string;
   first72Hours: string;
   days4to7: string;
+  consideringInpatient: string;
   encouragement: string;
 };
 
@@ -83,6 +84,7 @@ const EMPTY_REPORT: ReportSections = {
   whatToAvoid: '',
   first72Hours: '',
   days4to7: '',
+  consideringInpatient: '',
   encouragement: '',
 };
 
@@ -809,7 +811,14 @@ export default function PageClient({ language }: Props) {
               <div className="sections">
                 {sectionLabels.map(([key, label]) => {
                   const body = report[key as keyof ReportSections];
-                  if (key === 'urgentConcern' && body.length === 0) return null;
+                  // urgentConcern and consideringInpatient are conditional
+                  // (crisis report only) — skip their cards entirely when empty
+                  // so non-crisis plans don't render an empty section box.
+                  if (
+                    (key === 'urgentConcern' || key === 'consideringInpatient') &&
+                    body.length === 0
+                  )
+                    return null;
                   const isUrgent = key === 'urgentConcern';
                   const isActive = stage === 'writing' && body.length > 0;
                   return (

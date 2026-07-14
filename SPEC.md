@@ -177,6 +177,8 @@ If two or more domains share the same score, rank in this fixed order:
 > - **Founder review pass #11 (2026-07-02) — final refinements before approval (EN + ES).** Relayed by Matthew after the founder's final review. Tier mapping used in the implementation: the founder's **CRITICAL** report is the URGENT / crisis-field path (severity is force-promoted to SERIOUS, so SERIOUS-register guidance governs it). (1) *Opioids over heroin (program-wide):* new `OPIOIDS OVER HEROIN` hard rule (EN) / `OPIOIDES ANTES QUE HEROÍNA` (ES) — unless the scenario is confirmed heroin-specific, parent-facing copy uses the broader "opioids." Parent-facing "suspected fentanyl/heroin" acute-risk phrasing and the URGENT opening ("admitted to using **heroin**, fentanyl…") change to "opioids" (`system.prompt.ts`, `system.prompt.es.ts`, and the SERIOUS/GRAVE severity guidance in `user.prompt.ts`). The drug-landscape enumeration inside the `UNKNOWN SUBSTANCE` rule (which lists heroin among many substances) is left intact. (2) *Parent Emotional Regulation label:* the existing gender-neutral pin is reinforced at the top-level `NO AMBIGUOUS / GENDERED REFERENTS` rule with an explicit, universal ban on "Emotional Regulation for the Father" (or Mother/Dad/Mom) in any casing, any section, every report including CRITICAL — the founder still saw "…for the Father" in a Critical report despite the TOP-3 label pin from pass #10. ES mirror added at the `REGULACIÓN EMOCIONAL DE LOS PADRES` label. (3) *Complete room search at SERIOUS + CRITICAL:* new `COMPLETE ROOM SEARCH — SERIOUS AND CRITICAL` hard rule (EN) / `COMPLETE ROOM SEARCH — GRAVE Y CRÍTICO` (ES). The "soft search" framing is now scoped to MILD/MODERATE; at SERIOUS and the crisis/CRITICAL path the plan transitions to a **complete room search** emphasizing: a fact-finding mission (not punishment), never conducted while angry/emotional, never with the child present, done with the co-parent whenever possible, the room left as close as possible to as-found, and — if drugs or paraphernalia are found — **document them, confiscate them, and safely discard them** (English + Spanish). Continues routing to the Auxiliary Workshop "How and When to Search a Room." Wired into the SERIOUS/GRAVE section, the DAY 2 output-structure instruction, the SERIOUS/GRAVE severity guidance (`HARD RULE 8` / `REGLA DURA 11` in `user.prompt.ts`), and the EN/ES search reminders. (4) *MODERATE:* the "conducted without the child present" reminder is reaffirmed centrally (it was already carried by the canonical PRIVATE SEARCH line). Deterministic placement extended in `scripts/check-founder-edits.ts`; tests in `test/api.spec.ts` (EN) and `test/language.spec.ts` (ES) cover all four items.
 > - **Founder review pass #12 (2026-07-03) — near-final refinements.** Relayed by Matthew; several items were still leaking in generated reports despite pass #11. (1) *Soft search is MILD-only.* The soft search now applies to MILD reports only; **MODERATE joins SERIOUS and CRITICAL on the COMPLETE ROOM SEARCH** (renamed the hard-rule header `COMPLETE ROOM SEARCH — MODERATE, SERIOUS, AND CRITICAL` / ES `MODERADO, GRAVE Y CRÍTICO`, scoped the SOFT SEARCH block header to "MILD REPORTS ONLY", and updated the MODERATE/MODERADO severity guidance in `user.prompt.ts`). (2) *Parent Emotional Regulation label* — still appearing as "Emotional Regulation for the Father" in Critical; the TOP-3 #1 rule is escalated to a HARD RULE ("single most-reported error… re-check in the Critical/crisis report") and a high-visibility reminder was added near the top of the user-prompt reminders (EN). (3) *WHAT TO AVOID room-search wording* simplified — dropped the confusing negative constructions ("never in a confrontational manner," "don't announce it beforehand") in favor of the direct COMPLETE ROOM SEARCH points (fact-finding not punishment; never while angry/emotional; never with the child present; with the co-parent when possible; respect belongings / leave room as found; follow the "How and When to Search a Room" workshop). (4) *Drug-test wording* — new `DRUG TEST — "GIVE," NOT "TAKE"` hard rule: the parent GIVES a drug test ("Give a drug test"), never "Take a drug test." (5) *New permanent methodology — ROOT CAUSE / UNDERSTAND WHY* (EN + ES, MODERATE/SERIOUS/CRITICAL only): the closing (ENCOURAGEMENT AND DIRECTION and/or DAYS 4 TO 7) must weave in that monitoring, supervision, room searches, and drug testing reveal *what* and *when*, but the ultimate goal is understanding *why* the child is using — addressing root causes drives long-term recovery. Baked in as `ROOT CAUSE — UNDERSTAND WHY` / `ROOT CAUSE — ENTENDER EL PORQUÉ` hard rules with the founder's canonical wording as the template; MILD is excluded. Spanish Serious/Critical wording was left unchanged per founder direction except for the shared MODERATE-scoping and the new root-cause closing. Deterministic placement extended in `scripts/check-founder-edits.ts` (60/60, incl. a MODERATE build); EN coverage in `test/api.spec.ts`, ES in `test/language.spec.ts`.
 > All four changes ship together so the DTO shape, scoring, prompt, and UI move in lockstep. Tests in `test/api.spec.ts` and `test/language.spec.ts` cover: crisis-field DTO acceptance/rejection, the SERIOUS auto-escalator, the Q23/Q24 demotion (including a regression that previously promoted via `safetyFours`), the per-question answer labels in concerns/strengths blocks, the conditional header list in the user-prompt closing instruction (EN+ES), and the URGENT section parsing into `report.urgentConcern`. The mock OpenAI server in `test/global-setup.ts` now branches its response body on the presence of the `URGENT CONCERN — parent flagged this` context-block header, so it returns an 8-section payload when the crisis fires and the 7-section baseline otherwise.
+>
+> - **Beta finalization (2026-07-14) — CONSIDERING INPATIENT TREATMENT section (CRITICAL only).** Relayed by Matthew after Dave's final review. The Critical Parent Action Plan (i.e. the URGENT / crisis report, the only path that force-promotes to the crisis register) gains a new dedicated section, `CONSIDERING INPATIENT TREATMENT` (ES `CONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL`), positioned **between `DAYS 4 TO 7 CONTINUATION` and `ENCOURAGEMENT AND DIRECTION`** so the STANDARDIZED CLOSING — PROTECTING RECOVERY stays the last word. It is a short, calm, non-alarmist section: removing a child from home for inpatient/residential treatment is one of the hardest decisions a parent makes — never impulsive, but not delayed when safety is at risk — and parents should strongly consider an ASAP-endorsed inpatient treatment program when one or more of four circumstances exist: (1) the child is a danger to themselves; (2) a danger to others; (3) substance use places them at significant risk of overdose or death; (4) reasonable outpatient interventions have been exhausted without success. It closes on the reframe that seeking a higher level of care is **not a failure — it is an act of protecting the child's life and future**, and because it references an ASAP-endorsed inpatient program / treatment providers it fires the PROFESSIONAL HELP SEQUENCE (SR + Admin Spaces, verbatim). Like `URGENT CONCERN ACKNOWLEDGED`, the section is **conditional**: gated on the same crisis-field condition and omitted from the instructed header list (and from the parsed shape as an empty string) in MILD / MODERATE / non-crisis SERIOUS plans. `SECTION_HEADERS_EN`/`SECTION_HEADERS_ES` grow from 8 to 9 entries; `ReportSections` gains `consideringInpatient: string`; `claude.service` parses it; the user-prompt header count becomes "nine"/"nueve" when the crisis fires (vs. the unchanged "seven"/"siete" baseline). The existing `CRITICAL CLOSING` hard rule keeps its weight statement + residential/IOP pointer but now defers the *criteria* to this dedicated section (no duplication). Frontend: new `consideringInpatient` label + marker (EN+ES) and an empty-guard so the card is skipped in non-crisis plans. Mock (`test/global-setup.ts`) inserts the section into the crisis (non-SR) payload before `ENCOURAGEMENT AND DIRECTION`. Coverage: `test/api.spec.ts` (parse-on-crisis / empty-otherwise / system-prompt content), `test/language.spec.ts` (9-entry constants + ES content), and `scripts/check-founder-edits.ts` (EN+ES content, gating, header count).
 
 Stored as a constant in `src/report/prompts/system.prompt.ts`. Treat the file as authoritative — when changing prompt text, edit the file directly and update this section to summarize the change.
 
@@ -202,8 +204,10 @@ Scores must be rounded to 2 decimal places before injection.
 ### 6.3 Required Output Structure
 
 > **Update (post-v1.0):** The original 5-section structure has been replaced by a 7-section structure to support the ASAP framing and the deeper 72-hour intervention plan. The headers below are emitted verbatim by the model and parsed in `claude.service.ts`. Response keys in §7.4 / `ReportSections` follow this 7-section layout.
+>
+> **Update (crisis reports):** Two **conditional** sections are added only when the optional crisis field fires (the CRITICAL / URGENT report): `URGENT CONCERN ACKNOWLEDGED` (emitted **first**, before HEADLINE SUMMARY — see the Milestone 6 note in §6.1) and `CONSIDERING INPATIENT TREATMENT` (emitted **between DAYS 4 TO 7 CONTINUATION and ENCOURAGEMENT AND DIRECTION** — see the Beta finalization note in §6.1). Neither appears in MILD / MODERATE / non-crisis SERIOUS plans; in those, the corresponding `ReportSections` keys (`urgentConcern`, `consideringInpatient`) are the empty string. A crisis report therefore has 9 sections; a non-crisis report has 7.
 
-The AI must return exactly 7 sections with these fixed names:
+The AI must return the 7 base sections below (plus, in a crisis report, the two conditional sections above), with these fixed names:
 
 | # | Section Name | Content |
 |---|---|---|
@@ -213,7 +217,8 @@ The AI must return exactly 7 sections with these fixed names:
 | 4 | WHAT TO AVOID | 3–5 specific mistakes, including at least one warning about emotional reactivity. |
 | 5 | FIRST 72 HOURS PLAN | Day 1 / Day 2 / Day 3, sequenced bullets covering emotional regulation, caregiver coordination, support-structure building, substance learning, and decision guidance for predictable teen reactions. |
 | 6 | DAYS 4 TO 7 CONTINUATION | 3–4 bullets pointing to specific ASAP next steps (workshops, Articles of Action chapters, when to escalate to a professional). |
-| 7 | ENCOURAGEMENT AND DIRECTION | 2–3 grounded sentences. Names the determination/perseverance the work takes. Frames it as parent + child against the drugs. |
+| — | CONSIDERING INPATIENT TREATMENT | *(CRITICAL/crisis report only)* Short, calm section on when to seriously consider inpatient/residential treatment — the four founder circumstances (danger to self, danger to others, overdose/death risk, exhausted outpatient efforts) and the "not a failure" reframe; fires the professional-help sequence. |
+| 7 | ENCOURAGEMENT AND DIRECTION | 2–3 grounded sentences. Names the determination/perseverance the work takes. Frames it as parent + child against the drugs. Ends with the STANDARDIZED CLOSING — PROTECTING RECOVERY (MODERATE/SERIOUS/CRITICAL). |
 
 ### 6.4 Content Rules
 
@@ -281,16 +286,20 @@ No API key required on this endpoint.
     "Boundary Consistency"
   ],
   "report": {
+    "urgentConcern": "...",
     "headlineSummary": "...",
     "topImmediatePriorities": "...",
     "keyPriorities": "...",
     "whatToAvoid": "...",
     "first72Hours": "...",
     "days4to7": "...",
+    "consideringInpatient": "...",
     "encouragement": "..."
   }
 }
 ```
+
+> `urgentConcern` and `consideringInpatient` are always present as keys but are the empty string in any non-crisis report (they are only populated when the optional crisis field fires — the CRITICAL/URGENT report). See §6.3.
 
 > Note: response keys use camelCase to follow NestJS/TypeScript conventions.
 
@@ -430,12 +439,14 @@ export interface DomainScores {
 }
 
 export interface ReportSections {
+  urgentConcern: string; // conditional — empty string unless the crisis field fired
   headlineSummary: string;
   topImmediatePriorities: string;
   keyPriorities: string;
   whatToAvoid: string;
   first72Hours: string;
   days4to7: string;
+  consideringInpatient: string; // conditional — empty string unless the crisis field fired
   encouragement: string;
 }
 

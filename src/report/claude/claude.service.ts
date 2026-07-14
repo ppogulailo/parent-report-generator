@@ -256,6 +256,7 @@ export class ClaudeService {
       whatToAvoid,
       first72Hours,
       days4to7,
+      consideringInpatient,
       encouragement,
     ] = headers;
 
@@ -278,6 +279,7 @@ export class ClaudeService {
       whatToAvoid: extract(whatToAvoid),
       first72Hours: extract(first72Hours),
       days4to7: extract(days4to7),
+      consideringInpatient: extract(consideringInpatient),
       encouragement: extract(encouragement),
     };
   }

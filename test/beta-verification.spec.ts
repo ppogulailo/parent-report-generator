@@ -41,7 +41,8 @@ const post = (request: any, body: unknown) =>
 
 const getLastCaptured = async () => (await fetch(`${MOCK_BASE}/_last`)).json();
 
-const CRISIS = 'Found an unknown substance in the bedroom. Worried about fentanyl.';
+const CRISIS =
+  'Found an unknown substance in the bedroom. Worried about fentanyl.';
 
 type Tier = 'Mild' | 'Moderate' | 'Serious' | 'Critical';
 type Lang = 'en' | 'es';
@@ -124,6 +125,21 @@ for (const lang of LANGS) {
       if (tier === 'Critical') {
         // The crisis overlay is present: the parent's flagged concern is carried in.
         expect(userContent).toContain(CRISIS);
+        // The CRITICAL-only CONSIDERING INPATIENT TREATMENT section is emitted
+        // in the header list, between DAYS 4 TO 7 and the closing section.
+        const inpatientOrder =
+          lang === 'es'
+            ? /DÍAS 4 A 7 — CONTINUACIÓN\nCONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL\nALIENTO Y DIRECCIÓN/
+            : /DAYS 4 TO 7 CONTINUATION\nCONSIDERING INPATIENT TREATMENT\nENCOURAGEMENT AND DIRECTION/;
+        expect(userContent).toMatch(inpatientOrder);
+      } else {
+        // Non-crisis tiers never emit the CRITICAL-only inpatient section in the
+        // header list (the reminder text may still name it — anchor on adjacency).
+        const inpatientInList =
+          lang === 'es'
+            ? 'DÍAS 4 A 7 — CONTINUACIÓN\nCONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL'
+            : 'DAYS 4 TO 7 CONTINUATION\nCONSIDERING INPATIENT TREATMENT';
+        expect(userContent).not.toContain(inpatientInList);
       }
     });
   }

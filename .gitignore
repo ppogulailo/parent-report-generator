@@ -69,3 +69,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 /ASAP Parent Action Plan Redesign*/
 /*.png
 /*.zip
+
+# Generated review deliverables (share externally, keep out of repo)
+/ASAP-Parent-Action-Plans-Beta-Review.*
