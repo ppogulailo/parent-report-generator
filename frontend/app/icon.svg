@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="ASAP">
+  <rect width="64" height="64" rx="14" fill="#eef4f3"/>
+  <g transform="translate(32,31) scale(0.52)">
+    <path d="M -46 26 L 0 -14 L 46 26" fill="none" stroke="#2f5f5d" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M 0 8 C -6 -2 -20 -1 -20 11 C -20 22 -8 30 0 38 C 8 30 20 22 20 11 C 20 -1 6 -2 0 8 Z" fill="#e8a04b"/>
+  </g>
+</svg>
