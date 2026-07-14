@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { headers } from 'next/headers';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -14,13 +15,18 @@ export const metadata: Metadata = {
   other: { google: 'notranslate' },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // Middleware sets x-lang to the active route locale so the server-rendered
+  // <html lang> matches the displayed language (source of truth), not a
+  // hardcoded default. translate="no" keeps browser auto-translation off so the
+  // displayed language can never diverge from the selected/generated one.
+  const lang = (await headers()).get('x-lang') ?? 'en';
   return (
-    <html lang="en" translate="no">
+    <html lang={lang} translate="no">
       <body>{children}</body>
     </html>
   );
