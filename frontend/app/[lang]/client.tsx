@@ -381,6 +381,10 @@ export default function PageClient({ language }: Props) {
 
   useEffect(() => {
     document.documentElement.lang = language;
+    // Keep browser auto-translation off (source of truth is the toggle, not a
+    // browser translation of the page). Belt-and-suspenders with the SSR
+    // <html translate="no"> set in the root layout.
+    document.documentElement.setAttribute('translate', 'no');
   }, [language]);
 
   useEffect(() => {
