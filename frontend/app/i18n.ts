@@ -507,6 +507,7 @@ export const SECTION_LABELS_BY_LANG: Record<
     ['whatToAvoid', 'What to Avoid'],
     ['first72Hours', 'First 72 Hours Plan'],
     ['days4to7', 'Days 4–7 Continuation'],
+    ['consideringInpatient', 'Considering Inpatient Treatment'],
     ['encouragement', 'Encouragement & Direction'],
   ],
   es: [
@@ -517,6 +518,7 @@ export const SECTION_LABELS_BY_LANG: Record<
     ['whatToAvoid', 'Qué evitar'],
     ['first72Hours', 'Plan de las primeras 72 horas'],
     ['days4to7', 'Días 4 a 7 — Continuación'],
+    ['consideringInpatient', 'Considerar el tratamiento interno o residencial'],
     ['encouragement', 'Aliento y dirección'],
   ],
 };
@@ -535,6 +537,7 @@ export const SECTION_MARKERS_BY_LANG: Record<
     ['whatToAvoid', 'WHAT TO AVOID'],
     ['first72Hours', 'FIRST 72 HOURS PLAN'],
     ['days4to7', 'DAYS 4 TO 7 CONTINUATION'],
+    ['consideringInpatient', 'CONSIDERING INPATIENT TREATMENT'],
     ['encouragement', 'ENCOURAGEMENT AND DIRECTION'],
   ],
   es: [
@@ -545,6 +548,7 @@ export const SECTION_MARKERS_BY_LANG: Record<
     ['whatToAvoid', 'QUÉ EVITAR'],
     ['first72Hours', 'PLAN DE LAS PRIMERAS 72 HORAS'],
     ['days4to7', 'DÍAS 4 A 7 — CONTINUACIÓN'],
+    ['consideringInpatient', 'CONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL'],
     ['encouragement', 'ALIENTO Y DIRECCIÓN'],
   ],
 };

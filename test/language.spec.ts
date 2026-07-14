@@ -167,17 +167,53 @@ test('SYSTEM_PROMPT_ES holds the core ASAP rules in Spanish', () => {
 
 // ─── Section-header constants uniqueness ─────────────────────────────────────
 
-test('section-header constants are 8 unique entries in each language (URGENT first, then 7 base)', () => {
-  // Milestone 6: the conditional URGENT CONCERN ACKNOWLEDGED header is the
-  // 8th constant. It is only rendered into the user-prompt template when the
-  // optional crisis field fires; the constant always exists at index 0 so
-  // the parser can find it when the model emits it.
-  expect(SECTION_HEADERS_EN).toHaveLength(8);
-  expect(SECTION_HEADERS_ES).toHaveLength(8);
-  expect(new Set(SECTION_HEADERS_EN).size).toBe(8);
-  expect(new Set(SECTION_HEADERS_ES).size).toBe(8);
+test('section-header constants are 9 unique entries in each language (URGENT first, then 7 base + CONSIDERING INPATIENT)', () => {
+  // Milestone 6 added the conditional URGENT CONCERN ACKNOWLEDGED header at
+  // index 0. The Beta finalization added a second conditional header,
+  // CONSIDERING INPATIENT TREATMENT, positioned between DAYS 4 TO 7 and
+  // ENCOURAGEMENT. Both are only rendered into the user-prompt template when
+  // the optional crisis field fires; both constants always exist so the
+  // parser can find them when the model emits them.
+  expect(SECTION_HEADERS_EN).toHaveLength(9);
+  expect(SECTION_HEADERS_ES).toHaveLength(9);
+  expect(new Set(SECTION_HEADERS_EN).size).toBe(9);
+  expect(new Set(SECTION_HEADERS_ES).size).toBe(9);
   expect(SECTION_HEADERS_EN[0]).toBe('URGENT CONCERN ACKNOWLEDGED');
   expect(SECTION_HEADERS_ES[0]).toBe('PREOCUPACIÓN URGENTE RECONOCIDA');
+  // CONSIDERING INPATIENT TREATMENT sits directly before the closing section.
+  expect(SECTION_HEADERS_EN[SECTION_HEADERS_EN.length - 2]).toBe(
+    'CONSIDERING INPATIENT TREATMENT',
+  );
+  expect(SECTION_HEADERS_EN[SECTION_HEADERS_EN.length - 1]).toBe(
+    'ENCOURAGEMENT AND DIRECTION',
+  );
+  expect(SECTION_HEADERS_ES[SECTION_HEADERS_ES.length - 2]).toBe(
+    'CONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL',
+  );
+  expect(SECTION_HEADERS_ES[SECTION_HEADERS_ES.length - 1]).toBe(
+    'ALIENTO Y DIRECCIÓN',
+  );
+});
+
+test('SYSTEM_PROMPT_ES defines the CRITICAL-only CONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL section with the four circumstances', () => {
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /CONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL/,
+  );
+  expect(SYSTEM_PROMPT_ES).toContain('Tu hijo es un peligro para sí mismo.');
+  expect(SYSTEM_PROMPT_ES).toContain('Tu hijo es un peligro para otros.');
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'riesgo significativo de sobredosis o muerte',
+  );
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'agotado las intervenciones ambulatorias razonables',
+  );
+  expect(SYSTEM_PROMPT_ES).toMatch(
+    /no es un fracaso — es un acto de protección de la vida y el futuro de tu hijo/,
+  );
+  // The professional-help sequence stays in English verbatim inside the section.
+  expect(SYSTEM_PROMPT_ES).toContain(
+    'For guidance, consider posting questions in the Sustaining Recovery discussion group.',
+  );
 });
 
 // ─── Founder review pass #6 (ES) ─────────────────────────────────────────────
@@ -388,9 +424,13 @@ test('Milestone 6 (ES): user prompt template lists PREOCUPACIÓN URGENTE header 
   });
   const captured = await getLastCaptured();
   const userContent: string = captured.body.messages[1].content;
-  expect(userContent).toContain('ocho encabezados de sección');
+  expect(userContent).toContain('nueve encabezados de sección');
   expect(userContent).toMatch(
     /PREOCUPACIÓN URGENTE RECONOCIDA\nRESUMEN INICIAL/,
+  );
+  // The CRITICAL-only inpatient section sits before the closing section.
+  expect(userContent).toMatch(
+    /DÍAS 4 A 7 — CONTINUACIÓN\nCONSIDERAR EL TRATAMIENTO INTERNO O RESIDENCIAL\nALIENTO Y DIRECCIÓN/,
   );
 });
 

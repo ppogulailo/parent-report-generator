@@ -164,10 +164,11 @@ const DOMAIN_NAMES = [
   'Support & Professional Engagement',
 ];
 
-// Milestone 6 added urgentConcern as the conditional 8th section. It is
-// always present on the parsed shape, but is the empty string in any plan
-// where the optional crisis field was not supplied (the model never emits
-// the URGENT CONCERN ACKNOWLEDGED header in that case).
+// Milestone 6 added urgentConcern as a conditional section, and the Beta
+// finalization added consideringInpatient as another. Both are always present
+// on the parsed shape, but are the empty string in any plan where the optional
+// crisis field was not supplied (the model never emits their headers — URGENT
+// CONCERN ACKNOWLEDGED / CONSIDERING INPATIENT TREATMENT — in that case).
 const REPORT_KEYS_ALWAYS_NON_EMPTY = [
   'headlineSummary',
   'topImmediatePriorities',
@@ -198,9 +199,13 @@ test('success response has correct shape', async ({ request }) => {
     expect(DOMAIN_NAMES).toContain(d);
   }
 
-  expect(Object.keys(body.report)).toHaveLength(8);
-  // urgentConcern is a string but is empty when no crisis field was supplied.
+  expect(Object.keys(body.report)).toHaveLength(9);
+  // urgentConcern and consideringInpatient are strings but empty when no
+  // crisis field was supplied.
   expect(typeof body.report.urgentConcern).toBe('string');
+  expect(body.report.urgentConcern).toBe('');
+  expect(typeof body.report.consideringInpatient).toBe('string');
+  expect(body.report.consideringInpatient).toBe('');
   for (const key of REPORT_KEYS_ALWAYS_NON_EMPTY) {
     expect(typeof body.report[key]).toBe('string');
     expect(body.report[key].length).toBeGreaterThan(0);
@@ -1469,8 +1474,12 @@ test('Milestone 6: user prompt template lists URGENT header when crisis fires, o
   await post(request, { responses: VALID, crisis: 'suspected overdose' });
   const captured2 = await (await fetch(`${MOCK_BASE}/_last`)).json();
   const userContent2: string = captured2.body.messages[1].content;
-  expect(userContent2).toContain('eight section headers');
+  expect(userContent2).toContain('nine section headers');
   expect(userContent2).toMatch(/URGENT CONCERN ACKNOWLEDGED\nHEADLINE SUMMARY/);
+  // The CRITICAL-only inpatient section sits between DAYS 4 TO 7 and ENCOURAGEMENT.
+  expect(userContent2).toMatch(
+    /DAYS 4 TO 7 CONTINUATION\nCONSIDERING INPATIENT TREATMENT\nENCOURAGEMENT AND DIRECTION/,
+  );
 });
 
 test('Milestone 6: URGENT CONCERN ACKNOWLEDGED section parses into report.urgentConcern when crisis fires', async ({
@@ -1501,6 +1510,53 @@ test('Milestone 6: URGENT CONCERN section is empty in report when no crisis was 
   expect(res.status()).toBe(200);
   const body = await res.json();
   expect(body.report.urgentConcern).toBe('');
+});
+
+test('Beta finalization: CONSIDERING INPATIENT TREATMENT parses into report.consideringInpatient when crisis fires', async ({
+  request,
+}) => {
+  const res = await post(request, {
+    responses: VALID,
+    crisis: 'Suspected overdose; talked about ending it.',
+  });
+  expect(res.status()).toBe(200);
+
+  const body = await res.json();
+  expect(body.success).toBe(true);
+  expect(typeof body.report.consideringInpatient).toBe('string');
+  expect(body.report.consideringInpatient.length).toBeGreaterThan(0);
+  expect(body.report.consideringInpatient).toMatch(/inpatient or residential/i);
+  expect(body.report.consideringInpatient).toMatch(/danger to themselves/i);
+  // The dedicated section does not swallow the closing section.
+  expect(body.report.encouragement.length).toBeGreaterThan(0);
+});
+
+test('Beta finalization: CONSIDERING INPATIENT section is empty in report when no crisis was supplied', async ({
+  request,
+}) => {
+  const res = await post(request, { responses: VALID });
+  expect(res.status()).toBe(200);
+  const body = await res.json();
+  expect(body.report.consideringInpatient).toBe('');
+});
+
+test('Beta finalization: SYSTEM_PROMPT defines the CRITICAL-only CONSIDERING INPATIENT TREATMENT section with the four circumstances', () => {
+  expect(SYSTEM_PROMPT).toMatch(/CONSIDERING INPATIENT TREATMENT/);
+  // Conditional, crisis-only, placed before ENCOURAGEMENT.
+  expect(SYSTEM_PROMPT).toMatch(
+    /CONSIDERING INPATIENT TREATMENT {2}\(conditional/,
+  );
+  // The four founder circumstances.
+  expect(SYSTEM_PROMPT).toContain('Your child is a danger to themselves.');
+  expect(SYSTEM_PROMPT).toContain('Your child is a danger to others.');
+  expect(SYSTEM_PROMPT).toContain('significant risk of overdose or death');
+  expect(SYSTEM_PROMPT).toContain(
+    'exhausted reasonable outpatient interventions',
+  );
+  // The reframe.
+  expect(SYSTEM_PROMPT).toMatch(
+    /not a failure — it is an act of protecting your child's life and future/,
+  );
 });
 
 test('Milestone 6: SYSTEM_PROMPT has the URGENT CONCERN hard rule with trigger-keyword resource map', () => {

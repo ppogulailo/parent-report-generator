@@ -14,6 +14,7 @@ export interface ReportSections {
   whatToAvoid: string;
   first72Hours: string;
   days4to7: string;
+  consideringInpatient: string;
   encouragement: string;
 }
 

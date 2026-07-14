@@ -65,6 +65,7 @@ type ReportSections = {
   whatToAvoid: string;
   first72Hours: string;
   days4to7: string;
+  consideringInpatient: string;
   encouragement: string;
 };
 
@@ -83,6 +84,7 @@ const EMPTY_REPORT: ReportSections = {
   whatToAvoid: '',
   first72Hours: '',
   days4to7: '',
+  consideringInpatient: '',
   encouragement: '',
 };
 
@@ -435,7 +437,27 @@ export default function PageClient({ language }: Props) {
       <header className="brandbar no-print">
         <div className="brandbar-inner">
           <div className="brand">
-            <span className="brand-mark" aria-hidden>II</span>
+            <svg
+              className="brand-mark"
+              viewBox="284 34 112 112"
+              role="img"
+              aria-hidden
+            >
+              <g transform="translate(340,78)">
+                <path
+                  d="M -46 26 L 0 -14 L 46 26"
+                  fill="none"
+                  stroke="#4a8f8c"
+                  strokeWidth="7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="M 0 8 C -6 -2 -20 -1 -20 11 C -20 22 -8 30 0 38 C 8 30 20 22 20 11 C 20 -1 6 -2 0 8 Z"
+                  fill="#e8a04b"
+                />
+              </g>
+            </svg>
             <span>ASAP Community</span>
           </div>
           <div className="brandbar-controls">
@@ -809,7 +831,14 @@ export default function PageClient({ language }: Props) {
               <div className="sections">
                 {sectionLabels.map(([key, label]) => {
                   const body = report[key as keyof ReportSections];
-                  if (key === 'urgentConcern' && body.length === 0) return null;
+                  // urgentConcern and consideringInpatient are conditional
+                  // (crisis report only) — skip their cards entirely when empty
+                  // so non-crisis plans don't render an empty section box.
+                  if (
+                    (key === 'urgentConcern' || key === 'consideringInpatient') &&
+                    body.length === 0
+                  )
+                    return null;
                   const isUrgent = key === 'urgentConcern';
                   const isActive = stage === 'writing' && body.length > 0;
                   return (

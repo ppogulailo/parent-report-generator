@@ -37,6 +37,31 @@ const URGENT_BLOCK = [
   '',
 ];
 
+// Conditional CRITICAL-only section, inserted before ENCOURAGEMENT AND
+// DIRECTION when the crisis field fires (early-intervention plan only).
+const INPATIENT_BLOCK = [
+  'CONSIDERING INPATIENT TREATMENT',
+  'Removing a child from home for inpatient or residential treatment is one of the hardest decisions a parent makes. Strongly consider an ASAP-endorsed inpatient treatment program when one or more of these exist:',
+  '- Your child is a danger to themselves.',
+  '- Your child is a danger to others.',
+  "- Your child's substance use places them at significant risk of overdose or death.",
+  '- You have exhausted reasonable outpatient interventions and treatment efforts without success.',
+  "Seeking a higher level of care is not a failure — it is an act of protecting your child's life and future. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.",
+  '',
+];
+
+// Insert the CRITICAL-only inpatient section just before the final
+// ENCOURAGEMENT AND DIRECTION section of the early-intervention plan.
+function withInpatientSection(sections: string[]): string[] {
+  const idx = sections.indexOf('ENCOURAGEMENT AND DIRECTION');
+  if (idx === -1) return sections;
+  return [
+    ...sections.slice(0, idx),
+    ...INPATIENT_BLOCK,
+    ...sections.slice(idx),
+  ];
+}
+
 // Sustaining Recovery (post-treatment) plan — different section structure than
 // the early-intervention plan above. The mock returns these when the outgoing
 // user prompt identifies itself as the SUSTAINING RECOVERY plan.
@@ -84,7 +109,11 @@ function buildResponseBody(userMessage: string): string {
 
   const base = isSustainingRecovery ? SR_BASE_SECTIONS : BASE_SECTIONS;
   const urgent = isSustainingRecovery ? SR_URGENT_BLOCK : URGENT_BLOCK;
-  const content = (isCrisis ? [...urgent, ...base] : base).join('\n');
+  // The CONSIDERING INPATIENT TREATMENT section is CRITICAL-only and belongs
+  // to the early-intervention plan (not the Sustaining Recovery plan).
+  const crisisBase =
+    isCrisis && !isSustainingRecovery ? withInpatientSection(base) : base;
+  const content = (isCrisis ? [...urgent, ...crisisBase] : base).join('\n');
   return JSON.stringify({
     choices: [
       {
