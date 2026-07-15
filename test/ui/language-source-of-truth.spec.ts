@@ -45,7 +45,12 @@ async function waitHydrated(page: Page) {
 }
 
 async function fillAndGenerate(page: Page) {
-  await page.getByRole('button', { name: /Prefill sample answers/i }).click();
+  // Fill all 24 questions the way a real user would (the dev-only "Prefill"
+  // button is not present in production builds). Options render in order 1..4,
+  // so nth(value-1) is the matching choice.
+  for (let i = 0; i < SAMPLE.length; i++) {
+    await page.locator(`#q-${i} label.opt`).nth(SAMPLE[i] - 1).click();
+  }
   const gen = page.locator('button.btn-full');
   await expect(gen).toBeEnabled();
   await gen.click();
