@@ -887,16 +887,19 @@ export default function PageClient({ language }: Props) {
         )}
       </main>
 
-      {/* Prototype tools (dev only) */}
-      <div className="devtools no-print">
-        <span className="devtools-title">Prototype tools</span>
-        <button type="button" className="devtools-btn" onClick={fillSample}>
-          Prefill sample answers
-        </button>
-        <button type="button" className="devtools-btn" onClick={startOver}>
-          Reset all
-        </button>
-      </div>
+      {/* Prototype tools — development only; never shipped to production
+          (Next inlines NODE_ENV, so this block is dropped from prod builds). */}
+      {process.env.NODE_ENV !== 'production' && (
+        <div className="devtools no-print">
+          <span className="devtools-title">Prototype tools</span>
+          <button type="button" className="devtools-btn" onClick={fillSample}>
+            Prefill sample answers
+          </button>
+          <button type="button" className="devtools-btn" onClick={startOver}>
+            Reset all
+          </button>
+        </div>
+      )}
     </>
   );
 }
