@@ -3,8 +3,9 @@
    Design: "ASAP Parent Action Plan Redesign" (ElevenLabs-style
    warm-monochrome system). Ported from the designer's tokens.
    Display: Hanken Grotesk · UI/body: Inter · numeric/mono: JetBrains Mono.
+   Fonts are self-hosted via next/font (see app/[lang]/layout.tsx); the
+   --font-hanken / --font-inter / --font-jetbrains variables come from there.
    ============================================================ */
-@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 :root {
   /* --- Absolutes --- */
@@ -78,9 +79,9 @@
     opacity var(--dur-fast) var(--ease-standard);
 
   /* --- Fonts --- */
-  --font-display: 'Hanken Grotesk', 'Helvetica Neue', Arial, sans-serif;
-  --font-sans: 'Inter', 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: var(--font-hanken), 'Helvetica Neue', Arial, sans-serif;
+  --font-sans: var(--font-inter), 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, 'SF Mono', Menlo, monospace;
 
   --wrap: 680px;
 }

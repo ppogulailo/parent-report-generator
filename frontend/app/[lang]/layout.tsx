@@ -1,5 +1,26 @@
 import type { Metadata } from 'next';
+import { Hanken_Grotesk, Inter, JetBrains_Mono } from 'next/font/google';
 import '../globals.css';
+
+// Self-hosted at build via next/font (no render-blocking Google Fonts @import,
+// no layout shift). These are variable fonts, so the full weight axis is
+// available without listing weights. The CSS variables are consumed by
+// --font-display / --font-sans / --font-mono in globals.css.
+const hanken = Hanken_Grotesk({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-hanken',
+});
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-jetbrains',
+});
 
 // This is the app's ROOT layout. It lives under app/[lang] (not app/) so that
 // the locale comes from the static route param — which lets every page be
@@ -145,7 +166,11 @@ export default async function RootLayout({
   // language can never diverge from the selected/generated one.
   const lang = resolveLang((await params).lang);
   return (
-    <html lang={lang} translate="no">
+    <html
+      lang={lang}
+      translate="no"
+      className={`${hanken.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+    >
       <body>
         <script
           type="application/ld+json"
