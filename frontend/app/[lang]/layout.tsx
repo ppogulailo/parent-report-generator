@@ -45,11 +45,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const lang = resolveLang((await params).lang);
   const { title, description } = META[lang];
+  const ogLocale = lang === 'es' ? 'es_ES' : 'en_US';
 
   return {
     metadataBase: new URL(SITE_URL),
     title,
     description,
+    applicationName: 'ASAP Community Parent Action Plan',
     alternates: {
       // Self-referencing canonical per locale.
       canonical: `/${lang}`,
@@ -59,6 +61,22 @@ export async function generateMetadata({
         es: '/es',
         'x-default': '/en',
       },
+    },
+    // The og:image / twitter:image tags are injected automatically from
+    // app/[lang]/opengraph-image.tsx and twitter-image.tsx — do not duplicate
+    // an `images` field here.
+    openGraph: {
+      type: 'website',
+      siteName: 'ASAP Community',
+      locale: ogLocale,
+      url: `${SITE_URL}/${lang}`,
+      title,
+      description,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
     },
     // The app is deliberately bilingual through the in-app language toggle
     // (EN/ES). Browser auto-translation must NEVER run: it silently makes the
