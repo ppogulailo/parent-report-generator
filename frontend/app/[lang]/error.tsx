@@ -34,9 +34,9 @@ export default function Error({
 
   return (
     <main style={{ padding: '2rem', maxWidth: 560, margin: '0 auto' }}>
-      <p style={{ marginBottom: '1rem' }}>
+      <h1 style={{ marginBottom: '1rem', fontSize: '1.25rem', fontWeight: 600 }}>
         Something went wrong loading the page.
-      </p>
+      </h1>
 
       {error.message && (
         <pre

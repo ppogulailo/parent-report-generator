@@ -44,12 +44,14 @@ export async function POST(req: Request) {
         ? `${err.name}: ${err.message}${(err as any).cause?.code ? ` (${(err as any).cause.code})` : ''}`
         : String(err);
 
+    // Keep the internal target URL + detail in server logs only — never echo
+    // the internal hostname back to the client.
     console.error('[proxy] fetch failed', { target, detail });
 
     return NextResponse.json(
       {
         success: false,
-        error: `Could not reach NestJS API at ${target} — ${detail}`,
+        error: 'Could not reach the report service. Please try again.',
       },
       { status: 502 },
     );
