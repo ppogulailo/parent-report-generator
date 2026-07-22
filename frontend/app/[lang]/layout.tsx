@@ -38,6 +38,51 @@ function resolveLang(lang: string): SupportedLang {
     : 'en';
 }
 
+// Factual structured data only — no ratings, medical claims, or unverifiable
+// assertions on this health-adjacent topic. Organization + WebSite describe the
+// publisher and site; WebApplication describes the free bilingual tool itself.
+const APP_DESCRIPTION: Record<SupportedLang, string> = {
+  en: 'A free bilingual tool that turns a 24-question intake into a personalized, step-by-step action plan for parents concerned about a child’s substance use.',
+  es: 'Una herramienta bilingüe y gratuita que convierte un cuestionario de 24 preguntas en un plan de acción personalizado y paso a paso para padres preocupados por el consumo de sustancias de su hijo.',
+};
+
+function buildJsonLd(lang: SupportedLang) {
+  const orgId = `${SITE_URL}/#organization`;
+  const siteId = `${SITE_URL}/#website`;
+  return {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Organization',
+        '@id': orgId,
+        name: 'ASAP Community',
+        url: SITE_URL,
+        logo: `${SITE_URL}/icon.svg`,
+      },
+      {
+        '@type': 'WebSite',
+        '@id': siteId,
+        url: SITE_URL,
+        name: 'ASAP Community Parent Action Plan',
+        inLanguage: lang,
+        publisher: { '@id': orgId },
+      },
+      {
+        '@type': 'WebApplication',
+        name: 'Parent Risk Assessment & Action Plan',
+        url: `${SITE_URL}/${lang}`,
+        applicationCategory: 'HealthApplication',
+        operatingSystem: 'Web browser',
+        inLanguage: lang,
+        isAccessibleForFree: true,
+        offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        description: APP_DESCRIPTION[lang],
+        publisher: { '@id': orgId },
+      },
+    ],
+  };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -101,7 +146,13 @@ export default async function RootLayout({
   const lang = resolveLang((await params).lang);
   return (
     <html lang={lang} translate="no">
-      <body>{children}</body>
+      <body>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd(lang)) }}
+        />
+        {children}
+      </body>
     </html>
   );
 }
