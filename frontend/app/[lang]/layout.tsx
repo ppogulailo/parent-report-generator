@@ -35,7 +35,7 @@ export function generateStaticParams() {
   return SUPPORTED.map((lang) => ({ lang }));
 }
 
-const SITE_URL = 'https://actionplan.asapcommunity.org';
+const SITE_URL = 'https://actionplan.asap-community.org';
 
 // Localized <head> metadata. These strings are head-only (title/meta), not
 // visible on-page copy, and target parent-intent search queries on the

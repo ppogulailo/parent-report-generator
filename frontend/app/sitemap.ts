@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const SITE_URL = 'https://actionplan.asapcommunity.org';
+const SITE_URL = 'https://actionplan.asap-community.org';
 
 // Only the two public locale landing/tool pages are indexable. There is no
 // separate report/results URL — a generated plan is client-side state on the
