@@ -6,11 +6,11 @@
  * pointing at a host that does not resolve is invisible in testing and costly in
  * search.
  *
- * **The default is the host that currently resolves**, not the intended one.
- * `monitoring.asapcommunity.org` needs a DNS record in an account we do not
- * control; until that exists, defaulting to it would point every canonical,
- * hreflang and sitemap entry at a dead domain. That mistake has already been
- * made and reverted once here.
+ * The default is `monitoring.asapcommunity.org`, the launch host: its Fly
+ * certificate is issued, DNS resolves to the frontend, and it already serves
+ * traffic. `actionplan.asap-community.org` still resolves and should be
+ * redirected here rather than dropped, so the links and search visibility it has
+ * accumulated follow.
  *
  * To switch at launch, set `NEXT_PUBLIC_SITE_URL`. Because it is a
  * `NEXT_PUBLIC_*` value it is inlined at build time, so it needs BOTH a
@@ -18,14 +18,14 @@
  * build arg with no `ARG` to receive it is silently dropped, and the feature it
  * gates simply does not exist in production.
  */
-const FALLBACK = 'https://actionplan.asap-community.org';
+const FALLBACK = 'https://monitoring.asapcommunity.org';
 
 const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
 export const SITE_URL = (configured || FALLBACK).replace(/\/+$/, '');
 
-/** True while the site is served from the pre-launch hostname. */
-export const IS_PRELAUNCH_HOST = SITE_URL === FALLBACK;
+/** True while the site is still served from the pre-launch hostname. */
+export const IS_PRELAUNCH_HOST = SITE_URL.includes('asap-community.org');
 
 /**
  * Whether `/[lang]` serves the Version 1.0 flow.

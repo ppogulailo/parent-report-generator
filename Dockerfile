@@ -24,6 +24,13 @@ RUN npm ci --omit=dev && npm cache clean --force
 
 COPY --from=builder /app/dist ./dist
 
+# The methodology itself. `ContentService` reads it from the working directory at
+# boot and THROWS if it is missing, so an image without this does not start —
+# which, on a running service, is an outage rather than a failed deploy. It is
+# copied into the runtime stage rather than the builder because it is read at
+# run time, not compiled.
+COPY content ./content
+
 RUN addgroup -S nodeapp && adduser -S nodeapp -G nodeapp \
     && chown -R nodeapp:nodeapp /app
 USER nodeapp
