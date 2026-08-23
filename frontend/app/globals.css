@@ -1410,6 +1410,43 @@ html[data-theme='dark'] .orb-2 {
   }
 }
 
+/* The V1 pages open straight into the assessment title rather than the landing
+   hero, so the first block would otherwise sit flush against the sticky
+   brandbar. 40px matches the bottom padding every block already has, so the
+   page keeps its rhythm.
+
+   Scoped to a leading `.block`: the landing page opens with `.hero`, which
+   carries its own 56px, so this cannot reach it. */
+main > .block:first-child {
+  padding-top: 40px;
+}
+
+/* Step navigation. The questionnaire is stepped one concern domain at a time, so
+   Back and Next sit together under the section; on the last step Next becomes
+   the generate button. `space-between` rather than a flex-end row, so Back stays
+   on the left where a parent expects to find it. */
+.stepnav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.stepnav .btn {
+  min-width: 120px;
+}
+/* A Next that cannot advance yet still looks pressable, because it is: pressing
+   it explains what is missing. Only the emphasis drops. */
+.stepnav .btn[aria-disabled='true'] {
+  opacity: 0.55;
+}
+.step-count {
+  font-size: 12.5px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
 /* ---------------------------------------------------------------------------
    Version 1.0 additions
 

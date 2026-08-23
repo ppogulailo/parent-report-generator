@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { STRINGS, type Language } from '../../i18n';
 import ReportView, {
   type ReportSection,
@@ -15,21 +15,27 @@ import {
   Spinner,
   SunIcon,
 } from '../ui';
+import { clearProgress, loadProgress, saveProgress } from './progress-store';
 
 /**
- * The Version 1.0 questionnaire, in the existing design.
+ * The Version 1.0 questionnaire, in the existing design, one concern domain at a
+ * time.
  *
  * Every class here already exists in `globals.css` and is what the live
- * questionnaire uses — `brandbar`, `block`, `qgroups`, `qcard`, `opts`,
+ * questionnaire uses — `brandbar`, `block`, `qgroup-head`, `qcard`, `opts`,
  * `crisis-card`. The copy comes from `i18n.ts` for the same reason: this is the
  * same product with a different engine behind it, and it should not announce
  * that to the parent.
  *
- * Two things differ from the live flow, both deliberate. Answers are held keyed
- * by question id rather than by array position, because the live 24-slot array
- * silently re-maps every answer the moment the questionnaire is reordered — and
- * reordering is a content edit now. And the questions themselves are fetched
- * from the backend rather than duplicated in `app/questions.ts`.
+ * Three things differ from the live flow, all deliberate:
+ *
+ *   · Answers are keyed by question id, not by array position. The live 24-slot
+ *     array silently re-maps every answer the moment the questionnaire is
+ *     reordered — and reordering is a content edit now.
+ *   · The questions come from the backend rather than a second copy in
+ *     `app/questions.ts`.
+ *   · It is stepped rather than one long scroll, and a parent's place is saved
+ *     in this browser so closing the tab does not cost them the work.
  */
 
 interface Localized {
@@ -65,6 +71,7 @@ interface Props {
   draft: boolean;
   methodologyVersion: string;
   questionnaire: {
+    version: string;
     title: Localized;
     intro: Localized;
     domains: Domain[];
@@ -79,7 +86,7 @@ interface Props {
   };
 }
 
-/** The handful of strings the V1 flow adds. Everything else comes from i18n. */
+/** The strings the V1 flow adds. Everything else comes from `i18n.ts`. */
 const EXTRA = {
   en: {
     draft:
@@ -87,8 +94,20 @@ const EXTRA = {
     optional: 'Optional',
     workshopsUnlinked: 'Links to these workshops are coming soon.',
     openWorkshop: 'Open in ASAP Community',
-    unanswered: (n: number) =>
-      `${n} question${n === 1 ? '' : 's'} still to answer.`,
+    resumeHeading: 'You have answers saved',
+    resumeBody: (answered: number, total: number) =>
+      `You answered ${answered} of ${total} questions last time. Nothing was sent anywhere.`,
+    continueLabel: 'Continue',
+    startFreshLabel: 'Start fresh',
+    next: 'Next',
+    back: 'Back',
+    stepOf: (current: number, total: number) => `Step ${current} of ${total}`,
+    stepIncomplete: 'Answer every question in this section to continue.',
+    lastStepTitle: 'Before your plan',
+    lastStepDesc:
+      'Two optional questions, then your plan. Neither one changes your priorities.',
+    moreTitle: 'One more question',
+    moreDesc: 'This one does not belong to any of the areas above.',
   },
   es: {
     draft:
@@ -97,10 +116,32 @@ const EXTRA = {
     workshopsUnlinked:
       'Los enlaces a estos workshops estarán disponibles pronto.',
     openWorkshop: 'Abrir en ASAP Community',
-    unanswered: (n: number) =>
-      `Falta${n === 1 ? '' : 'n'} ${n} pregunta${n === 1 ? '' : 's'} por responder.`,
+    resumeHeading: 'Tienes respuestas guardadas',
+    resumeBody: (answered: number, total: number) =>
+      `La última vez respondiste ${answered} de ${total} preguntas. No se envió nada a ningún lugar.`,
+    continueLabel: 'Continuar',
+    startFreshLabel: 'Empezar de cero',
+    next: 'Siguiente',
+    back: 'Atrás',
+    stepOf: (current: number, total: number) => `Paso ${current} de ${total}`,
+    stepIncomplete: 'Responde todas las preguntas de esta sección para seguir.',
+    lastStepTitle: 'Antes de tu plan',
+    lastStepDesc:
+      'Dos preguntas opcionales, y luego tu plan. Ninguna cambia tus prioridades.',
+    moreTitle: 'Una pregunta más',
+    moreDesc: 'Esta no pertenece a ninguna de las áreas anteriores.',
   },
 } as const;
+
+type Step =
+  | {
+      kind: 'questions';
+      key: string;
+      title: string;
+      description: string;
+      items: { question: Question; number: number }[];
+    }
+  | { kind: 'final'; key: 'final' };
 
 export default function V1Client({
   language,
@@ -114,6 +155,7 @@ export default function V1Client({
   const [responses, setResponses] = useState<Record<string, number>>({});
   const [gates, setGates] = useState<Record<string, string>>({});
   const [urgent, setUrgent] = useState('');
+  const [stepIndex, setStepIndex] = useState(0);
   const [stage, setStage] = useState<'form' | 'working' | 'done'>('form');
   const [error, setError] = useState<string | null>(null);
   const [sections, setSections] = useState<ReportSection[]>([]);
@@ -124,6 +166,13 @@ export default function V1Client({
   > | null>(null);
   const [topDomains, setTopDomains] = useState<string[]>([]);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [saved, setSaved] = useState<{
+    responses: Record<string, number>;
+    gates: Record<string, string>;
+    answered: number;
+  } | null>(null);
+
+  const stepTop = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('apap-theme');
@@ -140,16 +189,20 @@ export default function V1Client({
     [questionnaire.questions],
   );
 
-  /** Questions grouped by domain, numbered in questionnaire order.
+  /**
+   * Steps: one per concern domain, then whatever no domain claims, then the
+   * optional questions.
    *
-   *  A question can belong to two domains — the approved methodology overlaps —
-   *  so it is shown in the first domain that claims it, and the running number
-   *  stays unique. Showing it twice would make a 24-question assessment look
-   *  like 26. */
-  const groups = useMemo(() => {
+   * A question can belong to two domains — the approved methodology overlaps, so
+   * q18 and q22 each count toward two — and it is shown in the first domain that
+   * claims it. Showing it twice would make a 24-question assessment look like 26
+   * and give a parent two cards holding one answer.
+   */
+  const steps = useMemo<Step[]>(() => {
     const seen = new Set<string>();
     let number = 0;
-    return [...questionnaire.domains]
+
+    const domainSteps = [...questionnaire.domains]
       .sort((a, b) => a.order - b.order)
       .map((domain) => {
         const items = domain.questionIds
@@ -159,35 +212,44 @@ export default function V1Client({
             number += 1;
             return { question: byId.get(id)!, number };
           });
-        return { domain, items };
+        return {
+          kind: 'questions' as const,
+          key: domain.id,
+          title: domain.label[language],
+          description: domain.description[language],
+          items,
+        };
       })
-      .filter((group) => group.items.length > 0);
-  }, [questionnaire.domains, byId]);
+      .filter((candidate) => candidate.items.length > 0);
 
-  /**
-   * Any question no domain claims — q04 today — still has to be answerable, and
-   * numbered continuing from the grouped ones.
-   *
-   * Using the question's own `order` here collided: the grouped questions are
-   * numbered 1..23 by position, so q04's order of 4 produced two cards labelled
-   * 4. A parent counting through the form would have seen 24 questions with a
-   * repeated number and no 24th.
-   */
-  const ungrouped = useMemo(() => {
-    const claimed = new Set(
-      questionnaire.domains.flatMap((d) => d.questionIds),
-    );
-    const grouped = questionnaire.questions.filter((q) =>
-      claimed.has(q.id),
-    ).length;
-    return questionnaire.questions
-      .filter((q) => !claimed.has(q.id))
+    // q04 belongs to no domain today. It is still asked, so it still needs a
+    // step — numbered after the grouped ones, because a badge repeating a number
+    // already used is worse than a gap in the sequence.
+    const orphans = questionnaire.questions
+      .filter((q) => !seen.has(q.id))
       .sort((a, b) => a.order - b.order)
-      .map((question, index) => ({ question, number: grouped + index + 1 }));
-  }, [questionnaire.domains, questionnaire.questions]);
+      .map((question) => {
+        number += 1;
+        return { question, number };
+      });
 
-  /** Domain descriptions keyed by the label the API returns scores under, so the
-   *  report can explain an area when a parent opens it. */
+    return [
+      ...domainSteps,
+      ...(orphans.length > 0
+        ? [
+            {
+              kind: 'questions' as const,
+              key: 'other',
+              title: extra.moreTitle,
+              description: extra.moreDesc,
+              items: orphans,
+            },
+          ]
+        : []),
+      { kind: 'final' as const, key: 'final' },
+    ];
+  }, [questionnaire.domains, questionnaire.questions, byId, language, extra]);
+
   const domainDescriptions = useMemo(
     () =>
       Object.fromEntries(
@@ -204,6 +266,52 @@ export default function V1Client({
   const allAnswered = answeredCount === total;
   const progressPct = total > 0 ? (answeredCount / total) * 100 : 0;
   const loading = stage === 'working';
+  const step = steps[Math.min(stepIndex, steps.length - 1)];
+
+  const stepAnswered =
+    step.kind === 'questions'
+      ? step.items.filter(
+          (item) => responses[item.question.id] !== undefined,
+        ).length
+      : 0;
+  const stepComplete =
+    step.kind === 'final' || stepAnswered === step.items.length;
+
+  /** The first step still missing an answer, so Continue lands where the parent
+   *  left off rather than back at the beginning. */
+  const firstIncompleteStep = (answers: Record<string, number>): number => {
+    const index = steps.findIndex(
+      (candidate) =>
+        candidate.kind === 'questions' &&
+        candidate.items.some((item) => answers[item.question.id] === undefined),
+    );
+    return index === -1 ? steps.length - 1 : index;
+  };
+
+  // Offer to resume, once, on first load.
+  useEffect(() => {
+    const found = loadProgress(questionnaire.questions.map((q) => q.id));
+    if (!found) return;
+    setSaved({
+      responses: found.responses,
+      gates: found.gates,
+      answered: Object.keys(found.responses).length,
+    });
+  }, [questionnaire.questions]);
+
+  // Save on every change. Cheap, and the alternative is picking a moment to
+  // save, which is always the moment after the tab closed.
+  useEffect(() => {
+    if (stage === 'done') return;
+    saveProgress(responses, gates, questionnaire.version);
+  }, [responses, gates, questionnaire.version, stage]);
+
+  function goToStep(next: number) {
+    setStepIndex(next);
+    // The step header, not the top of the document: the parent has already read
+    // the title and should not scroll past it once per section.
+    stepTop.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }
 
   async function submit() {
     setStage('working');
@@ -240,6 +348,10 @@ export default function V1Client({
       setDomainScores(body.domainScores ?? null);
       setTopDomains(body.topDomains ?? []);
       setStage('done');
+      // The plan exists now, so the saved answers have done their job. Clearing
+      // them keeps a record of somebody's child out of a browser that is often
+      // on a shared family computer.
+      clearProgress();
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch {
       setError(t.errorHeading);
@@ -384,192 +496,256 @@ export default function V1Client({
           ) : null}
         </section>
 
-        {stage !== 'done' ? (
-          <>
-            <section className="block" id="questionnaire">
-              <h2 className="block-heading">{t.questionnaireHeading}</h2>
-              <p className="block-sub">{t.questionnaireSub}</p>
-
-              <div className="scale-legend">
-                <span>{t.severityLegend}</span>
-                <span className="scale-swatches" aria-hidden>
-                  {SEV_COLORS.map((colour) => (
-                    <span
-                      key={colour}
-                      className="scale-swatch"
-                      style={{ background: colour }}
-                    />
-                  ))}
-                </span>
-                <span>{t.severityLegendHigh}</span>
+        {stage !== 'done' && saved ? (
+          <section className="block" id="resume">
+            <div className="crisis-card">
+              <h2 className="crisis-heading">{extra.resumeHeading}</h2>
+              <p className="crisis-intro">
+                {extra.resumeBody(saved.answered, total)}
+              </p>
+              <div className="stepnav">
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={() => {
+                    setResponses(saved.responses);
+                    setGates(saved.gates);
+                    setSaved(null);
+                    goToStep(firstIncompleteStep(saved.responses));
+                  }}
+                >
+                  <span>{extra.continueLabel}</span>
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    clearProgress();
+                    setSaved(null);
+                    setResponses({});
+                    setGates({});
+                    goToStep(0);
+                  }}
+                >
+                  <span>{extra.startFreshLabel}</span>
+                </button>
               </div>
+            </div>
+          </section>
+        ) : null}
 
-              <div className="progress no-print">
-                <div className="progress-row">
-                  <span className="progress-label">
-                    <span>{t.answeredOf(answeredCount)}</span>
-                  </span>
-                </div>
-                <div className="progress-track" aria-hidden>
-                  <div
-                    className="progress-fill"
-                    style={{ width: `${progressPct}%` }}
+        {stage !== 'done' && !saved ? (
+          <section className="block" id="questionnaire">
+            <div ref={stepTop} />
+            <h2 className="block-heading">{t.questionnaireHeading}</h2>
+            <p className="block-sub">{t.questionnaireSub}</p>
+
+            <div className="scale-legend">
+              <span>{t.severityLegend}</span>
+              <span className="scale-swatches" aria-hidden>
+                {SEV_COLORS.map((colour) => (
+                  <span
+                    key={colour}
+                    className="scale-swatch"
+                    style={{ background: colour }}
                   />
-                </div>
+                ))}
+              </span>
+              <span>{t.severityLegendHigh}</span>
+            </div>
+
+            <div className="progress no-print">
+              <div className="progress-row">
+                <span className="progress-label">
+                  <span>{t.answeredOf(answeredCount)}</span>
+                </span>
+                <span className="step-count">
+                  {extra.stepOf(stepIndex + 1, steps.length)}
+                </span>
               </div>
+              <div className="progress-track" aria-hidden>
+                <div
+                  className="progress-fill"
+                  style={{ width: `${progressPct}%` }}
+                />
+              </div>
+            </div>
 
+            {step.kind === 'questions' ? (
               <div className="qgroups">
-                {groups.map((group, index) => {
-                  const answered = group.items.filter(
-                    (item) => responses[item.question.id] !== undefined,
-                  ).length;
-                  return (
-                    <div key={group.domain.id}>
-                      <div className="qgroup-head">
-                        <span className="qgroup-badge">{index + 1}</span>
-                        <div style={{ minWidth: 0 }}>
-                          <h3 className="qgroup-title">
-                            {group.domain.label[language]}
-                          </h3>
-                          <p className="qgroup-desc">
-                            {group.domain.description[language]}
-                          </p>
-                        </div>
-                        <span
-                          className="qgroup-count"
-                          style={{
-                            color:
-                              answered === group.items.length
-                                ? 'var(--positive)'
-                                : 'var(--grey-500)',
-                          }}
-                        >
-                          {answered}/{group.items.length}
-                        </span>
-                      </div>
-                      <div className="qgroup-questions">
-                        {group.items.map((item) =>
-                          questionCard(item.question, item.number),
-                        )}
-                      </div>
+                <div>
+                  <div className="qgroup-head">
+                    <span className="qgroup-badge">{stepIndex + 1}</span>
+                    <div style={{ minWidth: 0 }}>
+                      <h3 className="qgroup-title">{step.title}</h3>
+                      <p className="qgroup-desc">{step.description}</p>
                     </div>
-                  );
-                })}
-
-                {ungrouped.length > 0 ? (
+                    <span
+                      className="qgroup-count"
+                      style={{
+                        color: stepComplete
+                          ? 'var(--positive)'
+                          : 'var(--grey-500)',
+                      }}
+                    >
+                      {stepAnswered}/{step.items.length}
+                    </span>
+                  </div>
                   <div className="qgroup-questions">
-                    {ungrouped.map((item) =>
+                    {step.items.map((item) =>
                       questionCard(item.question, item.number),
                     )}
                   </div>
-                ) : null}
+                </div>
               </div>
-            </section>
-
-            {questionnaire.gates.map((gate) => (
-              <section className="block" key={gate.id}>
-                <div className="crisis-card">
-                  <h2 className="crisis-heading">
-                    {gate.prompt[language]}{' '}
-                    <span className="qgroup-desc">({extra.optional})</span>
-                  </h2>
-                  {gate.help ? (
-                    <p className="crisis-intro">{gate.help[language]}</p>
-                  ) : null}
-                  <div
-                    className="opts"
-                    role="radiogroup"
-                    aria-label={gate.prompt[language]}
-                  >
-                    {gate.options.map((option) => {
-                      const checked = gates[gate.id] === option.value;
-                      return (
-                        <label
-                          key={option.value}
-                          className="opt"
-                          style={
-                            checked
-                              ? {
-                                  borderColor: 'var(--accent-violet)',
-                                  background:
-                                    'color-mix(in srgb, var(--accent-violet) 10%, var(--surface))',
-                                }
-                              : undefined
-                          }
-                        >
-                          <input
-                            type="radio"
-                            className="visually-hidden"
-                            name={gate.id}
-                            value={option.value}
-                            checked={checked}
-                            onChange={() =>
-                              setGates((previous) => ({
-                                ...previous,
-                                [gate.id]: option.value,
-                              }))
-                            }
-                            aria-label={option.label[language]}
-                          />
-                          <span className="opt-text">
-                            {option.label[language]}
-                          </span>
-                        </label>
-                      );
-                    })}
+            ) : (
+              <>
+                <div className="qgroup-head">
+                  <span className="qgroup-badge">{stepIndex + 1}</span>
+                  <div style={{ minWidth: 0 }}>
+                    <h3 className="qgroup-title">{extra.lastStepTitle}</h3>
+                    <p className="qgroup-desc">{extra.lastStepDesc}</p>
                   </div>
                 </div>
-              </section>
-            ))}
 
-            <section className="block">
-              <div className="crisis-card">
-                <h2 className="crisis-heading">{t.crisisHeading}</h2>
-                <p className="crisis-intro">{t.crisisIntro}</p>
-                <label className="crisis-fieldlabel" htmlFor="urgent">
-                  {questionnaire.urgentField.label[language]}{' '}
-                  <span className="qgroup-desc">({extra.optional})</span>
-                </label>
-                <textarea
-                  id="urgent"
-                  className="crisis-textarea"
-                  maxLength={questionnaire.urgentField.maxLength}
-                  placeholder={questionnaire.urgentField.placeholder[language]}
-                  value={urgent}
-                  onChange={(event) => setUrgent(event.target.value)}
-                />
-                <p className="crisis-count">
-                  {t.crisisHint(
-                    questionnaire.urgentField.maxLength - urgent.length,
-                  )}
-                </p>
-                <p className="safety-note">{t.crisisSafetyNotice}</p>
-              </div>
-            </section>
+                {questionnaire.gates.map((gate) => (
+                  <div className="crisis-card" key={gate.id}>
+                    <h2 className="crisis-heading">
+                      {gate.prompt[language]}{' '}
+                      <span className="qgroup-desc">({extra.optional})</span>
+                    </h2>
+                    {gate.help ? (
+                      <p className="crisis-intro">{gate.help[language]}</p>
+                    ) : null}
+                    <div
+                      className="opts"
+                      role="radiogroup"
+                      aria-label={gate.prompt[language]}
+                    >
+                      {gate.options.map((option) => {
+                        const checked = gates[gate.id] === option.value;
+                        return (
+                          <label
+                            key={option.value}
+                            className="opt"
+                            style={
+                              checked
+                                ? {
+                                    borderColor: 'var(--accent-violet)',
+                                    background:
+                                      'color-mix(in srgb, var(--accent-violet) 10%, var(--surface))',
+                                  }
+                                : undefined
+                            }
+                          >
+                            <input
+                              type="radio"
+                              className="visually-hidden"
+                              name={gate.id}
+                              value={option.value}
+                              checked={checked}
+                              onChange={() =>
+                                setGates((previous) => ({
+                                  ...previous,
+                                  [gate.id]: option.value,
+                                }))
+                              }
+                              aria-label={option.label[language]}
+                            />
+                            <span className="opt-text">
+                              {option.label[language]}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
 
-            <section className="block no-print">
+                <div className="crisis-card">
+                  <h2 className="crisis-heading">{t.crisisHeading}</h2>
+                  <p className="crisis-intro">{t.crisisIntro}</p>
+                  <label className="crisis-fieldlabel" htmlFor="urgent">
+                    {questionnaire.urgentField.label[language]}{' '}
+                    <span className="qgroup-desc">({extra.optional})</span>
+                  </label>
+                  <textarea
+                    id="urgent"
+                    className="crisis-textarea"
+                    maxLength={questionnaire.urgentField.maxLength}
+                    placeholder={
+                      questionnaire.urgentField.placeholder[language]
+                    }
+                    value={urgent}
+                    onChange={(event) => setUrgent(event.target.value)}
+                  />
+                  <p className="crisis-count">
+                    {t.crisisHint(
+                      questionnaire.urgentField.maxLength - urgent.length,
+                    )}
+                  </p>
+                  <p className="safety-note">{t.crisisSafetyNotice}</p>
+                </div>
+              </>
+            )}
+
+            <div className="stepnav no-print">
               <button
                 type="button"
-                className="btn btn-primary btn-full"
-                disabled={!allAnswered || loading}
-                onClick={submit}
-                aria-busy={loading}
+                className="btn btn-secondary"
+                disabled={stepIndex === 0 || loading}
+                onClick={() => goToStep(stepIndex - 1)}
               >
-                {loading ? <Spinner /> : null}
-                <span>{loading ? t.writing : t.generate}</span>
+                <span>{extra.back}</span>
               </button>
-              {!allAnswered ? (
-                <p className="generate-hint">
-                  <span>{extra.unanswered(total - answeredCount)}</span>
-                </p>
-              ) : null}
-              {loading ? (
-                <p className="generate-hint" aria-live="polite">
-                  <span>{t.writingSub}</span>
-                </p>
-              ) : null}
-            </section>
-          </>
+
+              {step.kind === 'questions' ? (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  // Genuinely disabled, not `aria-disabled`. The first attempt
+                  // used aria-disabled so the button stayed pressable and could
+                  // explain itself — but aria-disabled tells assistive
+                  // technology the control IS disabled, so a screen-reader user
+                  // got the dead end anyway. The reason is shown below instead,
+                  // permanently, so nobody has to press it to find out.
+                  disabled={!stepComplete || loading}
+                  onClick={() => goToStep(stepIndex + 1)}
+                >
+                  <span>{extra.next}</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  disabled={!allAnswered || loading}
+                  onClick={submit}
+                  aria-busy={loading}
+                >
+                  {loading ? <Spinner /> : null}
+                  <span>{loading ? t.writing : t.generate}</span>
+                </button>
+              )}
+            </div>
+
+            {step.kind === 'questions' && !stepComplete ? (
+              <p className="generate-hint">
+                <span>{extra.stepIncomplete}</span>
+              </p>
+            ) : null}
+
+            {step.kind === 'final' && !allAnswered ? (
+              <p className="generate-hint">
+                <span>{t.submitHint}</span>
+              </p>
+            ) : null}
+
+            {loading ? (
+              <p className="generate-hint" aria-live="polite">
+                <span>{t.writingSub}</span>
+              </p>
+            ) : null}
+          </section>
         ) : null}
 
         {error ? (
@@ -624,7 +800,7 @@ export default function V1Client({
                   setSeverity(null);
                   setDomainScores(null);
                   setTopDomains([]);
-                  window.scrollTo({ top: 0 });
+                  goToStep(0);
                 }}
               >
                 <span>{t.startOverButton}</span>
