@@ -761,7 +761,7 @@ export default function V1Client({
                   type="button"
                   className="btn btn-primary"
                   disabled={!allAnswered || loading}
-                  onClick={submit}
+                  onClick={() => void submit()}
                   aria-busy={loading}
                 >
                   {loading ? <Spinner /> : null}
@@ -797,7 +797,7 @@ export default function V1Client({
             <button
               type="button"
               className="btn btn-secondary"
-              onClick={submit}
+              onClick={() => void submit()}
             >
               <span>{t.retry}</span>
             </button>
