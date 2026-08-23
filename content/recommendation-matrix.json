@@ -1,0 +1,469 @@
+{
+  "_comment": [
+    "THE RECOMMENDATION MATRIX — the governing document.",
+    "",
+    "This is the approved Monitoring & Intervention methodology, transcribed out",
+    "of the ~40 hard rules and the 12-row routing table that currently live in",
+    "src/report/prompts/system.prompt.ts and its Spanish mirror. Nothing here is",
+    "new methodology. Where a transcription required a judgement, the rule below",
+    "carries a `notes` field saying so, and RECOMMENDATION-MATRIX.md lists every",
+    "one for the founder to confirm.",
+    "",
+    "STATUS IS \"draft\" UNTIL DAVE APPROVES IT. Boot logs a warning while it is,",
+    "and every report generated meanwhile is provisional.",
+    "",
+    "THREE THINGS TO UNDERSTAND BEFORE EDITING:",
+    "",
+    "  1. TIER ORDER IS SIGNIFICANT. The first tier whose condition matches wins,",
+    "     and the last must be a catch-all. The order here reproduces the live",
+    "     severity gate exactly: urgent text first (a hard escalator), then the",
+    "     SERIOUS pathways, then MILD, then MODERATE as the remainder.",
+    "",
+    "  2. maxSupporting IS DELIBERATELY HIGH. The live methodology says \"when",
+    "     multiple patterns apply, cite multiple resources — do not collapse them",
+    "     into one\", so it has no cap at all. A low cap here would silently drop",
+    "     recommendations the current system includes, which is exactly the",
+    "     behaviour change this milestone must not make. 12 is above the number of",
+    "     rules that can match at once, so nothing is ever cut and",
+    "     educationalImpact only decides ORDER. If ASAP later wants shorter plans,",
+    "     lowering this number is a content edit.",
+    "",
+    "  3. TWO ROUTING ROWS ARE DISABLED, NOT DELETED. The legal-exposure and",
+    "     LGBTQ+ rows fire on a concern \"named in inputs\" — free text the matrix",
+    "     cannot read, and there is no question for either. They are here with",
+    "     { \"always\": false } so the methodology stays complete and the gap is",
+    "     visible. See RECOMMENDATION-MATRIX.md §6."
+  ],
+  "version": "1.0.0",
+  "status": "draft",
+  "assessmentVersion": "1.0.0",
+  "methodologyVersion": "MI-V1.0-DRAFT",
+  "maxSupporting": 12,
+  "defaultPrimary": "parent-emotional-regulation",
+  "primaryTieBreak": [
+    "immediate-safety-urgency",
+    "communication-conflict",
+    "boundary-consistency",
+    "household-structure",
+    "support-professional-engagement"
+  ],
+
+  "tiers": [
+    {
+      "id": "critical",
+      "label": { "en": "Critical", "es": "Crítico" },
+      "description": {
+        "en": "You told us something urgent is happening. This plan deals with that first.",
+        "es": "Nos dijiste que está pasando algo urgente. Este plan aborda eso primero."
+      },
+      "_comment": [
+        "The live system promotes any non-empty urgent-concern field straight to",
+        "SERIOUS and additionally renders two urgent-only sections. Modelled here",
+        "as its own tier so the two can be told apart in an audit — the tone",
+        "guidance is identical to SERIOUS, so no prose behaviour changes, and the",
+        "urgent sections stay gated on the field itself rather than on the tier,",
+        "exactly as today.",
+        "",
+        "A parent who completes a field labelled 'urgent' is by definition not in",
+        "MILD territory, whatever the 24 scores say."
+      ],
+      "when": { "urgentTextPresent": true },
+      "toneGuidance": "Grounded urgency — calm, direction-giving, never alarmist. Open by acknowledging what the parent reported in their own terms before anything else. Name the emotional weight directly only where the inputs actually show it. Reference external emergency resources only where acute-risk signals are explicit."
+    },
+    {
+      "id": "serious",
+      "label": { "en": "Serious", "es": "Grave" },
+      "description": {
+        "en": "What you have described points to active use or a real safety concern. This plan moves quickly.",
+        "es": "Lo que describes apunta a consumo activo o a una preocupación real de seguridad. Este plan avanza rápido."
+      },
+      "_comment": [
+        "Transcribed from computeSeverityTier. Three independent pathways, any of",
+        "which promotes to SERIOUS:",
+        "  · the child-safety questions average 3 or higher",
+        "  · the mean of the domain averages reaches 2.75",
+        "  · three or more answers are 4, AND at least one of those 4s is a",
+        "    child-safety question",
+        "",
+        "The third pathway's second half is load-bearing. Without it, a household",
+        "under real strain — conflict, exhaustion, weak co-parent alignment — with",
+        "no use or safety signal at all is promoted to SERIOUS and handed an",
+        "intervention plan it does not need.",
+        "",
+        "q01/q02/q10 are the child-safety subset: certainty of use, suspected",
+        "frequency, safety concern. q23 and q24 belong to the same DOMAIN but are",
+        "excluded from this subset per founder direction (2026-05-19) — they",
+        "measure the parent's worry and readiness, not evidence about the child."
+      ],
+      "when": {
+        "any": [
+          { "questionAverage": ["q01", "q02", "q10"], "gte": 3 },
+          { "overallAverage": { "gte": 2.75 } },
+          {
+            "all": [
+              { "answeredCount": { "value": 4, "gte": 3 } },
+              {
+                "questionValueCount": {
+                  "questions": ["q01", "q02", "q10"],
+                  "value": 4
+                },
+                "gte": 1
+              }
+            ]
+          }
+        ]
+      },
+      "toneGuidance": "Grounded urgency — calm, direction-giving, never alarmist. Name the emotional weight directly only where the inputs actually show it. Assume the teen will deny, deflect, shut down or escalate, and say what the parent does when that happens. Do not offer 'revisit later', 'wait and see' or 'see how it goes' as a next step. Reference external emergency resources only where acute-risk signals are explicit."
+    },
+    {
+      "id": "mild",
+      "label": { "en": "Mild", "es": "Leve" },
+      "description": {
+        "en": "What you are seeing looks early. This plan is about paying closer attention now, while it is still small.",
+        "es": "Lo que estás viendo parece temprano. Este plan es para prestar más atención ahora, mientras todavía es algo pequeño."
+      },
+      "_comment": [
+        "All four conditions must hold, transcribed from the live gate: no 4s at",
+        "all, no more than two 3s, the mean of domain averages at or below 2.0,",
+        "and the child-safety subset below 2.0.",
+        "",
+        "Ordered after SERIOUS because the live code checks SERIOUS first; a",
+        "submission cannot satisfy both, but preserving the order means the",
+        "transcription can be read against the original line by line."
+      ],
+      "when": {
+        "all": [
+          { "answeredCount": { "value": 4, "eq": 0 } },
+          { "answeredCount": { "value": 3, "lte": 2 } },
+          { "overallAverage": { "lte": 2.0 } },
+          { "questionAverage": ["q01", "q02", "q10"], "lt": 2.0 }
+        ]
+      },
+      "toneGuidance": "Observational and attentive, NOT urgent. Frame it as 'something may be developing — pay closer attention now'. No crisis, fear or overwhelm language: the parent is probably not there, so do not put them there. Acknowledge the attention they have paid rather than exhaustion or fear, and credit them for noticing early. Do not invent emotional weight the inputs do not support. Close by reminding them that children and circumstances change, so it is worth reassessing over time."
+    },
+    {
+      "id": "moderate",
+      "label": { "en": "Moderate", "es": "Moderado" },
+      "description": {
+        "en": "There are real signals here, though not acute ones. This plan is about acting steadily and early.",
+        "es": "Hay señales reales aquí, aunque no agudas. Este plan es para actuar con firmeza y a tiempo."
+      },
+      "_comment": [
+        "The catch-all, matching the live `return 'MODERATE'`. Boot validation",
+        "requires the last tier to be { \"always\": true }."
+      ],
+      "when": { "always": true },
+      "toneGuidance": "Steady, direct, pragmatic — acknowledge the concerns without amplifying them. Anticipate pushback even here: name at least one concrete fallback for denial, defensiveness or shutdown. Every priority area ends in a specific commitment, never 'monitor and reassess' or 'see how it goes'."
+    }
+  ],
+
+  "tierGates": [
+    {
+      "_comment": [
+        "Severity gating. In the live system these are prompt instructions the",
+        "model is asked to respect; here the resource is removed from the",
+        "family's set before the model is told what exists, so it cannot be cited."
+      ],
+      "workshopIds": ["aux-early-warning-signs-identifying-substance-use"],
+      "forbiddenAtTiers": ["serious", "critical"],
+      "reason": "The parent is past the awareness stage. Telling someone whose child is actively using to watch for the first signs is both useless and quietly dismissive of what they have already seen. The live rule routes them to 'Intervening When Substance Use is Present' instead."
+    },
+    {
+      "workshopIds": [
+        "aux-drug-testing",
+        "aux-behavioral-contracts-a-tool-for-positive"
+      ],
+      "forbiddenAtTiers": ["mild"],
+      "reason": "Drug testing and behavioural contracts belong to the MODERATE and SERIOUS register. In a MILD plan they escalate a household that has shown no use signal, and the live rule excludes them from the first 72 hours and the key priorities at this tier."
+    },
+    {
+      "workshopIds": ["aux-protecting-recovery-preventing-relapse-and-responding"],
+      "forbiddenAtTiers": ["mild"],
+      "reason": "Cited only inside the standardized closing, which the methodology excludes from MILD entirely. Gating it here means a MILD plan cannot reach it by any other route either."
+    }
+  ],
+
+  "recommendations": [
+    {
+      "id": "parent-emotional-regulation",
+      "domainId": "communication-conflict",
+      "title": {
+        "en": "Parent Emotional Regulation",
+        "es": "Regulación emocional del padre o la madre"
+      },
+      "intent": {
+        "en": "Before any conversation with the child, the parent steadies themselves first. What the child sees is what the parent brings into the room, not the feeling they had before walking in. In MILD this is naming the second-guessing and pausing before responding; in MODERATE it adds the tactical layer — walk, write down what you want to say, leave the room if it heats up; in SERIOUS and CRITICAL it is explicit. The step is never skipped or downgraded by severity; only the tactics change.",
+        "es": "Antes de cualquier conversación con el hijo, el padre se regula primero. Lo que el hijo ve es lo que el padre lleva al cuarto, no el sentimiento que tuvo antes de entrar. En LEVE esto es nombrar el segundo-cuestionamiento y pausar antes de responder; en MODERADO suma la capa táctica — caminar, escribir lo que quieres decir, salir del cuarto si la cosa se calienta; en GRAVE y CRÍTICO es explícito. El paso nunca se omite ni se rebaja según la severidad; solo cambian las tácticas."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 100,
+      "excludes": [],
+      "alwaysInclude": true,
+      "workshopIds": [],
+      "discussionGroupIds": ["dg-monitoring-intervention"],
+      "when": { "always": true },
+      "notes": "The live methodology makes this the first immediate priority in every report at every tier, with no exceptions, which is why it is alwaysInclude with an always-true rule and the highest impact — it leads. It is also defaultPrimary: it is the one recommendation guaranteed to be available to every family at every tier, so a submission matching no other primary-eligible rule still receives a real primary rather than a fallback that does not fit. It routes to the parent's own peer-support group and to no workshop, which is what guarantees that group appears in every report."
+    },
+    {
+      "id": "co-parent-alignment",
+      "domainId": "boundary-consistency",
+      "title": {
+        "en": "Get the adults aligned",
+        "es": "Alinear a los adultos"
+      },
+      "intent": {
+        "en": "The rules, rewards and consequences only hold if the adults are saying the same thing. Align with the co-parent or co-guardian before the conversation with the child, not during it. Never framed as finding a 'trusted adult' — that phrasing is not part of this methodology.",
+        "es": "Las reglas, las recompensas y las consecuencias solo se sostienen si los adultos dicen lo mismo. Alinea con el co-padre o co-tutor antes de la conversación con el hijo, no durante. Nunca se plantea como buscar un 'adulto de confianza' — esa frase no es parte de esta metodología."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 90,
+      "excludes": [],
+      "workshopIds": ["ess-building-a-support-network"],
+      "discussionGroupIds": ["dg-monitoring-intervention"],
+      "when": { "question": "q11", "gte": 3 },
+      "notes": "Routing table row 8, verbatim: weak co-parent alignment (q11 >= 3) requires the Monitoring and Intervention discussion group AND the Essential Workshop 'Building a Support Network' — the workshop that builds the family-side foundation so the rewards-and-consequences agreement stays consistent."
+    },
+    {
+      "id": "active-use-intervention",
+      "domainId": "immediate-safety-urgency",
+      "title": {
+        "en": "Act on what you are seeing",
+        "es": "Actuar sobre lo que estás viendo"
+      },
+      "intent": {
+        "en": "Use is confirmed or strongly suspected, so the plan moves from watching to intervening: structured first steps, a firm boundary the adults already agreed, and a named next move if the behaviour continues this week.",
+        "es": "El consumo está confirmado o fuertemente sospechado, así que el plan pasa de observar a intervenir: primeros pasos estructurados, un límite firme ya acordado entre los adultos, y un próximo paso concreto si la conducta continúa esta semana."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 95,
+      "excludes": [],
+      "workshopIds": ["aux-intervening-when-substance-use-is-present"],
+      "discussionGroupIds": [],
+      "when": {
+        "any": [
+          { "question": "q01", "gte": 3 },
+          { "tier": ["serious", "critical"] }
+        ]
+      },
+      "notes": "Routing table row 2, which reads 'Q1 >= 3, or SERIOUS severity'. The tier half is why the matrix needs a tier condition at all — inlining the whole SERIOUS definition here would duplicate it and let the two drift. The row also says explicitly NOT to use 'Early Warning Signs' at this point, which is enforced by the tierGate above rather than repeated here."
+    },
+    {
+      "id": "secrecy-and-hidden-use",
+      "domainId": "communication-conflict",
+      "title": {
+        "en": "When you are not getting straight answers",
+        "es": "Cuando no obtienes respuestas claras"
+      },
+      "intent": {
+        "en": "Secrecy, lying or avoidance around questions means information has to be gathered a different way. Any search of a room, backpack or phone happens privately and without the child present — that is not a detail, it is the difference between fact-finding and a confrontation.",
+        "es": "El secretismo, las mentiras o la evasión ante las preguntas significan que la información hay que reunirla de otra forma. Cualquier revisión del cuarto, la mochila o el celular ocurre en privado y sin que el hijo esté presente — eso no es un detalle, es la diferencia entre reunir información y una confrontación."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 80,
+      "excludes": [],
+      "workshopIds": ["aux-how-and-when-to-search-a"],
+      "discussionGroupIds": [],
+      "when": { "question": "q03", "gte": 3 },
+      "notes": "Routing table row 3 (q03 >= 3). The private-search wording is enforced as a requiredWording rule in workshops.json, not left to the prose."
+    },
+    {
+      "id": "peer-influence",
+      "domainId": "communication-conflict",
+      "title": {
+        "en": "The people around your child",
+        "es": "Las personas alrededor de tu hijo"
+      },
+      "intent": {
+        "en": "Peers the parent considers a negative influence are a route into use, and the answer is not simply forbidding friendships. The parent learns how influence and social contagion work so they can talk about it without the conversation becoming a fight about who is allowed in the house.",
+        "es": "Los pares que el padre considera una mala influencia son una vía hacia el consumo, y la respuesta no es simplemente prohibir amistades. El padre aprende cómo funcionan la influencia y el contagio social para poder hablarlo sin que la conversación se vuelva una pelea sobre quién puede entrar a la casa."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 70,
+      "excludes": [],
+      "workshopIds": ["aux-understanding-and-navigating-peer-pressure"],
+      "discussionGroupIds": [],
+      "when": { "question": "q12", "gte": 3 },
+      "notes": "Routing table row 1 (q12 >= 3). The row also forbids substituting a discussion group here, which the schema enforces structurally: this recommendation routes to a workshop and to no group."
+    },
+    {
+      "id": "phone-and-social-media",
+      "domainId": "household-structure",
+      "title": {
+        "en": "The phone and what is on it",
+        "es": "El celular y lo que hay en él"
+      },
+      "intent": {
+        "en": "Unmonitored phone and social-media access alongside negative peer influence is a supply line and a pressure source at once. Supervision that is explained holds; supervision that arrives as a punishment does not.",
+        "es": "El acceso sin supervisión al celular y a las redes, junto con la influencia de pares negativos, es a la vez una vía de suministro y una fuente de presión. La supervisión que se explica se sostiene; la que llega como castigo no."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 60,
+      "excludes": [],
+      "workshopIds": ["aux-understanding-the-impact-of-social-media"],
+      "discussionGroupIds": [],
+      "when": {
+        "all": [
+          { "question": "q14", "gte": 3 },
+          { "question": "q12", "gte": 2 }
+        ]
+      },
+      "notes": "Routing table row 4, which reads 'Q14 >= 3 with Q12 >= 2, or social media concerns named'. The first half is transcribed exactly. The second half reads free text and cannot be evaluated — see the disabled rows below and §6 of the matrix document."
+    },
+    {
+      "id": "school-engagement",
+      "domainId": "support-professional-engagement",
+      "title": {
+        "en": "Bring the school in",
+        "es": "Involucrar a la escuela"
+      },
+      "intent": {
+        "en": "School staff see hours of the child's day that the parent does not, and engaging them is one of the most important parts of building the network around the child. This is a partnership to build, not a complaint to make.",
+        "es": "El personal escolar ve horas del día del hijo que el padre no ve, e involucrarlo es una de las partes más importantes de construir la red alrededor del hijo. Esto es una alianza que se construye, no una queja que se presenta."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 65,
+      "excludes": [],
+      "workshopIds": [
+        "aux-partnering-with-schools-for-your-childs",
+        "ess-building-a-support-network"
+      ],
+      "discussionGroupIds": [],
+      "when": { "question": "q15", "gte": 3 },
+      "notes": "Routing table row 5 (q15 >= 3), which names BOTH resources and says citing only one is a violation. Both are listed here, so the schema guarantees both reach the report — the live system relies on the model reading the word 'AND'."
+    },
+    {
+      "id": "mood-and-mental-health",
+      "domainId": "communication-conflict",
+      "title": {
+        "en": "What is underneath the behaviour",
+        "es": "Lo que hay debajo de la conducta"
+      },
+      "intent": {
+        "en": "Mood swings, withdrawal, aggression, or a child who cannot talk about stress are signals in their own right, and often the reason use started. Treating the behaviour without the cause leaves the cause in place.",
+        "es": "Los cambios de ánimo, el aislamiento, la agresividad, o un hijo que no puede hablar del estrés son señales por sí mismas, y a menudo la razón por la que empezó el consumo. Tratar la conducta sin la causa deja la causa intacta."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 75,
+      "excludes": [],
+      "workshopIds": ["aux-managing-stress-and-pressure-helping-your"],
+      "discussionGroupIds": [],
+      "when": {
+        "any": [
+          { "question": "q09", "gte": 3 },
+          { "question": "q13", "gte": 3 }
+        ]
+      },
+      "notes": "Routing table row 6 (q09 >= 3 or q13 >= 3)."
+    },
+    {
+      "id": "consistent-consequences",
+      "domainId": "boundary-consistency",
+      "title": {
+        "en": "Make the rules mean something",
+        "es": "Hacer que las reglas signifiquen algo"
+      },
+      "intent": {
+        "en": "Rules that are enforced sometimes teach that they are negotiable. Rewards and consequences travel together — consequences alone do not change behaviour — and both are agreed with the co-parent before they are announced.",
+        "es": "Las reglas que se aplican a veces enseñan que son negociables. Las recompensas y las consecuencias van juntas — las consecuencias solas no cambian la conducta — y ambas se acuerdan con el co-padre antes de anunciarlas."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 85,
+      "excludes": [],
+      "workshopIds": [
+        "aux-behavioral-contracts-a-tool-for-positive",
+        "aux-setting-boundaries-with-respect-discipline-without"
+      ],
+      "discussionGroupIds": [],
+      "when": {
+        "any": [
+          { "question": "q07", "gte": 3 },
+          { "question": "q19", "gte": 3 }
+        ]
+      },
+      "notes": "Routing table row 7 (q07 >= 3 or q19 >= 3), which names both workshops. Note the interaction with the MILD tier gate: behavioural contracts are gated out of MILD, so in a MILD plan this priority area cites 'Setting Boundaries with Respect' alone. That is the live behaviour — the MILD rules exclude contracts — and it is why boot validation checks that a tier-gated recommendation still has a resource left to cite."
+    },
+    {
+      "id": "parent-support-and-exhaustion",
+      "domainId": "support-professional-engagement",
+      "title": {
+        "en": "You cannot do this on empty",
+        "es": "No puedes con esto estando vacío"
+      },
+      "intent": {
+        "en": "Exhaustion, fear and isolation do some of the talking in a conversation with a child, whether or not the parent intends it. Peer support is not a comfort measure here; it is what keeps the plan executable.",
+        "es": "El agotamiento, el miedo y el aislamiento hablan por sí solos en una conversación con un hijo, lo quiera el padre o no. El apoyo entre pares no es un consuelo aquí; es lo que mantiene el plan ejecutable."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 78,
+      "excludes": [],
+      "alwaysInclude": true,
+      "workshopIds": [],
+      "discussionGroupIds": ["dg-monitoring-intervention"],
+      "when": { "question": "q17", "gte": 3 },
+      "notes": "Routing table row 9 (q17 >= 3), which requires the Monitoring and Intervention discussion group at every severity. alwaysInclude because the methodology states it as an absolute rather than a ranking — the harder the family's situation, the more rules match, and without the exemption this is the one a cap would drop."
+    },
+    {
+      "id": "drug-testing-serious",
+      "domainId": "immediate-safety-urgency",
+      "title": {
+        "en": "Know what you are dealing with",
+        "es": "Saber a qué te enfrentas"
+      },
+      "intent": {
+        "en": "With use confirmed and the situation serious, the parent needs to know what is actually being used rather than guessing. A test the parent administers, framed as fact-finding, is a firm structured step for the back half of the first week — not a punishment and not a threat.",
+        "es": "Con el consumo confirmado y la situación grave, el padre necesita saber qué se está consumiendo en realidad en lugar de adivinar. Una prueba que el padre administra, planteada como recolección de hechos, es un paso firme y estructurado para la segunda mitad de la primera semana — no un castigo ni una amenaza."
+      },
+      "eligibleAs": ["supporting"],
+      "educationalImpact": 88,
+      "excludes": [],
+      "workshopIds": ["aux-drug-testing"],
+      "discussionGroupIds": [],
+      "allowedTiers": ["serious", "critical"],
+      "when": {
+        "all": [
+          { "question": "q01", "gte": 3 },
+          { "tier": ["serious", "critical"] }
+        ]
+      },
+      "notes": "Routing table row 12: confirmed use AND SERIOUS requires the Drug Testing workshop plus a referral to an ASAP-endorsed therapist. The therapist half is not a workshop route — it fires the professional-help wording rule in workshops.json, which is checked against the finished prose. Supporting only: this is a structured next step within a plan, never the plan's headline."
+    },
+    {
+      "id": "legal-exposure",
+      "domainId": "immediate-safety-urgency",
+      "title": {
+        "en": "If the law is now involved",
+        "es": "Si la ley ya está involucrada"
+      },
+      "intent": {
+        "en": "Legal exposure changes the sequence of everything else, and a parent guessing at consequences makes decisions they cannot undo.",
+        "es": "La exposición legal cambia la secuencia de todo lo demás, y un padre que adivina las consecuencias toma decisiones que no puede deshacer."
+      },
+      "eligibleAs": ["supporting"],
+      "educationalImpact": 82,
+      "excludes": [],
+      "workshopIds": ["aux-legal-issues-and-substance-use-understanding"],
+      "discussionGroupIds": [],
+      "when": { "always": false },
+      "notes": "DISABLED, NOT DELETED. Routing table row 10 fires on legal exposure 'named in inputs' — free text the matrix cannot read, and no question in the approved 24 asks about it. Under the current prompt-only system this row fires only if the model happens to notice the topic in the urgent-concern field, which is not a routing rule so much as a hope. Kept here with { \"always\": false } so the methodology is complete and the gap is visible. ASAP has three options, in §6 of the matrix document: add a non-scored gate question, accept that it never fires, or have it fire whenever urgent text is present and let the prose decide relevance."
+    },
+    {
+      "id": "lgbtq-specific-risk",
+      "domainId": "communication-conflict",
+      "title": {
+        "en": "Risks that are specific to your child",
+        "es": "Riesgos específicos de tu hijo"
+      },
+      "intent": {
+        "en": "An LGBTQ+ adolescent carries substance-use risks that generic advice misses, and a parent who does not know that gives well-meant advice that does not fit their child.",
+        "es": "Un adolescente LGBTQ+ carga riesgos de consumo que los consejos genéricos no ven, y un padre que no lo sabe da consejos bien intencionados que no encajan con su hijo."
+      },
+      "eligibleAs": ["supporting"],
+      "educationalImpact": 68,
+      "excludes": [],
+      "workshopIds": ["aux-supporting-lgbtq-teens-addressing-unique-substance"],
+      "discussionGroupIds": [],
+      "when": { "always": false },
+      "notes": "DISABLED, NOT DELETED — same reason as legal-exposure. Routing table row 11 fires on LGBTQ+-specific risk 'named in inputs' and there is no question for it. This one needs more care than the legal row: asking a parent to disclose a child's identity in a questionnaire is a decision with its own weight, and it is ASAP's to make, not ours. See §6."
+    }
+  ]
+}

@@ -1,0 +1,312 @@
+{
+  "_comment": [
+    "THE REPORT STRUCTURE.",
+    "",
+    "The nine sections the live system produces, transcribed from its output",
+    "structure, plus five additions that Version 1.0 introduces. The model's",
+    "output schema is derived from this file at runtime, so adding, renaming or",
+    "removing a section is a content edit.",
+    "",
+    "WHAT CHANGES FOR THE MODEL, AND WHY IT MATTERS:",
+    "",
+    "The live system asks the model for one block of text with uppercase headings",
+    "and then pulls the sections apart by matching those headings. A heading the",
+    "model words even slightly differently produces a silently EMPTY section — the",
+    "parent receives a plan with a hole in it and nothing anywhere reports a",
+    "problem. Here each section is a named key in a validated object, so a missing",
+    "one fails and is regenerated.",
+    "",
+    "TWO KEYS ARE NOT FREE TEXT. They carry ids, and those ids are checked against",
+    "exactly what the matrix selected — no additions, no omissions, no",
+    "substitutions:",
+    "    keyPriorities[].recommendationId",
+    "    recommendedWorkshops[].workshopId",
+    "That check is what actually enforces 'the matrix selects, the model writes'.",
+    "A model that invents a workshop fails validation and the request is retried.",
+    "",
+    "SECTIONS OF TYPE \"static\" ARE NOT WRITTEN BY THE MODEL AT ALL. They carry",
+    "their own text, are rendered verbatim by the platform, are absent from the",
+    "schema the model receives, and — because that schema is strict — a model that",
+    "returns one anyway fails validation. That is the strongest guarantee",
+    "available that agreed wording stays agreed, and it is how the Universal",
+    "Guiding Principles and the standardized closing ship.",
+    "",
+    "FIVE SECTIONS ARE NEW IN VERSION 1.0. All five are flagged in",
+    "RECOMMENDATION-MATRIX.md §8 for the founder to accept or drop:",
+    "  · recommendedWorkshops        — makes workshop links possible at all, and",
+    "                                  is where id validation bites",
+    "  · universalGuidingPrinciple   — carried over from Sustaining Recovery,",
+    "  · parentSelfCare                pending ASAP's final Monitoring &",
+    "                                  Intervention wording",
+    "  · standardizedClosing         — the approved closing, previously prose the",
+    "                                  model reproduced 'essentially verbatim'",
+    "  · sustainingRecoveryTransition — the new program transition",
+    "",
+    "WORD BUDGETS ARE GUIDANCE, not validated, except that an empty string fails.",
+    "They are PLACEHOLDER — ASAP should set the lengths they actually want a",
+    "parent to read."
+  ],
+  "version": "1.0.0-DRAFT",
+  "sections": [
+    {
+      "key": "urgentConcern",
+      "order": 1,
+      "type": "prose",
+      "title": {
+        "en": "What you told us, first",
+        "es": "Lo que nos dijiste, primero"
+      },
+      "_comment": [
+        "Conditional on the urgent field itself rather than on the CRITICAL tier,",
+        "matching the live behaviour exactly. The two are equivalent today, but",
+        "tying it to the field means it stays correct if the tier rules ever change."
+      ],
+      "when": { "urgentTextPresent": true },
+      "instruction": {
+        "en": "Open by addressing what the parent wrote in the urgent field, in their own terms, before anything else in the plan. Name the specific thing they reported. Do not restate their words as a quotation and do not soften them. If they described something that may have been ingested, the first action is the medical one. Never call an unidentified substance 'pills' — it may be a pressed pill, a powder, a vape, an edible, or something they cannot identify, and narrowing it narrows their vigilance.",
+        "es": "Abre abordando lo que el padre escribió en el campo urgente, en sus propios términos, antes que cualquier otra cosa del plan. Nombra lo específico que reportó. No repitas sus palabras como una cita y no las suavices. Si describió algo que pudo haber sido consumido, la primera acción es la médica. Nunca llames 'pastillas' a una sustancia no identificada — puede ser una pastilla prensada, un polvo, un vape, un comestible, o algo que no puede identificar, y limitarlo limita su vigilancia."
+      },
+      "targetWords": [90, 160]
+    },
+    {
+      "key": "headlineSummary",
+      "order": 2,
+      "type": "prose",
+      "title": {
+        "en": "Where you are right now",
+        "es": "Dónde estás ahora mismo"
+      },
+      "instruction": {
+        "en": "Say plainly what the answers describe, tied to what the parent actually reported rather than to scores. Reflect their situation back so they recognise it. Do not open with generic empathy, and do not quote the answer labels — those are intake-form options, not speech. Translate them into natural description: 'the near-daily exhaustion you described', not 'your \"Near-daily — running on empty\" exhaustion'.",
+        "es": "Di con claridad lo que describen las respuestas, ligado a lo que el padre realmente reportó y no a los puntajes. Refleja su situación de vuelta para que la reconozca. No abras con empatía genérica, y no cites las etiquetas de respuesta — son opciones de un formulario, no habla. Tradúcelas a descripción natural: 'el agotamiento casi diario que describiste', no 'tu agotamiento \"Casi diario — sin energía\"'."
+      },
+      "targetWords": [110, 180]
+    },
+    {
+      "key": "topImmediatePriorities",
+      "order": 3,
+      "type": "list",
+      "title": {
+        "en": "Your first three priorities",
+        "es": "Tus tres primeras prioridades"
+      },
+      "_comment": [
+        "Fixed order, stated in the instruction rather than selected by the matrix:",
+        "the methodology fixes what these three are and the sequence they come in.",
+        "Modelling them as matrix selections would let the order vary, which the",
+        "live rules forbid."
+      ],
+      "instruction": {
+        "en": "Exactly three, in this order and no other. (1) The parent steadies themselves first — never a conversation-with-child action. (2) Get the adults aligned: the co-parent, co-guardian, or another parent or guardian on the family side. Never the phrase 'trusted adult'. (3) The parent's own support: name the Monitoring and Intervention discussion group, using action language — 'join the' or 'reach out to', never passive. Phrase all three directly and tied to real behaviour, not as soft coaching. Where consequences come up, rewards come up in the same breath.",
+        "es": "Exactamente tres, en este orden y ningún otro. (1) El padre se regula primero — nunca una acción de conversación-con-el-hijo. (2) Alinear a los adultos: el co-padre, co-tutor, u otro padre o tutor del lado familiar. Nunca la frase 'adulto de confianza'. (3) El apoyo del propio padre: nombra el Monitoring and Intervention discussion group, con lenguaje de acción — 'únete al' o 'acércate al', nunca pasivo. Formula las tres de forma directa y ligada a conductas reales, no como coaching blando. Donde aparezcan las consecuencias, aparecen las recompensas en la misma frase."
+      },
+      "listRange": [3, 3],
+      "ordered": true,
+      "targetWords": [130, 220]
+    },
+    {
+      "key": "keyPriorities",
+      "order": 4,
+      "type": "recommendationList",
+      "title": {
+        "en": "What to work on",
+        "es": "En qué trabajar"
+      },
+      "_comment": [
+        "The matrix's output. One entry per selected recommendation, in the order",
+        "the matrix ranked them, and the ids are validated — this is the section",
+        "where 'the matrix selects, the model writes' is actually enforced."
+      ],
+      "instruction": {
+        "en": "One entry per priority area you have been given, in the order given. Write to that area's stated intent — do not substitute your own advice, and do not merge two areas into one. Each entry ends by citing its workshops by their exact full titles, with the correct category label. Each entry also ends with a concrete trigger: 'if [specific behaviour] continues this week, the next step is [named action]'. Never end on 'monitor and reassess' or 'see how it goes'.",
+        "es": "Una entrada por cada área de prioridad que te fue dada, en el orden dado. Escribe hacia la intención declarada de esa área — no sustituyas con tus propios consejos, y no fusiones dos áreas en una. Cada entrada termina citando sus workshops por su título exacto completo, con la etiqueta de categoría correcta. Cada entrada también termina con un disparador concreto: 'si [conducta específica] continúa esta semana, el próximo paso es [acción nombrada]'. Nunca termines con 'observa y vuelve a evaluar' ni 'a ver cómo va'."
+      },
+      "targetWords": [90, 150]
+    },
+    {
+      "key": "whatToAvoid",
+      "order": 5,
+      "type": "list",
+      "title": { "en": "What to avoid", "es": "Qué evitar" },
+      "instruction": {
+        "en": "Three to five things this particular parent is at risk of doing, given what they reported — not a generic list. Never write 'avoid searching your child's room': a search done the ASAP way is encouraged, and only the confrontational version is discouraged. Say 'do not search your child's room, backpack, or phone confrontationally' instead.",
+        "es": "Entre tres y cinco cosas que este padre en particular está en riesgo de hacer, dado lo que reportó — no una lista genérica. Nunca escribas 'evita revisar el cuarto de tu hijo': una revisión hecha al estilo ASAP está alentada, y solo se desalienta la versión confrontativa. Di 'no revises el cuarto, la mochila o el celular de tu hijo de manera confrontativa'."
+      },
+      "listRange": [3, 5],
+      "targetWords": [110, 190]
+    },
+    {
+      "key": "first72Hours",
+      "order": 6,
+      "type": "prose",
+      "title": {
+        "en": "Your first 72 hours",
+        "es": "Tus primeras 72 horas"
+      },
+      "instruction": {
+        "en": "Day 1, Day 2 and Day 3, in that order and clearly labelled. Day 1 opens with the parent's own regulation. Day 2 is information-gathering and support, and includes an explicit instruction to review the workshop matched to the strongest concern — cited by exact title — plus the relevant substance facts, BEFORE Day 3's conversation with the child. Day 3 is that conversation. The sequence never inverts: regulation, then adult alignment, then information, then the conversation. The conversation is the last step of the first week, not the first.",
+        "es": "Día 1, Día 2 y Día 3, en ese orden y claramente etiquetados. El Día 1 abre con la regulación del propio padre. El Día 2 es reunir información y apoyo, e incluye una instrucción explícita de revisar el workshop que coincide con la preocupación más fuerte — citado por título exacto — más los hechos relevantes sobre la sustancia, ANTES de la conversación del Día 3 con el hijo. El Día 3 es esa conversación. La secuencia nunca se invierte: regulación, luego alineación de los adultos, luego información, luego la conversación. La conversación es el último paso de la primera semana, no el primero."
+      },
+      "targetWords": [220, 340]
+    },
+    {
+      "key": "days4to7",
+      "order": 7,
+      "type": "prose",
+      "title": { "en": "Days 4 to 7", "es": "Días 4 a 7" },
+      "instruction": {
+        "en": "What happens after the conversation, including at least one firm structured next step. Assume the child denied, deflected or escalated, and say what the parent does then — the boundary the adults already agreed stands. Where professional help belongs at this severity, recommend it directly rather than as something to prepare for one day.",
+        "es": "Qué pasa después de la conversación, incluyendo al menos un próximo paso firme y estructurado. Asume que el hijo negó, esquivó o escaló, y di qué hace el padre entonces — el límite que los adultos ya acordaron se mantiene. Donde la ayuda profesional corresponda a esta severidad, recomiéndala directamente, no como algo para lo que prepararse algún día."
+      },
+      "targetWords": [180, 300]
+    },
+    {
+      "key": "consideringInpatient",
+      "order": 8,
+      "type": "prose",
+      "title": {
+        "en": "If you are weighing inpatient or residential care",
+        "es": "Si estás considerando tratamiento interno o residencial"
+      },
+      "_comment": [
+        "Urgent-only, matching the live system: this section appears exclusively in",
+        "the crisis report and never in a MILD, MODERATE or non-urgent SERIOUS plan."
+      ],
+      "when": { "urgentTextPresent": true },
+      "instruction": {
+        "en": "What inpatient and intensive outpatient programmes actually involve, what makes a family ready to consider one, and what the immediate next step is. Recommend it as a decision to make with a professional, not one to make from this plan — and when you name that professional, the professional-help sequence follows in the same paragraph.",
+        "es": "Qué implican realmente los programas internos y los intensivos ambulatorios, qué hace que una familia esté lista para considerar uno, y cuál es el próximo paso inmediato. Recomiéndalo como una decisión a tomar con un profesional, no una a tomar desde este plan — y cuando nombres a ese profesional, la secuencia de ayuda profesional sigue en el mismo párrafo."
+      },
+      "targetWords": [150, 260]
+    },
+    {
+      "key": "recommendedWorkshops",
+      "order": 9,
+      "type": "workshopList",
+      "title": {
+        "en": "The workshops for your situation",
+        "es": "Los workshops para tu situación"
+      },
+      "_comment": [
+        "NEW IN VERSION 1.0. The live report cites workshops inline in prose only,",
+        "which means there is nowhere to attach a link and no structured place to",
+        "check what was cited. This section is what makes 'direct links from",
+        "recommended workshops to the appropriate ASAP resources' possible, and the",
+        "workshopIds here are validated against exactly what the matrix selected.",
+        "",
+        "Workshops still appear inline in the prose sections as well — this does not",
+        "replace that, it collects them."
+      ],
+      "instruction": {
+        "en": "One entry per workshop you have been given, in the order given, using the exact title supplied. For each, one or two sentences on why THIS family in particular should attend it — referring to what they reported, not to the workshop's general topic. Do not add a workshop, do not omit one, and do not rename one.",
+        "es": "Una entrada por cada workshop que te fue dado, en el orden dado, usando el título exacto suministrado. Para cada uno, una o dos oraciones sobre por qué ESTA familia en particular debería asistir — refiriéndote a lo que reportó, no al tema general del workshop. No agregues un workshop, no omitas ninguno, y no renombres ninguno."
+      },
+      "targetWords": [30, 60]
+    },
+    {
+      "key": "universalGuidingPrinciple",
+      "order": 10,
+      "type": "static",
+      "title": {
+        "en": "Matching what you do to what you are seeing",
+        "es": "Ajustar lo que haces a lo que estás viendo"
+      },
+      "_comment": [
+        "PLACEHOLDER WORDING, carried over from the Sustaining Recovery FRAAP and",
+        "adapted to this track's framing. Rendered verbatim, so ASAP should supply",
+        "the exact wording they want a parent to read. The model never sees this",
+        "text and cannot reword it."
+      ],
+      "text": {
+        "en": "One principle runs underneath everything in this plan: the response should match what you are actually seeing, and no more. Acting harder than the situation calls for costs you trust you will need later. Acting more softly than it calls for leaves your child carrying something alone. Neither error is safer than the other, which is why this plan is built from what you reported rather than from a template — and why it is worth reassessing as things change.",
+        "es": "Un principio recorre todo este plan: la respuesta debe ajustarse a lo que realmente estás viendo, y no más. Actuar con más fuerza de la que la situación pide cuesta una confianza que vas a necesitar después. Actuar con menos fuerza de la que pide deja a tu hijo cargando algo solo. Ninguno de los dos errores es más seguro que el otro, y por eso este plan se construye desde lo que reportaste y no desde una plantilla — y por eso vale la pena volver a evaluarlo a medida que las cosas cambien."
+      }
+    },
+    {
+      "key": "parentSelfCare",
+      "order": 11,
+      "type": "static",
+      "title": {
+        "en": "Looking after yourself is part of the plan",
+        "es": "Cuidarte es parte del plan"
+      },
+      "_comment": [
+        "PLACEHOLDER WORDING — same provenance and same caveat as the section above."
+      ],
+      "text": {
+        "en": "This is not an aside. Whatever you bring into a room, your child reads it before they hear a word you say — so your own steadiness is not separate from your child's recovery, it is part of the mechanism. Sleep, eat, and keep at least one person in your life who knows what you are carrying. The Monitoring and Intervention discussion group exists for exactly this: parents who are in the middle of it, who will not need the situation explained from the beginning.",
+        "es": "Esto no es un comentario al margen. Lo que sea que lleves a una habitación, tu hijo lo lee antes de escuchar una sola palabra — así que tu propia estabilidad no está separada de la recuperación de tu hijo, es parte del mecanismo. Duerme, come, y mantén al menos a una persona en tu vida que sepa lo que estás cargando. El Monitoring and Intervention discussion group existe exactamente para esto: padres que están en medio de lo mismo, que no van a necesitar que les expliques la situación desde el principio."
+      }
+    },
+    {
+      "key": "encouragement",
+      "order": 12,
+      "type": "prose",
+      "title": {
+        "en": "Where this can go",
+        "es": "Hacia dónde puede ir esto"
+      },
+      "instruction": {
+        "en": "Grounded encouragement tied to something this parent actually did or reported — never generic reassurance. Reinforce that the child is not the opponent; the substance is. Reinforce that the ASAP discussion groups are a real source of support and shared experience. Reinforce that they and their child are on the same side of this.",
+        "es": "Aliento con los pies en la tierra, ligado a algo que este padre realmente hizo o reportó — nunca consuelo genérico. Refuerza que el hijo no es el oponente; la sustancia lo es. Refuerza que los ASAP discussion groups son una fuente real de apoyo y experiencia compartida. Refuerza que él y su hijo están del mismo lado de esto."
+      },
+      "targetWords": [120, 200]
+    },
+    {
+      "key": "standardizedClosing",
+      "order": 13,
+      "type": "static",
+      "title": {
+        "en": "Protecting the progress",
+        "es": "Proteger el progreso"
+      },
+      "_comment": [
+        "The founder-approved standardized closing, verbatim in both languages.",
+        "",
+        "In the live system this is prose the model is asked to reproduce",
+        "'essentially verbatim', with permission to adjust connective wording. As a",
+        "static section it is now exact in every report. That is a change in",
+        "ENFORCEMENT, not in methodology — but it is a change, so it is flagged for",
+        "the founder in RECOMMENDATION-MATRIX.md §8.",
+        "",
+        "Excluded from MILD, per the methodology. The Protecting Recovery workshop",
+        "and discussion group are cited here and nowhere else."
+      ],
+      "appliesAtTiers": ["moderate", "serious", "critical"],
+      "text": {
+        "en": "Recovery is a journey—not a single event—and protecting the progress your child has already made is one of the most important responsibilities you have as a parent. While many adolescents go on to achieve lasting recovery, setbacks can occur. A setback does not erase the progress that has been made, and it does not have to become a return to the past.\n\nPreparation is one of your greatest strengths. We encourage you to complete the Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks.\" It will help you recognize early warning signs, respond calmly and effectively if challenges arise, and strengthen your family's plan to protect your child's recovery. We also encourage you to participate in the Protecting Recovery Discussion Group, where parents share experiences, encouragement, and practical insights while supporting one another through the ongoing journey of recovery.\n\nRemember, the purpose of monitoring, supervision, conversations, and appropriate boundaries is not simply to discover what happened or when it happened—but to understand why. Identifying and addressing the underlying reasons for substance use gives your child the greatest opportunity for long-term recovery and a healthy, meaningful future.",
+        "es": "La recuperación es un camino, no un solo acontecimiento, y proteger el progreso que tu hijo ya ha logrado es una de las responsabilidades más importantes que tienes como padre. Aunque muchos adolescentes llegan a alcanzar una recuperación duradera, pueden ocurrir recaídas. Una recaída no borra el progreso alcanzado, y no tiene por qué convertirse en un regreso al pasado.\n\nLa preparación es una de tus mayores fortalezas. Te animamos a completar el Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks\". Te ayudará a reconocer las señales de alerta tempranas, a responder con calma y eficacia si surgen dificultades, y a fortalecer el plan de tu familia para proteger la recuperación de tu hijo. También te animamos a participar en el Protecting Recovery Discussion Group, donde los padres comparten experiencias, aliento y conocimientos prácticos mientras se apoyan mutuamente a lo largo del camino continuo de la recuperación.\n\nRecuerda que el propósito del monitoreo, la supervisión, las conversaciones y los límites apropiados no es simplemente descubrir qué pasó o cuándo pasó, sino entender por qué. Identificar y abordar las razones de fondo del consumo de sustancias le da a tu hijo la mayor oportunidad de lograr una recuperación a largo plazo y un futuro sano y significativo."
+      }
+    },
+    {
+      "key": "sustainingRecoveryTransition",
+      "order": 14,
+      "type": "static",
+      "title": {
+        "en": "What comes next for your family",
+        "es": "Lo que viene después para tu familia"
+      },
+      "_comment": [
+        "THE NEW PROGRAM TRANSITION. PLACEHOLDER WORDING — ASAP is supplying the",
+        "final text, and this ships verbatim, so it must be theirs.",
+        "",
+        "Gated on the non-scored treatment-status gate, NOT on severity. That is the",
+        "whole point: the 24 approved questions contain no signal for abstinence or",
+        "sustained stability, and a low score means 'early-stage, possibly nothing",
+        "yet' rather than 'recovered'. Firing this on low scores would route",
+        "families with no treatment history into a post-treatment workshop.",
+        "",
+        "ONE-DIRECTIONAL BY DESIGN. This points forward into Sustaining Recovery.",
+        "The reverse link, from Sustaining Recovery back to this assessment, was",
+        "removed on the founder's instruction in August 2026 — a parent arriving",
+        "there has already followed the right pathway and a second assessment only",
+        "creates doubt. Do not add a return link here on symmetry grounds."
+      ],
+      "when": { "gate": "treatment-status", "in": ["post-treatment-stable"] },
+      "text": {
+        "en": "One more thing, because of what you told us about where your child is. You have said your child has been through treatment and has held a meaningful period without use. That is a different stage, and it has its own work — protecting what has been built rather than intervening in what is happening. The Sustaining Recovery Essential Workshop is written for exactly that stage, and the Sustaining Recovery Family Risk Assessment & Action Plan will give you a plan built around holding the line rather than establishing it. This plan still stands; that one is where to go next.",
+        "es": "Una cosa más, por lo que nos dijiste sobre dónde está tu hijo. Dijiste que tu hijo pasó por tratamiento y ha mantenido un periodo significativo sin consumo. Esa es una etapa distinta, y tiene su propio trabajo — proteger lo que se ha construido en lugar de intervenir en lo que está ocurriendo. El Sustaining Recovery Essential Workshop está escrito exactamente para esa etapa, y el Sustaining Recovery Family Risk Assessment & Action Plan te dará un plan construido alrededor de sostener la línea en lugar de establecerla. Este plan sigue siendo válido; ese es el siguiente lugar a donde ir."
+      }
+    }
+  ]
+}
