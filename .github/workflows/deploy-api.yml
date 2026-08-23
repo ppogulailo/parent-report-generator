@@ -5,12 +5,15 @@ on:
     branches: [main]
     paths:
       - 'src/**'
+      - 'content/**'
       - 'test/**'
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig*.json'
       - 'nest-cli.json'
       - 'playwright.config.ts'
+      - 'playwright.unit.config.ts'
+      - 'playwright.v1.config.ts'
       - 'Dockerfile'
       - 'fly.toml'
       - '.dockerignore'
@@ -34,6 +37,16 @@ jobs:
           cache: 'npm'
 
       - run: npm ci
+
+      # Content first: a deploy that ships a broken routing rule is worse than a
+      # deploy that fails.
+      - run: npm run content:validate
+
+      - run: npm run test:unit
+
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run test:v1
 
       - run: npx playwright test --reporter=line
 

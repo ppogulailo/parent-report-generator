@@ -26,9 +26,12 @@ export default defineConfig({
   timeout: 90000,
   reporter: process.env.CI ? 'line' : 'list',
   use: {
+    // Device preset first: spreading it after `viewport` silently overwrites
+    // the viewport with the preset's, which is how an explicit size becomes a
+    // decorative line of config.
+    ...devices['Desktop Chrome'],
     baseURL: `http://localhost:${FRONTEND_PORT}`,
     viewport: { width: 1280, height: 900 },
-    ...devices['Desktop Chrome'],
   },
   webServer: {
     // `npm run dev` hardcodes -p 3100, so the port is passed explicitly rather

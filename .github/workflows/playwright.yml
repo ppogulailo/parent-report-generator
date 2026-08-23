@@ -1,27 +1,70 @@
-name: Playwright Tests
+name: Tests
+
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # The browser suite starts the Next dev server itself, which needs the
+      # frontend's own dependencies. Without this the suite fails at webServer
+      # start with an error that says nothing about the cause.
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      # First, and on its own: everything below is meaningless if the
+      # methodology content does not load. A broken routing rule fails here with
+      # the rule named, rather than as a mystery boot failure inside a suite.
+      - name: Validate content
+        run: npm run content:validate
+
+      - name: Type-check
+        run: npx tsc --noEmit --project tsconfig.build.json
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      # Only runs when a baseline has been captured. It compares what the matrix
+      # routes against what the live system did, and fails on a severity
+      # mismatch — the one difference that is arithmetic rather than judgement.
+      - name: Compare against the captured baseline
+        if: ${{ hashFiles('baseline/*.json') != '' }}
+        run: npm run baseline:compare
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: V1 API tests
+        run: npm run test:v1
+
+      - name: V1 browser tests
+        run: npm run test:v1:ui
+
+      # The pre-existing endpoint, still serving the live questionnaire. Runs
+      # last because it is the suite that goes away once the frontend migrates.
+      - name: Legacy endpoint tests
+        run: npx playwright test --reporter=line
+
+      - uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 30
