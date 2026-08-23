@@ -35,6 +35,53 @@ export function compare(
   return true;
 }
 
+/**
+ * The question ids inside a condition that actually contributed to it matching.
+ *
+ * This is what lets a report say *why* a family received a priority area, in
+ * terms of what they themselves reported: "the secrecy you described" rather
+ * than "your Communication & Conflict score". The prompt builder passes these
+ * to the model as the evidence for each recommendation, so the link between an
+ * answer and the advice that follows from it is structural rather than something
+ * the model is asked to infer.
+ *
+ * Only branches that hold are walked. A `not` branch contributes nothing: the
+ * absence of a signal is not evidence a parent can be shown.
+ */
+export function evidenceFor(
+  condition: Condition,
+  scored: ScoredSubmission,
+): string[] {
+  if (!evaluate(condition, scored)) return [];
+
+  const ids: string[] = [];
+  const walk = (node: Condition): void => {
+    if ('all' in node) return node.all.forEach(walk);
+    if ('any' in node) {
+      // Only the branches that actually fired are evidence.
+      for (const child of node.any) {
+        if (evaluate(child, scored)) walk(child);
+      }
+      return;
+    }
+    if ('not' in node) return;
+    if ('question' in node) ids.push(node.question);
+    if ('questionAverage' in node) ids.push(...node.questionAverage);
+    if ('questionValueCount' in node) {
+      // Only the questions actually sitting at the value, not the whole subset.
+      ids.push(
+        ...node.questionValueCount.questions.filter(
+          (id) =>
+            scored.normalisedResponses[id] === node.questionValueCount.value,
+        ),
+      );
+    }
+  };
+  walk(condition);
+
+  return [...new Set(ids)];
+}
+
 export function evaluate(
   condition: Condition,
   scored: ScoredSubmission,

@@ -1,4 +1,5 @@
 import type { Language } from '../content/content.types';
+import type { VoiceRule } from '../content/schemas/voice.schema';
 import type {
   RequiredWording,
   Workshops,
@@ -229,4 +230,121 @@ export function checkUnselectedResources(
   }
 
   return violations;
+}
+
+/**
+ * Escapes a term for use inside a regular expression.
+ *
+ * Necessary because banned terms are content, and content contains `[`, `(` and
+ * `.` — `"[sequence]"` is one of the banned placeholders, and unescaped it is a
+ * character class matching the letters s, e, q, u, n and c.
+ */
+const escapeRegExp = (term: string): string =>
+  term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+/**
+ * The prose with approved wording removed, ready for banned-term matching.
+ *
+ * **This is what makes the voice rules usable rather than noise.** Three of the
+ * banned words occur inside approved workshop titles — "Engagement" in the
+ * Effective Communication workshop, "Dynamics" in Family Dynamics,
+ * "Reinforcement" in Positive Reinforcement — and the professional-help sequence
+ * is itself required wording. Matching without stripping these would flag every
+ * correctly-written report, and a checker that always fires gets turned off.
+ */
+export function proseWithoutApprovedWording(
+  report: Record<string, unknown>,
+  workshops: Workshops,
+): string {
+  let text = proseOf(report).join('\n\n');
+
+  const approved = [
+    ...workshops.workshops.map((w) => w.title),
+    ...workshops.discussionGroups.map((g) => `${g.name} discussion group`),
+    ...workshops.discussionGroups.map((g) => g.name),
+    ...workshops.requiredWording.flatMap((r) => [
+      ...r.sentences.en,
+      ...r.sentences.es,
+    ]),
+    // Longest first, so a title containing another title is removed whole rather
+    // than leaving a fragment behind that then matches something else.
+  ].sort((a, b) => b.length - a.length);
+
+  for (const phrase of approved) {
+    text = text.replace(new RegExp(escapeRegExp(phrase), 'gi'), ' ');
+  }
+
+  return text;
+}
+
+/**
+ * Checks the prose against the voice rules.
+ *
+ * These exist only as prompt instructions in the live system: the model is told
+ * not to write "foster" or "You are not alone", and nothing has ever verified
+ * that it didn't. Unlike a missing workshop, this class of failure survives
+ * close reading — a plan full of "facilitate" and "holistic" still looks like a
+ * plan, it just doesn't sound like ASAP.
+ */
+export function checkVoice(
+  report: Record<string, unknown>,
+  rules: VoiceRule[],
+  workshops: Workshops,
+  language: Language,
+): WordingViolation[] {
+  const text = proseWithoutApprovedWording(report, workshops);
+  const violations: WordingViolation[] = [];
+
+  for (const rule of rules) {
+    if (rule.strictness === 'warn') continue;
+
+    const found = rule.terms[language].filter((term) => {
+      const pattern =
+        rule.kind === 'words'
+          ? new RegExp(`\\b${escapeRegExp(term)}\\b`, 'i')
+          : new RegExp(escapeRegExp(term), 'i');
+      return pattern.test(text);
+    });
+
+    if (found.length > 0) {
+      violations.push({
+        ruleId: rule.id,
+        detail: `${found.map((t) => `"${t}"`).join(', ')} must not appear. ${rule.reason}`,
+      });
+    }
+  }
+
+  return violations;
+}
+
+/**
+ * Catches an answer label quoted verbatim back at the parent.
+ *
+ * The labels are intake-form options. Quoting one — 'your "Near-daily — running
+ * on empty" exhaustion' — is the clearest single tell that a plan was assembled
+ * from a form rather than written about a family, and it is the kind of thing a
+ * reader notices immediately and cannot unsee.
+ *
+ * Only the labels the parent actually chose are checked, and only the longer
+ * ones: "Always consistent" occurs in ordinary prose.
+ */
+export function checkAnswerLabels(
+  report: Record<string, unknown>,
+  chosenLabels: string[],
+  minWords: number,
+): WordingViolation[] {
+  const text = normalise(proseOf(report).join('\n\n'));
+
+  const quoted = chosenLabels
+    .filter((label) => label.trim().split(/\s+/).length >= minWords)
+    .filter((label) => text.includes(normalise(label)));
+
+  if (quoted.length === 0) return [];
+
+  return [
+    {
+      ruleId: 'answer-label-quoted',
+      detail: `${quoted.map((l) => `"${l}"`).join(', ')} — these are questionnaire options, not something the parent said. Describe what they reported in natural words instead: "the near-daily exhaustion you described", not the label itself.`,
+    },
+  ];
 }

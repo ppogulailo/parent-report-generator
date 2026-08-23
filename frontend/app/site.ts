@@ -26,3 +26,12 @@ export const SITE_URL = (configured || FALLBACK).replace(/\/+$/, '');
 
 /** True while the site is served from the pre-launch hostname. */
 export const IS_PRELAUNCH_HOST = SITE_URL === FALLBACK;
+
+/**
+ * Whether `/[lang]` serves the Version 1.0 flow.
+ *
+ * Off by default: the existing questionnaire keeps serving parents until V1 has
+ * been exercised against a real model and Dave has approved the matrix. Setting
+ * this is the launch switch, and unsetting it is the way back.
+ */
+export const V1_IS_DEFAULT = process.env.NEXT_PUBLIC_V1_DEFAULT === '1';

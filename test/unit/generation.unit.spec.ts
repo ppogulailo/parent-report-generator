@@ -8,9 +8,11 @@ import {
   writtenSections,
 } from '../../src/generation/report-schema';
 import {
+  checkAnswerLabels,
   checkBannedTitles,
   checkRequiredWording,
   checkUnselectedResources,
+  checkVoice,
   proseOf,
 } from '../../src/generation/voice-rules';
 import { evaluate } from '../../src/selection/rule.evaluator';
@@ -444,4 +446,192 @@ test('the prompt omits the urgent block entirely when there is none', () => {
   const user = prompts.user(selection, sections, 'en', null);
   expect(user).not.toContain('"""');
   expect(user).not.toContain('urgent field');
+});
+
+// -------------------------------------------------------------- voice rules
+
+test('a banned word is caught', () => {
+  const violations = checkVoice(
+    { encouragement: 'This will help foster a healthier routine at home.' },
+    content.voiceRulesFor(selection.tierId),
+    content.workshops,
+    'en',
+  );
+  expect(violations.map((v) => v.ruleId)).toContain('corporate-vocabulary');
+});
+
+test('a banned word inside an approved workshop title is NOT caught', () => {
+  // The test this whole mechanism turns on. "Engagement", "Dynamics" and
+  // "Reinforcement" all live inside approved titles; a checker that flagged them
+  // would fire on every correctly-cited report and would rightly be switched off.
+  for (const title of [
+    'Effective Communication: Building Trust and Engagement with Your Teen',
+    'Family Dynamics and Substance Use: Strengthening Family Bonds to Prevent Abuse',
+    'The Power of Positive Reinforcement: Rewarding Healthy Behavior',
+  ]) {
+    const violations = checkVoice(
+      {
+        keyPriorities: [
+          {
+            recommendationId: 'x',
+            headline: 'h',
+            body: `Attend the Auxiliary Workshop "${title}".`,
+          },
+        ],
+      },
+      content.voiceRulesFor(selection.tierId),
+      content.workshops,
+      'en',
+    );
+    expect(
+      violations.map((v) => v.ruleId),
+      title,
+    ).not.toContain('corporate-vocabulary');
+  }
+});
+
+test('the word ban does not fire on a longer word that contains it', () => {
+  // "reinforce" is banned as a word; "reinforcement" in ordinary prose is not
+  // the banned term, and `kind: "words"` is what draws that line.
+  const violations = checkVoice(
+    { encouragement: 'Positive reinforcement works better than punishment.' },
+    content.voiceRulesFor(selection.tierId),
+    content.workshops,
+    'en',
+  );
+  expect(violations.map((v) => v.ruleId)).not.toContain('corporate-vocabulary');
+});
+
+test('the required wording does not trip a voice rule', () => {
+  const rule = content.workshops.requiredWording.find(
+    (r) => r.id === 'professional-help-sequence',
+  )!;
+  const violations = checkVoice(
+    { days4to7: rule.sentences.en.join(' ') },
+    content.voiceRulesFor(selection.tierId),
+    content.workshops,
+    'en',
+  );
+  expect(violations).toEqual([]);
+});
+
+test('generic empathy is caught', () => {
+  const violations = checkVoice(
+    { headlineSummary: 'You are not alone in this.' },
+    content.voiceRulesFor(selection.tierId),
+    content.workshops,
+    'en',
+  );
+  expect(violations.map((v) => v.ruleId)).toContain('generic-empathy');
+});
+
+test('the trusted-adult recommendation is caught', () => {
+  const violations = checkVoice(
+    {
+      keyPriorities: [
+        {
+          recommendationId: 'x',
+          headline: 'h',
+          body: 'Find a trusted adult for your child to talk to.',
+        },
+      ],
+    },
+    content.voiceRulesFor(selection.tierId),
+    content.workshops,
+    'en',
+  );
+  expect(violations.map((v) => v.ruleId)).toContain('trusted-adult');
+});
+
+test('soft fallbacks are caught at Serious but permitted at Mild', () => {
+  // The methodology gates this rule by severity: "see how it goes" is a real
+  // option for a family with no use signal and an abdication for one with three.
+  const text = { days4to7: 'For now, wait and see how it goes.' };
+
+  const mild = selectionService.select(submission(1));
+  expect(mild.tierId).toBe('mild');
+  expect(
+    checkVoice(
+      text,
+      content.voiceRulesFor(mild.tierId),
+      content.workshops,
+      'en',
+    ).map((v) => v.ruleId),
+  ).not.toContain('soft-fallbacks');
+
+  const serious = selectionService.select(submission(4));
+  expect(serious.tierId).toBe('serious');
+  expect(
+    checkVoice(
+      text,
+      content.voiceRulesFor(serious.tierId),
+      content.workshops,
+      'en',
+    ).map((v) => v.ruleId),
+  ).toContain('soft-fallbacks');
+});
+
+test('a warn-strictness rule does not block a report', () => {
+  // consequences-without-rewards is `warn`: worth logging, not worth costing a
+  // parent their plan.
+  const violations = checkVoice(
+    { whatToAvoid: ['Set clear consequences and hold to them.'] },
+    content.voiceRulesFor(selection.tierId),
+    content.workshops,
+    'en',
+  );
+  expect(violations.map((v) => v.ruleId)).not.toContain(
+    'consequences-without-rewards',
+  );
+});
+
+test('a placeholder in place of required wording is caught', () => {
+  const violations = checkVoice(
+    { days4to7: 'Bring in a therapist. [professional help sequence]' },
+    content.voiceRulesFor(selection.tierId),
+    content.workshops,
+    'en',
+  );
+  // The bracketed term must survive being used in a regular expression.
+  expect(violations.map((v) => v.ruleId)).toContain('no-placeholders');
+});
+
+test('a quoted answer label is caught, and a short one is not', () => {
+  const longLabel = content.assessment.questions
+    .flatMap((q) => q.options.map((o) => o.label.en))
+    .find((label) => label.trim().split(/\s+/).length >= 4)!;
+  const shortLabel = 'Always consistent';
+
+  expect(
+    checkAnswerLabels(
+      { headlineSummary: `Your "${longLabel}" answer stood out.` },
+      [longLabel],
+      content.voice.answerLabelQuoting.minWords,
+    ).map((v) => v.ruleId),
+  ).toContain('answer-label-quoted');
+
+  expect(
+    checkAnswerLabels(
+      { headlineSummary: `The consequences have not been always consistent.` },
+      [shortLabel],
+      content.voice.answerLabelQuoting.minWords,
+    ),
+  ).toEqual([]);
+});
+
+test('a voice violation is fed back and the retry is accepted', async () => {
+  const bad = validResponse();
+  bad.encouragement = 'This will foster a holistic approach.';
+
+  const good = validResponse();
+
+  const service = new GenerationService(
+    content,
+    prompts,
+    stubLlm([JSON.stringify(bad), JSON.stringify(good)]),
+  );
+
+  const report = await service.generate(selection, 'en');
+  expect(report.attempts).toBe(2);
+  expect(report.warnings).toEqual([]);
 });

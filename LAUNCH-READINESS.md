@@ -24,9 +24,13 @@ flipped deliberately. Nothing on this page needs new development.
 | English/Spanish held in one record per string, both required at boot | `src/content/schemas/rule.schema.ts` → `localizedStringSchema` |
 | Spanish strings listed for sign-off | `SPANISH-REVIEW.md` — 216 strings, generated from content |
 | Prompts moved out of code into content | `content/report-templates/` |
+| Banned vocabulary, empathy filler and softened referrals checked, not just prompted | `content/voice.json`, `src/generation/voice-rules.ts` |
+| Answer labels cannot be quoted back at the parent | `checkAnswerLabels` |
+| Baseline comparison runs offline, so it can gate CI | `scripts/compare-baseline.ts` |
+| Switch-over is a build arg, and reversible | `frontend/app/site.ts` → `V1_IS_DEFAULT` |
 | Site origin centralised so the hostname change is config, not code | `frontend/app/site.ts` |
 
-**Test state:** 48 unit tests. `npm run content:validate` clean. `npm run build`
+**Test state:** 59 unit tests. `npm run content:validate` clean. `npm run build`
 and the frontend build both clean.
 
 ---
@@ -50,32 +54,52 @@ gone there is nothing left to compare against.
 
 ```bash
 API_BASE=https://<live-host> API_SECRET_KEY=... npm run baseline:capture
+npm run baseline:compare   # offline; safe to run in CI on every content edit
 ```
 
 ---
 
 ## The switch-over
 
-The Version 1.0 questionnaire lives at `/[lang]/v1` and the pre-existing one at
-`/[lang]`. Both are live; the old one is what parents currently reach.
+The Version 1.0 questionnaire lives at `/[lang]/v1`; the pre-existing one serves
+`/[lang]` and is what parents currently reach.
 
-This is deliberate — the new pipeline should be exercised before it serves a
-family — but it is also temporary, and two routes generating plans by two
-methodologies is exactly the kind of thing that survives a launch and then
-quietly serves half the traffic. The switch is three steps, in this order:
+**Switching is one build arg**, not a code change. In `frontend/fly.toml`:
 
-1. **Point `/[lang]` at the V1 flow.** Replace the body of
-   `frontend/app/[lang]/page.tsx` with what `v1/page.tsx` does, and delete the
-   `v1` route.
-2. **Delete the old path.** `src/report/` on the backend,
-   `frontend/app/api/report/`, `frontend/app/[lang]/client.tsx`, and
-   `frontend/app/questions.ts` — the frontend's own duplicate copy of the
-   questionnaire, which the new flow reads from the backend instead.
-3. **Remove `ReportModule` from `src/app.module.ts`.**
+```toml
+NEXT_PUBLIC_V1_DEFAULT = '1'
+```
 
-Do not do step 1 without step 3. Leaving the old endpoint reachable means a
-stale client, a cached page, or a bookmarked URL still generates plans by the old
-methodology, and nothing about the response says which one produced it.
+Then redeploy the frontend with `--no-cache`, because `NEXT_PUBLIC_*` values are
+inlined at build time. Setting it back to `'0'` is the way back, which is the
+point: the new pipeline will not have written a plan for a real family until it
+does, and a reversible switch is worth more than a tidy diff on the day.
+
+**Before flipping it**, in this order:
+
+1. Capture the baseline (item 8 above) — it must come from the old system.
+2. `npm run baseline:compare` — offline, no API key. It fails only on a severity
+   mismatch, and lists separately the resources the old system cited that the
+   matrix does not route. Those are for Dave: each one is either model discretion
+   the methodology never granted, or a gap in the routing table.
+3. Generate one report per language against a real model and read them.
+4. Get Dave's approval on the matrix.
+
+### Then delete the old path
+
+Once V1 has served production for a few days, the flag has done its job and two
+pipelines become a liability — a stale client or a bookmarked URL still generates
+plans by the old methodology, and nothing in the response says which one produced
+it. Delete, in one commit:
+
+- `src/report/` and `ReportModule` from `src/app.module.ts`
+- `frontend/app/api/report/`, `frontend/app/[lang]/client.tsx`
+- `frontend/app/questions.ts` — the frontend's duplicate copy of the
+  questionnaire, which the V1 flow reads from the backend instead
+- the `V1_IS_DEFAULT` flag and the `v1` route, folding it into `[lang]/page.tsx`
+
+`SPEC.md` becomes historical at that point and should say so rather than being
+deleted — it is the record of what the methodology was before the matrix.
 
 ---
 

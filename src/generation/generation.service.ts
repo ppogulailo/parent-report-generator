@@ -8,9 +8,11 @@ import { LlmClient, LlmTurn, RetryableLlmError } from './llm.client';
 import { PromptBuilder } from './prompt.builder';
 import { buildReportSchema } from './report-schema';
 import {
+  checkAnswerLabels,
   checkBannedTitles,
   checkRequiredWording,
   checkUnselectedResources,
+  checkVoice,
   WordingViolation,
 } from './voice-rules';
 
@@ -228,7 +230,37 @@ export class GenerationService {
         selection.discussionGroupIds,
         this.content.requiredWordingFor(selection.tierId),
       ),
+      ...checkVoice(
+        report,
+        this.content.voiceRulesFor(selection.tierId),
+        this.content.workshops,
+        language,
+      ),
+      ...(this.content.voice.answerLabelQuoting.enabled
+        ? checkAnswerLabels(
+            report,
+            this.chosenLabels(selection, language),
+            this.content.voice.answerLabelQuoting.minWords,
+          )
+        : []),
     ];
+  }
+
+  /** The option labels this parent actually selected, for the answer-label check.
+   *  Only their own answers matter: a label they did not choose appearing in the
+   *  prose is a different problem, and not one this rule is about. */
+  private chosenLabels(
+    selection: SelectionResult,
+    language: Language,
+  ): string[] {
+    return this.content.assessment.questions
+      .map((question) => {
+        const value = selection.scored.normalisedResponses[question.id];
+        return question.options.find((option) => option.value === value)?.label[
+          language
+        ];
+      })
+      .filter((label): label is string => label !== undefined);
   }
 
   /**

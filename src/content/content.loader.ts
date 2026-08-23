@@ -4,6 +4,7 @@ import type { ZodType } from 'zod';
 import { assessmentSchema } from './schemas/assessment.schema';
 import { matrixSchema } from './schemas/matrix.schema';
 import { sectionsSchema } from './schemas/sections.schema';
+import { voiceSchema } from './schemas/voice.schema';
 import { workshopsSchema } from './schemas/workshops.schema';
 import { validateContent, validateTemplates } from './content.validate';
 import {
@@ -101,6 +102,7 @@ export function loadContent(dir: string): ContentBundle {
     sectionsSchema,
   );
 
+  const voice = readJson(dir, 'voice.json', voiceSchema);
   const templates = readTemplates(dir);
 
   const { problems, warnings } = validateContent({
@@ -108,12 +110,21 @@ export function loadContent(dir: string): ContentBundle {
     workshops,
     matrix,
     sections,
+    voice,
   });
   problems.push(...validateTemplates(templates));
 
   if (problems.length > 0) throw new ContentValidationError(problems);
 
-  return { assessment, workshops, matrix, sections, templates, warnings };
+  return {
+    assessment,
+    workshops,
+    matrix,
+    sections,
+    voice,
+    templates,
+    warnings,
+  };
 }
 
 /** `CONTENT_DIR` exists so tests can point at a fixture bundle. Production never

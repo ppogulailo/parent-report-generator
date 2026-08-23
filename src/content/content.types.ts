@@ -1,6 +1,7 @@
 import type { Assessment } from './schemas/assessment.schema';
 import type { RecommendationMatrix } from './schemas/matrix.schema';
 import type { ReportSectionsConfig } from './schemas/sections.schema';
+import type { VoiceConfig } from './schemas/voice.schema';
 import type { Workshops } from './schemas/workshops.schema';
 
 export type Language = 'en' | 'es';
@@ -50,6 +51,7 @@ export interface ContentBundle {
   workshops: Workshops;
   matrix: RecommendationMatrix;
   sections: ReportSectionsConfig;
+  voice: VoiceConfig;
   templates: PromptTemplates;
   /** Non-fatal problems worth surfacing at boot — missing workshop URLs,
    *  inferred domain mappings, placeholder or draft content still in place. */

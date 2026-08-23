@@ -13,6 +13,9 @@ primary_region = 'iad'
     # record exists. Build-time only, so the frontend must be redeployed with
     # --no-cache for a change here to take effect.
     NEXT_PUBLIC_SITE_URL = 'https://actionplan.asap-community.org'
+    # Set to '1' to serve the Version 1.0 flow at /[lang]. Off until the matrix
+    # is approved and V1 has been exercised against a real model.
+    NEXT_PUBLIC_V1_DEFAULT = '0'
 
 [env]
   HOSTNAME = '0.0.0.0'

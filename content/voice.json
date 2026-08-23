@@ -1,0 +1,242 @@
+{
+  "_comment": [
+    "VOICE RULES — the wording the methodology forbids, checked rather than",
+    "merely requested.",
+    "",
+    "These are transcribed from the hard rules in the live system's prompts,",
+    "where they exist only as instructions. The model is told not to write",
+    "\"foster\" or \"You are not alone\"; nothing has ever verified that it didn't.",
+    "That is the same gap that let the professional-help sequence be honoured",
+    "intermittently — and unlike that one, these failures are invisible even on",
+    "close reading, because a plan full of \"facilitate\" and \"holistic\" still",
+    "looks like a plan.",
+    "",
+    "TWO THINGS TO KNOW BEFORE ADDING A TERM:",
+    "",
+    "  1. RESOURCE TITLES ARE STRIPPED BEFORE CHECKING. Three of the banned",
+    "     words below appear inside approved workshop titles — \"Engagement\" in",
+    "     the Effective Communication workshop, \"Dynamics\" in Family Dynamics,",
+    "     \"Reinforcement\" in Positive Reinforcement. Without stripping, every",
+    "     correctly-cited report would be flagged, and a checker that cries wolf",
+    "     gets switched off. Required wording is stripped for the same reason.",
+    "",
+    "  2. `words` MATCH ON WORD BOUNDARIES, `phrases` MATCH ANYWHERE. So the word",
+    "     \"reinforce\" does not fire on \"reinforcement\" appearing in prose, while",
+    "     the phrase \"wait and see\" fires wherever it appears. Pick `kind`",
+    "     accordingly: a stem you want to catch in all its forms belongs in",
+    "     `phrases`.",
+    "",
+    "Strictness `retry` regenerates the report and feeds the error back. `warn`",
+    "logs and ships. Everything here is a content edit."
+  ],
+  "version": "1.0.0",
+  "rules": [
+    {
+      "id": "corporate-vocabulary",
+      "kind": "words",
+      "reason": "These read as a consultant's report rather than someone who has sat with families. The methodology bans them outright.",
+      "strictness": "retry",
+      "terms": {
+        "en": [
+          "foster",
+          "facilitate",
+          "dynamics",
+          "engagement",
+          "reinforce",
+          "utilize",
+          "framework",
+          "holistic",
+          "proactive",
+          "leverage"
+        ],
+        "es": [
+          "fomentar",
+          "facilitar",
+          "dinámicas",
+          "involucramiento",
+          "reforzar",
+          "utilizar",
+          "marco",
+          "holístico",
+          "proactivo",
+          "apalancar"
+        ]
+      }
+    },
+    {
+      "id": "generic-empathy",
+      "kind": "phrases",
+      "reason": "Polished empathy in place of a concrete observation. A parent who has just described their child's secrecy does not need to be told they are not alone; they need to be told what to do on Tuesday.",
+      "strictness": "retry",
+      "terms": {
+        "en": [
+          "I hear how hard this is",
+          "you are not alone",
+          "you're not alone",
+          "it's okay to feel",
+          "it is okay to feel",
+          "you're facing a lot",
+          "many parents feel",
+          "we're here for you",
+          "we are here for you",
+          "you've got this",
+          "you have got this",
+          "navigate challenges"
+        ],
+        "es": [
+          "escucho lo difícil que es esto",
+          "no estás solo",
+          "no estás sola",
+          "está bien sentir",
+          "estás enfrentando mucho",
+          "muchos padres sienten",
+          "estamos aquí para ti",
+          "tú puedes con esto",
+          "navegar desafíos"
+        ]
+      }
+    },
+    {
+      "id": "trusted-adult",
+      "kind": "phrases",
+      "reason": "Not part of this methodology. Building the network around the child belongs to the Essential Workshop \"Building a Support Network\"; co-parent alignment uses co-parent or co-guardian. The generic instruction sends a parent nowhere in particular.",
+      "strictness": "retry",
+      "terms": {
+        "en": ["trusted adult", "trusted adults"],
+        "es": ["adulto de confianza", "adultos de confianza"]
+      }
+    },
+    {
+      "id": "unknown-substance-not-pills",
+      "kind": "phrases",
+      "reason": "Drug exposure now includes pressed pills, powders, counterfeit prescriptions, vape cartridges and edibles. Naming pills alone narrows a parent's vigilance to the one thing they have already thought of.",
+      "strictness": "retry",
+      "terms": {
+        "en": [
+          "found pills",
+          "the pills",
+          "if you find pills",
+          "pills in",
+          "pills you found"
+        ],
+        "es": [
+          "encontraste pastillas",
+          "las pastillas",
+          "si encuentras pastillas",
+          "pastillas en"
+        ]
+      }
+    },
+    {
+      "id": "parent-gives-the-drug-test",
+      "kind": "phrases",
+      "reason": "The parent administers the test. \"Take a drug test\" as the parent's action reads as the parent testing themselves.",
+      "strictness": "retry",
+      "terms": {
+        "en": ["take a drug test", "taking a drug test"],
+        "es": ["toma una prueba de drogas", "tomar una prueba de drogas"]
+      }
+    },
+    {
+      "id": "soft-fallbacks",
+      "kind": "phrases",
+      "reason": "At these severities the methodology requires a named next move. \"See how it goes\" is what a parent does instead of acting, and offering it as the recommendation is how a serious situation gets a week older.",
+      "strictness": "retry",
+      "appliesAtTiers": ["serious", "critical"],
+      "terms": {
+        "en": [
+          "wait and see",
+          "see how it goes",
+          "revisit later",
+          "come back to it later",
+          "give it some time",
+          "circle back when things calm down",
+          "monitor and reassess"
+        ],
+        "es": [
+          "espera y observa",
+          "a ver cómo va",
+          "lo retomamos después",
+          "vuelve más adelante",
+          "dale tiempo",
+          "vuelve cuando las cosas se calmen",
+          "observa y vuelve a evaluar"
+        ]
+      }
+    },
+    {
+      "id": "consequences-without-rewards",
+      "kind": "phrases",
+      "reason": "ASAP philosophy is that consequences alone do not change behaviour, so rewards and consequences travel together. These exact formulations are the ones that arrive without their pair.",
+      "strictness": "warn",
+      "terms": {
+        "en": [
+          "set clear consequences",
+          "enforce consequences consistently",
+          "clear consequences for"
+        ],
+        "es": [
+          "establece consecuencias claras",
+          "aplica las consecuencias de forma consistente"
+        ]
+      }
+    },
+    {
+      "id": "indirect-professional-help",
+      "kind": "phrases",
+      "reason": "Softening a referral into a future task erases it. The recommendation is direct, and the professional-help sequence follows it.",
+      "strictness": "retry",
+      "terms": {
+        "en": [
+          "prepare to reach out",
+          "start preparing to seek",
+          "begin looking into therapists",
+          "start thinking about a therapist",
+          "plan to eventually contact"
+        ],
+        "es": [
+          "prepárate para buscar",
+          "empieza a prepararte para buscar",
+          "empieza a pensar en un terapeuta"
+        ]
+      }
+    },
+    {
+      "id": "no-placeholders",
+      "kind": "phrases",
+      "reason": "A meta-reference in place of required wording is a failure, not a shortcut. Every one of these has been produced by a model at some point in place of the actual sentences.",
+      "strictness": "retry",
+      "terms": {
+        "en": [
+          "add the two-sentence sequence",
+          "insert the professional help sequence",
+          "[sequence]",
+          "[professional help sequence]",
+          "see the sequence above",
+          "as referenced above"
+        ],
+        "es": [
+          "inserta la secuencia",
+          "agrega la secuencia de dos oraciones",
+          "[secuencia]",
+          "como se mencionó arriba"
+        ]
+      }
+    }
+  ],
+  "answerLabelQuoting": {
+    "_comment": [
+      "The questionnaire's option labels are intake-form text, not speech.",
+      "Quoting one back — 'your \"Near-daily — running on empty\" exhaustion' — is",
+      "the clearest tell that a plan was assembled from a form rather than",
+      "written about a family.",
+      "",
+      "Only the labels the parent actually chose are checked, and only those with",
+      "at least `minWords` words: a short label like \"Drug Testing\" or \"Always",
+      "consistent\" occurs in ordinary prose and would fire constantly."
+    ],
+    "enabled": true,
+    "minWords": 4,
+    "strictness": "retry"
+  }
+}

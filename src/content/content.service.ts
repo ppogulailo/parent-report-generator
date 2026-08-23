@@ -11,6 +11,7 @@ import type {
   ReportSectionConfig,
   ReportSectionsConfig,
 } from './schemas/sections.schema';
+import type { VoiceConfig } from './schemas/voice.schema';
 import type {
   DiscussionGroup,
   Workshop,
@@ -58,6 +59,17 @@ export class ContentService implements OnModuleInit {
 
   get sections(): ReportSectionsConfig {
     return this.bundle.sections;
+  }
+
+  get voice(): VoiceConfig {
+    return this.bundle.voice;
+  }
+
+  /** The voice rules in force for one report. */
+  voiceRulesFor(tierId: string) {
+    return this.bundle.voice.rules.filter(
+      (rule) => !rule.appliesAtTiers || rule.appliesAtTiers.includes(tierId),
+    );
   }
 
   get templates(): PromptTemplates {

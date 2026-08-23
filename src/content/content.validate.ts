@@ -2,6 +2,7 @@ import type { Condition } from './schemas/rule.schema';
 import type { Assessment } from './schemas/assessment.schema';
 import type { RecommendationMatrix } from './schemas/matrix.schema';
 import type { ReportSectionsConfig } from './schemas/sections.schema';
+import type { VoiceConfig } from './schemas/voice.schema';
 import type { Workshops } from './schemas/workshops.schema';
 import {
   LANGUAGES,
@@ -28,11 +29,12 @@ export function validateContent(bundle: {
   workshops: Workshops;
   matrix: RecommendationMatrix;
   sections: ReportSectionsConfig;
+  voice: VoiceConfig;
 }): { problems: string[]; warnings: string[] } {
   const problems: string[] = [];
   const warnings: string[] = [];
 
-  const { assessment, workshops, matrix, sections } = bundle;
+  const { assessment, workshops, matrix, sections, voice } = bundle;
 
   const questionIds = new Set(assessment.questions.map((q) => q.id));
   const domainIds = new Set(assessment.domains.map((d) => d.id));
@@ -355,6 +357,44 @@ export function validateContent(bundle: {
   if (new Set(orders).size !== orders.length) {
     problems.push(
       'sections: duplicate order values — the report would render in an arbitrary order',
+    );
+  }
+
+  // --------------------------------------------------------------------- voice
+
+  for (const rule of voice.rules) {
+    for (const tierId of rule.appliesAtTiers ?? []) {
+      if (!tierIds.has(tierId)) {
+        problems.push(
+          `voice: rule "${rule.id}" applies at tier "${tierId}", which does not exist`,
+        );
+      }
+    }
+  }
+
+  // A banned term that occurs inside an approved resource title or a required
+  // sentence would fire on every correctly-written report. The checker strips
+  // those before matching, so this is a warning rather than an error — but it is
+  // worth knowing which terms depend on that stripping to be usable at all.
+  const approvedText = [
+    ...workshops.workshops.map((w) => w.title),
+    ...workshops.discussionGroups.map((g) => g.name),
+    ...workshops.requiredWording.flatMap((r) => [
+      ...r.sentences.en,
+      ...r.sentences.es,
+    ]),
+  ]
+    .join('\n')
+    .toLowerCase();
+
+  const collisions = voice.rules.flatMap((rule) =>
+    [...rule.terms.en, ...rule.terms.es]
+      .filter((term) => approvedText.includes(term.toLowerCase()))
+      .map((term) => `${rule.id}:"${term}"`),
+  );
+  if (collisions.length > 0) {
+    warnings.push(
+      `voice: ${collisions.length} banned term(s) also occur inside approved resource titles or required wording (${collisions.join(', ')}). The checker strips those before matching; without that they would flag every correct report.`,
     );
   }
 
