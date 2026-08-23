@@ -1,3 +1,4 @@
+import { SITE_URL } from '../site';
 import type { Metadata } from 'next';
 import { Hanken_Grotesk, Inter, JetBrains_Mono } from 'next/font/google';
 import '../globals.css';
@@ -35,7 +36,6 @@ export function generateStaticParams() {
   return SUPPORTED.map((lang) => ({ lang }));
 }
 
-const SITE_URL = 'https://actionplan.asap-community.org';
 
 // Localized <head> metadata. These strings are head-only (title/meta), not
 // visible on-page copy, and target parent-intent search queries on the

@@ -1,6 +1,6 @@
+import { SITE_URL } from './site';
 import type { MetadataRoute } from 'next';
 
-const SITE_URL = 'https://actionplan.asap-community.org';
 
 // Public locale pages are crawlable; the backend-proxy API routes are not
 // (they carry no indexable content and only forward requests to the NestJS

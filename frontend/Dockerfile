@@ -9,6 +9,11 @@ RUN npm ci
 # ---- Build ----
 FROM node:20-alpine AS builder
 WORKDIR /app
+# Inlined at build time by Next. Needs the matching [build.args] entry in
+# fly.toml; without this ARG the value is silently dropped and every canonical
+# URL falls back to the pre-launch hostname.
+ARG NEXT_PUBLIC_SITE_URL
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .

@@ -4,11 +4,28 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-NestJS REST API that scores a 24-question parent questionnaire, maps responses to 5 concern domains, and generates a 7-section Parent Action Plan via the Anthropic Claude API. A Next.js frontend in `frontend/` consumes the API.
+NestJS REST API that scores a 24-question parent questionnaire, maps responses to 5 concern domains, and generates a personalised action plan. A Next.js frontend in `frontend/` consumes the API.
 
-**Source of truth:** [`SPEC.md`](./SPEC.md). Read it before writing code. It defines the domain map, scoring algorithm, tie-break order, prompt text, response shape, error messages, and test coverage. Do not paraphrase or deviate from values defined there (domain names, section names, error strings, `SYSTEM_PROMPT`).
+**Two pipelines exist right now, deliberately and temporarily.**
 
-**Out of scope:** no database, no auth beyond the `X-API-Key` header, no PDF/email, no streaming, no caching.
+- **Version 1.0** (`POST /api/assessment/submit`) — the methodology lives in `content/` as data, routing is decided in `src/selection/` before the model is called, and the model's output is schema-validated against that decision. This is the one to change.
+- **The pre-existing path** (`POST /api/report/generate`) — the methodology lives inside a 307-line prompt and the model is asked to follow it. Still serving the live questionnaire at `/[lang]` while V1 is reviewed at `/[lang]/v1`. Slated for deletion; see `LAUNCH-READINESS.md`.
+
+Do not add features to the old path.
+
+**Source of truth for Version 1.0:** [`RECOMMENDATION-MATRIX.md`](./RECOMMENDATION-MATRIX.md) and `content/`. The matrix document is what the client approves; `content/` is what the code executes. They must agree.
+
+**Source of truth for the old path:** [`SPEC.md`](./SPEC.md).
+
+## The rule that governs Version 1.0
+
+**The matrix selects. The model writes.**
+
+Selection happens in deterministic TypeScript (`src/selection/`) evaluating condition trees held as JSON in `content/recommendation-matrix.json`. The model receives the already-chosen recommendations and workshops and writes prose around them. It never chooses.
+
+This is enforced, not requested. `src/generation/report-schema.ts` builds a Zod schema from the selected ids, and a response whose ids do not match exactly fails validation and is retried with the error fed back. **If you are tempted to let the model pick something, or to move a selection decision into a prompt, stop — that inverts the whole architecture.**
+
+**Out of scope:** no database, no auth beyond the `X-API-Key` header, no PDF/email, no caching. Stored plans, PDF and email are Milestone 2.
 
 ## Architecture
 
@@ -16,23 +33,37 @@ NestJS REST API that scores a 24-question parent questionnaire, maps responses t
 src/
 ├── main.ts                         # /api global prefix, ValidationPipe, HttpExceptionFilter, CORS
 ├── app.module.ts
-├── common/
-│   ├── guards/api-key.guard.ts     # X-API-Key vs API_SECRET_KEY
-│   └── filters/http-exception.filter.ts  # normalise all errors to { success: false, error }
+├── common/                         # ApiKeyGuard, HttpExceptionFilter
 ├── health/                         # GET /api/health (no guard)
-└── report/
-    ├── report.module.ts
-    ├── report.controller.ts        # POST /api/report/generate, @UseGuards(ApiKeyGuard)
-    ├── report.service.ts           # scoring → prompt → Claude
-    ├── dto/generate-report.dto.ts  # class-validator: 24 ints, 1–4
-    ├── validation/                 # extra request-shape checks beyond class-validator
-    ├── scoring/{domain.map,scoring.service}.ts
-    ├── prompts/{system,user}.prompt.ts
-    ├── claude/claude.service.ts    # HttpService → Anthropic /v1/messages
-    └── interfaces/report.interface.ts
+│
+│   ── Version 1.0 ──
+├── content/                        # loads + validates content/, fails boot on a bad rule
+│   ├── content.loader.ts           #   JSON + prompt templates, `_`-prefixed keys stripped
+│   ├── content.validate.ts         #   cross-file checks; problems are fatal, warnings are not
+│   └── schemas/                    #   Zod, all .strict()
+├── selection/                      # THE MATRIX. Deterministic. No model involved.
+│   ├── scoring.service.ts          #   faithful port of the live arithmetic
+│   ├── rule.evaluator.ts           #   the only thing that interprets a condition tree
+│   └── selection.service.ts        #   tier → rules → tier gating → primary + supporting
+├── generation/                     # prompt → validate → retry → assemble
+│   ├── report-schema.ts            #   ids must equal the selection exactly
+│   ├── voice-rules.ts              #   required wording checked against the prose
+│   └── prompt.builder.ts           #   fills placeholders; contains no prompt text
+├── assessment/                     # POST /api/assessment/submit, GET questionnaire|capabilities
+│
+│   ── the old path, slated for deletion ──
+└── report/                         # POST /api/report/generate, prompts/, scoring/
+
+content/                            # the methodology, as data
+├── assessment.json                 # 24 scored questions + the non-scored gate
+├── recommendation-matrix.json      # tiers, routing rules, tier gates
+├── workshops.json                  # the resource library, wording rules, banned titles
+└── report-templates/               # sections.json + the four prompt templates
 ```
 
-Request flow: `ApiKeyGuard → ValidationPipe → ReportController → ReportService → ScoringService → buildUserPrompt → ClaudeService → response`.
+V1 request flow: `ApiKeyGuard → ValidationPipe → AssessmentValidator → ScoringService → SelectionService → PromptBuilder → LlmClient → schema + wording checks → assemble → response`.
+
+Old flow: `ApiKeyGuard → ValidationPipe → ReportController → ReportService → ScoringService → buildUserPrompt → ClaudeService → response`.
 
 `frontend/` is a Next.js 15 / React 19 app (default port 3100) under `app/[lang]/` with i18n via `app/i18n.ts` and questionnaire content in `app/questions.ts`. It calls the Nest backend through `app/api/`.
 
@@ -45,15 +76,31 @@ Request flow: `ApiKeyGuard → ValidationPipe → ReportController → ReportSer
 ## Conventions
 
 - Response keys are camelCase (`domainScores`, `topDomains`, `headlineSummary`, etc.) even though the domain *names* inside `domainScores` are the human-readable strings from the spec.
-- `SYSTEM_PROMPT` is the source of truth in `src/report/prompts/system.prompt.ts` (the post-v1.0 prompt baked in ASAP framing, resource prioritization, and a 7-section structure). When changing it, update SPEC §6.1's summary at the same time.
-- Model string `claude-sonnet-4-20250514` lives only in `claude.service.ts`.
+- **No prompt text in application code on the V1 path.** It all lives in `content/report-templates/`. `PromptBuilder` only fills placeholders, and a template using one the builder cannot fill fails at boot.
+- **Content is data.** Adding a section, a question, a routing rule or a tier is a JSON edit. If you find yourself adding a code branch for a content change, the schema is probably wrong.
+- **Zod schemas are `.strict()`.** A misspelled key must fail at boot. `"gtee": 3` silently ignored would be a rule that never fires — worse than a crash, because nobody notices a family quietly not receiving a recommendation. `_`-prefixed keys are comments and are stripped before validation.
+- **Answers are keyed by question id on the V1 path**, never by array position. The old path uses a positional array, which silently re-maps stored answers when the questionnaire is reordered.
+- `SYSTEM_PROMPT` in `src/report/prompts/system.prompt.ts` governs the **old** path only.
+- The model is `gpt-5.1` on both paths, configurable via `OPENAI_MODEL`, and lives only in `llm.client.ts` (V1) / `claude.service.ts` (old). **`ClaudeService` is named for Anthropic but posts to OpenAI** — do not reintroduce that name.
 - Read secrets via `ConfigService.getOrThrow` — fail fast at boot, not at first request.
-- `ANTHROPIC_API_URL` is overridable via env so tests can point at the mock.
-- Scoring: clamp values to [1,4], fill missing with 2, round domain averages to 2 decimals, break ties using `TIE_BREAK_ORDER` from SPEC §5.2.
+- `OPENAI_API_URL` is overridable via env so tests can point at the mock.
+- Scoring: clamp values to [1,4], fill missing with 2, round domain averages to 2 decimals, break ties using the order in `content/assessment.json` → `tieBreakOrder` (V1) or `TIE_BREAK_ORDER` from SPEC §5.2 (old path). The two are the same order.
+
+## Things that will bite you
+
+- **`tier.toneGuidance` is an instruction to the model. `tier.description` is what a parent reads.** Never render `toneGuidance`.
+- **Workshop titles and discussion group names are cited verbatim and never translated**, including in Spanish reports. Same for the two sentences of the professional-help sequence.
+- **The wording checker must only read prose.** Workshop ids contain "professional" and "search"; walking them made every report look like a violation.
+- **Required wording is exempt from the unselected-resource check.** The professional-help sequence names the Sustaining Recovery discussion group, which the matrix routes to nobody — without the exemption the two rules contradict and no response can pass.
+- **`overallAverage` is deliberately not rounded** while each domain average is rounded to 2dp. The severity gate compares it against 2.75 and 2.0, and rounding first moves a family across a tier boundary at exactly 2.745.
+- **Domains overlap.** q18 and q22 each count toward two, so `questionIds` lives on the domain rather than a `domainId` on the question. q04 belongs to no domain at all. Both are the approved behaviour and are flagged for the founder, not "fixed".
+- **The scale midpoint fill uses `Math.floor`, not `Math.round`.** On a 1–4 scale, rounding 2.5 up to 3 makes an unanswered question lean toward concern.
+- **Every `NEXT_PUBLIC_*` needs BOTH a `[build.args]` entry in `frontend/fly.toml` and an `ARG` line in `frontend/Dockerfile`.** A build arg with no `ARG` to receive it is silently dropped. They are inlined at build time, so changing one needs `--no-cache`.
+- **The frontend health check must be `/api/health`, not `/`.** The root redirects to `/en`, and a redirect fails Fly's check. This was a real outage.
 
 ## Environment variables
 
-`ANTHROPIC_API_KEY`, `API_SECRET_KEY`, `ALLOWED_ORIGIN`, `PORT` (default 3000), `ANTHROPIC_API_URL` (test override only).
+`OPENAI_API_KEY`, `API_SECRET_KEY`, `ALLOWED_ORIGIN`, `PORT` (default 3000), `OPENAI_API_URL` and `OPENAI_MODEL` (overridable), `CONTENT_DIR` (test override only).
 
 ## Commands
 
@@ -62,6 +109,10 @@ npm run start:dev                    # nodemon + ts-node, watches src/
 npm run build                        # nest build
 npm run lint                         # eslint --fix
 npm run test                         # playwright test (api.spec, language.spec, stability.spec)
+npm run test:unit                    # 48 unit tests, no server, no network
+npm run content:validate             # cross-file content validation
+npm run content:generate             # regenerate assessment.json + workshops.json from the approved sources
+npm run baseline:capture             # capture the eight baseline plans (needs API_SECRET_KEY)
 npx playwright test <pattern>        # single file/grep, e.g. npx playwright test api.spec.ts -g "health"
 npx playwright test --config=playwright.ui.config.ts   # UI suite under test/ui (needs frontend on :3100)
 ```
