@@ -1,0 +1,89 @@
+{
+  "fixture": {
+    "id": "mild-en",
+    "language": "en",
+    "expectedTier": "MILD",
+    "urgentPresent": false,
+    "responses": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "domainScores": {
+    "Immediate Safety & Urgency": 1,
+    "Household Structure": 1,
+    "Boundary Consistency": 1,
+    "Communication & Conflict": 1,
+    "Support & Professional Engagement": 1
+  },
+  "topDomains": [
+    "Immediate Safety & Urgency",
+    "Communication & Conflict",
+    "Boundary Consistency"
+  ],
+  "sectionsPresent": [
+    "days4to7",
+    "encouragement",
+    "first72Hours",
+    "headlineSummary",
+    "keyPriorities",
+    "topImmediatePriorities",
+    "whatToAvoid"
+  ],
+  "sectionsEmpty": [],
+  "fingerprint": {
+    "workshops": [
+      "Building a Support Network",
+      "Early Warning Signs – Identifying Substance Use Before It Becomes a Problem",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 1,
+    "privateSearchLineCount": 0,
+    "standardizedClosingPresent": true
+  },
+  "report": {
+    "urgentConcern": "",
+    "headlineSummary": "You’re in a pretty rare spot for ASAP: low current risk, strong structure, and you’ve already done a lot of the work other parents are still scrambling to build. You’re not seeing substance use, your teen talks openly, rules and routines are solid, and you and your co-parent are aligned. The work now is not emergency intervention — it’s protecting what’s working and tightening a few screws so if anything does start to shift, you see it early and know exactly what to do.",
+    "topImmediatePriorities": "1. PARENT EMOTIONAL REGULATION  \nYou’re not feeling much fear or overwhelm right now, which makes it easy to shrug things off because “everything seems fine.” That’s normal when there isn’t a fire burning. The priority is to stay deliberate anyway: before reacting to any new concern, pause, name what you’re worried about in one sentence to yourself, and hold off on comments or decisions until you’re calm and clear about the goal (keeping the relationship strong and substance use off the table).\n\n2. CO-PARENT / CAREGIVER ALIGNMENT  \nYou and your co-parent are already on the same page about rules, tone, and next steps — that’s a big strength. Protect that by setting a quick monthly check-in together where you review your teen’s behavior, their stress, and whether any rules, rewards, and consequences need to be updated as they get more freedom. Any disagreements happen in private so your teen always sees one united plan.\n\n3. BUILD YOUR PERSONAL SUPPORT GROUP  \nBUILD YOUR PERSONAL SUPPORT GROUP — Join and actively post in the \"Monitoring and Intervention discussion group.\" Connecting with other parents facing similar challenges can provide insight and support as you work through this. This group is an invaluable source of shared experience. Use it to sanity-check your prevention plan, ask how others kept things on track when their teen was doing well, and learn what early changes they wish they had noticed sooner.",
+    "keyPriorities": "1. IMMEDIATE SAFETY & URGENCY – KEEPING RISK LOW  \nRight now you’re confident there’s no use, conflicts are mild, and you know where your teen is and who they are with. The goal is to keep it that way as they age into more freedom.  \n- Make your “no use” stance explicit but calm: every few weeks, fold in a short line like, “Our expectation is still no alcohol, no drugs — if you ever feel pressure or curious, I want you to bring it to us, not your friends.” Not a lecture, just a steady reminder.  \n- Review one prevention resource so your decisions stay grounded, not just based on hope. Start with Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" so you know exactly what small shifts to watch for before a real problem appears.  \n- One thing to watch this month: any new freedom step (later curfew, new friend group, more online/social time). When a freedom changes, pause and check that your rules, rewards, and consequences are still strong enough for that new level.\n\n2. COMMUNICATION & CONFLICT – PROTECTING THE OPEN DOOR  \nYou described calm disagreements and a teen who talks openly about stress — that’s gold. The risk over time is that as topics get more adult (sex, substances, mental health), the openness quietly shrinks.  \n- Pick one consistent “connection window” that is low pressure — maybe the ride home from practice or a weekly meal — where phones are put away and there’s no agenda beyond hearing how life is actually going.  \n- Strengthen your skills before they’re tested: work through Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" so when harder topics come up, you’re already practiced at staying curious instead of reactive.  \n- When a disagreement pops up, keep using the pattern that works: listen, summarize what you heard, then restate the rule, the reason behind it, and the related rewards and consequences. That structure keeps the conflict from turning into a power struggle.  \n- One thing to watch: any drop in how much your teen shares about stress, friends, or feelings. A quieter teen isn’t automatically a problem, but a sudden shift in openness is a flag to lean back into what you learned in the communication workshop.\n\n3. BOUNDARY CONSISTENCY – HOLDING THE LINE AS THEY GROW  \nYou already have a strong routine and consistent follow-through on rules, rewards, and consequences. The real test will be when your teen pushes for more independence or hits a rough patch.  \n- Put your core rules, rewards, and consequences in writing if you haven’t already, and review them once with your teen: curfew, driving, sleep, school, screens, and zero-tolerance on substances. Explain that the rewards (freedoms, privileges) grow with trust, and the consequences are there to protect, not punish.  \n- Sharpen this even further with Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\" so as stakes rise, your teen still feels respected even when the answer is no.  \n- Use success to your advantage: when your teen sticks to agreements (grades, curfew, honesty), point it out and follow through on the positive side of the contract — added trust, choices, or privileges. That keeps this feeling like “we’re on the same team” instead of just rule enforcement.  \n- One thing to watch: moments where you’re tempted to bend a rule “just this once” because things seem fine. Those are the cracks where bigger problems can sneak in later.",
+    "whatToAvoid": "- Don’t let the fact that things are going well push you into autopilot; prevention work now is easier than repair work later.  \n- Don’t approach a new worry (a friend you don’t like, a strange story, a small lie) in the heat of irritation — step back, get steady, and then talk so your teen sees calm clarity, not a flare of fear or anger.  \n- Don’t focus only on consequences when something goes wrong — always anchor behavior to clear expectations, rewards, and consequences so your teen sees how positive choices benefit them.  \n- Don’t assume that because your teen talks openly today, they always will; keep practicing the skills from Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" instead of waiting for a big issue to force it.  \n- Don’t search your child’s room, backpack, or phone in a confrontational way or as a threat; if you ever reach a point where a search feels necessary, follow the calm, private approach taught in Auxiliary Workshop \"How and When to Search a Room\" instead of acting from emotion.",
+    "first72Hours": "DAY 1 — EMOTIONAL REGULATION + CO-PARENT ALIGNMENT  \n- Even with low concern, sit down with your co-parent and say out loud what you’re actually aiming for over the next year: no use, strong connection, clear structure. Naming the goal together keeps you from drifting.  \n- Review your current rules, rewards, and consequences for curfew, screens, grades, and honesty. Confirm you both would respond the same way if one of those lines were crossed.  \n- On your own, jot down the 2–3 early changes that would worry you most (new older friends, less openness, dropping grades). This list becomes your “early radar” instead of vague unease.\n\nDAY 2 — BUILD SUPPORT + GATHER INFORMATION + REVIEW RESOURCES  \n- Join the \"Monitoring and Intervention discussion group\" and make one post explaining your situation: low current concern, strong structure, wanting to stay ahead. Ask what other parents in your position watched for and what they wish they had done earlier.  \n- Before DAY 3’s conversation with your child, review Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" and the substance facts that match your teen’s age group — basic risks, how often fentanyl shows up in common drugs, and early behavioral signs. Having the information in your head means you respond from facts, not fear.  \n- If you haven’t already, look back at any notes from your ASAP core workshop work so your prevention plan stays tied to what you’ve already learned, not just to instinct in the moment.",
+    "days4to7": "- Keep using one daily or near-daily connection window with no phones and no agenda; this is where you’ll see any subtle changes first.  \n- Schedule time on your own to work through Essential Workshop \"Building a Support Network\" so the broader circle around your teen — family, school staff, coaches, community — stays engaged and you know how to involve them if needed, with school involvement called out early if anything shifts.  \n- Stay active in the \"Monitoring and Intervention discussion group\" this week — read a few threads from parents whose situations went from “fine” to “not fine” and note what changed first in their stories. Let that sharpen your radar, not scare you.  \n- If, over the next few weeks, you start to see real warning signs (secrecy, lying, new high-risk peers, slipping grades, or clear evidence of use), that’s the point where an ASAP-endorsed therapist or treatment provider becomes the right next step alongside the ASAP materials, not before. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.",
+    "consideringInpatient": "",
+    "encouragement": "You’ve already built what many parents in ASAP are still struggling to put together: structure, honest communication, aligned parenting, and professional support in the background. The work now is staying intentional so you and your teen stay on the same team — you and your child against the substances and pressures that are out there, not you against your child. Keep leaning on the \"Monitoring and Intervention discussion group\" and the Essential Workshops like \"Effective Communication: Building Trust and Engagement with Your Teen\" and \"Building a Support Network\" as live tools, not just one-time content.\n\nRecovery is a journey—not a single event—and protecting the progress your child has already made is one of the most important responsibilities you have as a parent. While many adolescents go on to achieve lasting recovery, setbacks can occur. A setback does not erase the progress that has been made, and it does not have to become a return to the past.\n\nPreparation is one of your greatest strengths. We encourage you to complete the Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks.\" It will help you recognize early warning signs, respond calmly and effectively if challenges arise, and strengthen your family's plan to protect your child's recovery. We also encourage you to participate in the Protecting Recovery Discussion Group, where parents share experiences, encouragement, and practical insights while supporting one another through the ongoing journey of recovery.\n\nRemember, the purpose of monitoring, supervision, conversations, and appropriate boundaries is not simply to discover what happened or when it happened—but to understand why. Identifying and addressing the underlying reasons for substance use gives your child the greatest opportunity for long-term recovery and a healthy, meaningful future."
+  },
+  "sectionsConditionallyAbsent": [
+    "consideringInpatient",
+    "urgentConcern"
+  ]
+}

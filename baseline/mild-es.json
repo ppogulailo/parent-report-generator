@@ -1,0 +1,88 @@
+{
+  "fixture": {
+    "id": "mild-es",
+    "language": "es",
+    "expectedTier": "MILD",
+    "urgentPresent": false,
+    "responses": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ]
+  },
+  "domainScores": {
+    "Immediate Safety & Urgency": 1,
+    "Household Structure": 1,
+    "Boundary Consistency": 1,
+    "Communication & Conflict": 1,
+    "Support & Professional Engagement": 1
+  },
+  "topDomains": [
+    "Immediate Safety & Urgency",
+    "Communication & Conflict",
+    "Boundary Consistency"
+  ],
+  "sectionsPresent": [
+    "days4to7",
+    "encouragement",
+    "first72Hours",
+    "headlineSummary",
+    "keyPriorities",
+    "topImmediatePriorities",
+    "whatToAvoid"
+  ],
+  "sectionsEmpty": [],
+  "fingerprint": {
+    "workshops": [
+      "Early Warning Signs – Identifying Substance Use Before It Becomes a Problem",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Reflection and Assessment",
+      "The Power of Positive Reinforcement: Rewarding Healthy Behavior"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 1,
+    "privateSearchLineCount": 0,
+    "standardizedClosingPresent": false
+  },
+  "report": {
+    "urgentConcern": "",
+    "headlineSummary": "Lo que describes ahora mismo es una situación tranquila y bastante sólida: sin consumo, sin entornos de riesgo, sin cambios de ánimo raros, con conflictos que se resuelven fácil y un plan escrito ya alineado con tu co-padre. Además ya estás en contacto con un profesional y con la escuela/entrenadores, y tu hijo habla abiertamente de lo que siente. Eso no quita que como padre tengas el radar encendido y quieras mantener esto así mientras tu hijo crece y las tentaciones aumentan. Lo que viene ahora es refinar el sistema que ya tienes para que, si algo empieza a moverse, lo notes temprano y sepas qué hacer sin dramatizar.\n\n3 PRIORIDADES INMEDIATAS\n- REGULACIÓN EMOCIONAL DE LOS PADRES — Aunque hoy digas que rara vez te sientes agotado o con miedo, habrá días en que una noticia de amigos, redes o escuela te mueva. Cuando pase, antes de hablar con tu hijo, date 10–15 minutos para caminar, respirar y escribir en una nota qué te preocupa exactamente y qué sí sabes, para no reaccionar desde suposiciones.\n- ALINEACIÓN CO-PADRE / CUIDADOR — Mantén vivo el acuerdo con tu co-padre sobre reglas, recompensas y consecuencias: revísenlo cada tanto (por ejemplo, una vez al mes) para asegurarse de que siguen hablando el mismo idioma y que los dos aplican las mismas expectativas claras, recompensas y consecuencias.\n- CONSTRUIR TU GRUPO PERSONAL DE APOYO — Únete y publica activamente en el \"Monitoring and Intervention discussion group.\" Conectar con otros padres que enfrentan retos similares puede dar perspectiva y apoyo mientras trabajas en esto. Este grupo es una fuente invaluable de experiencia compartida.",
+    "topImmediatePriorities": "- REGULACIÓN EMOCIONAL DE LOS PADRES — Aunque hoy digas que rara vez te sientes agotado o con miedo, habrá días en que una noticia de amigos, redes o escuela te mueva. Cuando pase, antes de hablar con tu hijo, date 10–15 minutos para caminar, respirar y escribir en una nota qué te preocupa exactamente y qué sí sabes, para no reaccionar desde suposiciones.\n- ALINEACIÓN CO-PADRE / CUIDADOR — Mantén vivo el acuerdo con tu co-padre sobre reglas, recompensas y consecuencias: revísenlo cada tanto (por ejemplo, una vez al mes) para asegurarse de que siguen hablando el mismo idioma y que los dos aplican las mismas expectativas claras, recompensas y consecuencias.\n- CONSTRUIR TU GRUPO PERSONAL DE APOYO — Únete y publica activamente en el \"Monitoring and Intervention discussion group.\" Conectar con otros padres que enfrentan retos similares puede dar perspectiva y apoyo mientras trabajas en esto. Este grupo es una fuente invaluable de experiencia compartida.",
+    "keyPriorities": "- Immediate Safety & Urgency  \n  Tu foto actual es de baja urgencia: casi nunca está en entornos con sustancias, no estás preocupado por su seguridad al conducir o salir, y tú sabes dónde está y qué hace. Tu tarea aquí es mantener ese nivel de visibilidad sin pasarte al control excesivo: revisa de vez en cuando tus propios miedos para no proyectarlos donde no hay señal real. Un buen siguiente paso es trabajar el Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" para afinar tu radar sobre cambios sutiles que sí valdría la pena tomar en serio.\n\n- Communication & Conflict  \n  Tu hijo habla contigo de estrés y emociones, y los desacuerdos se resuelven en calma; además dices que te sientes preparado para hablar si algo te preocupa. Consolidar esto ahora te va a ahorrar muchas peleas más adelante: elige una ventana semanal fija (por ejemplo, un trayecto en coche o una comida) donde la regla sea sin pantallas y preguntas abiertas, más escuchar que dar discurso. Para seguir puliendo estas conversaciones, programa tiempo para el Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\", llevándolo a tu realidad actual de diálogo bastante bueno que quieres sostener cuando lleguen temas más difíciles.\n\n- Boundary Consistency  \n  Ya tienes reglas muy claras, rutina sólida, un ambiente que desanima el consumo, y dices que las recompensas y consecuencias se aplican siempre igual y que tu hijo asume sus errores. El siguiente nivel aquí es revisar que las recompensas estén tan claras y presentes como las consecuencias (reconocer esfuerzo, responsabilidad, buena gestión del tiempo, etc.), para que no todo gire en “lo que pasa si se equivoca”. Te puede ayudar revisar el Auxiliary Workshop \"The Power of Positive Reinforcement: Rewarding Healthy Behavior\" para asegurarte de que tu sistema de reglas, recompensas y consecuencias siga motivando y no solo corrigiendo.",
+    "whatToAvoid": "- No entres a conversaciones importantes cuando estés con la cabeza llena de miedo por algo que oíste de otros adolescentes; primero baja esa carga y luego habla.\n- No conviertas cada error normal de adolescencia (una tarea olvidada, llegar 5 minutos tarde) en una conversación sobre drogas; reserva ese tema para cuando haya señales reales, usando lo que trabajes en el Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\".\n- No revises el cuarto, la mochila o el celular de tu hijo de manera confrontativa ni como castigo anunciado; si en algún momento necesitas pasar a una revisión estratégica, hazlo siguiendo el enfoque del Auxiliary Workshop \"How and When to Search a Room\".\n- No quedes atrapado solo en “consecuencias” cuando algo se rompe; asegúrate de que las recompensas y consecuencias que tú y tu co-padre acordaron sigan balanceadas y claras.",
+    "first72Hours": "DÍA 1 — REGULACIÓN EMOCIONAL + ALINEACIÓN CO-PADRE  \n- Toma un rato tú solo para escribir cómo ves hoy a tu hijo: fortalezas, pequeños focos amarillos (si los hay), y qué te asusta más del futuro; esto baja la niebla mental y te recuerda que no partes de cero.  \n- Revisa con calma el plan escrito que ya tienes con tu co-padre: confirmen que siguen de acuerdo en reglas, recompensas y consecuencias, y ajusten lo que ya se quedó viejo (por ejemplo, permisos que corresponden a su edad actual).  \n- Aclaren también qué señales concretas, si aparecieran (bajón brusco en notas, cambios de amigos, más irritabilidad, etc.), los harían pasar a un plan de acción más fuerte, para no improvisar después.\n\nDÍA 2 — CONSTRUIR TU GRUPO PERSONAL DE APOYO + REUNIR INFORMACIÓN + REVISAR RECURSOS  \n- Únete hoy mismo al \"Monitoring and Intervention discussion group\" y haz al menos una publicación corta explicando tu situación actual (baja urgencia, enfoque en prevención) y preguntando qué rutinas les han servido a otros para mantener el buen rumbo.  \n- Antes de la conversación del DÍA 3, revisa el Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" y los hechos sobre la sustancia que coinciden con lo que estás viendo — riesgo de fentanilo/opioides, señales de alerta, efectos médicos. Tener la información en la cabeza significa que respondes desde los hechos, no desde el miedo.  \n- Comenta con tu co-padre lo que saques de ese workshop y acuerden 2–3 indicadores concretos que vigilarán a lo largo del año (por ejemplo, cambios de grupo de amigos, caída de rendimiento, aislamiento repentino).",
+    "days4to7": "- Elige una pequeña rutina semanal de “chequeo de clima” (por ejemplo, domingo en la tarde) donde se hable de cómo fue la semana en escuela, amigos, estrés, y tú observes si algo empieza a cambiar respecto a lo que hoy ves como estable.  \n- Continúa participando en el \"Monitoring and Intervention discussion group\": lee experiencias de otros padres y, si algo te resuena como señal temprana, compártelo ahí antes de reaccionar en casa.  \n- En los próximos días, trabaja el Auxiliary Workshop \"Reflection and Assessment\" para revisar con más claridad el conjunto de comportamientos de tu hijo y ajustar, si hace falta, tus expectativas claras, recompensas y consecuencias.  \n- Si en las próximas semanas notas un giro real (más secretismo, nuevos amigos de riesgo, cambios de ánimo marcados, o señales de consumo), en ese punto un terapeuta ASAP-endorsed sería el siguiente escalón lógico para sumar ojos profesionales al trabajo que ya haces. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.",
+    "consideringInpatient": "",
+    "encouragement": "Has construido una base fuerte: rutina, comunicación abierta, reglas claras, recompensas y consecuencias consistentes, y ya hay apoyo profesional y escolar en juego. El trabajo ahora es mantenerte despierto pero no paranoico, ajustando el plan según crece tu hijo y sin perder de vista que el objetivo es siempre tú y tu hijo contra las drogas, no tú contra tu hijo.  \n\nLas circunstancias y los adolescentes cambian rápido; lo que hoy es leve puede moverse, por eso conviene seguir revisando cada cierto tiempo cómo van los patrones y actualizar tu plan escrito con tu co-padre. Mantenerte conectado de forma continua con la ASAP Community y el \"Monitoring and Intervention discussion group\" es una de las mejores formas de no quedarte solo en tu cabeza y sostener esta atención sana a lo largo de los años de adolescencia."
+  },
+  "sectionsConditionallyAbsent": [
+    "consideringInpatient",
+    "urgentConcern"
+  ]
+}

@@ -120,12 +120,41 @@ for (const file of files.sort()) {
     (id) => `${content.discussionGroup(id).name} discussion group`,
   );
 
+  // Some resources are never routed BY DESIGN and would otherwise dominate this
+  // list: the Sustaining Recovery discussion group is named inside the required
+  // professional-help wording, and the Protecting Recovery workshop and group
+  // are named inside the standardized closing, which the platform now renders
+  // itself. Reporting those as gaps would bury the ones that matter.
+  const byDesign = new Set<string>([
+    ...content.workshops.requiredWording
+      .flatMap((rule) => [...rule.sentences.en, ...rule.sentences.es])
+      .flatMap((sentence) => [
+        ...content.workshops.workshops
+          .filter((w) => sentence.includes(w.title))
+          .map((w) => w.title),
+        ...content.workshops.discussionGroups
+          .filter((g) => sentence.includes(g.name))
+          .map((g) => `${g.name} discussion group`),
+      ]),
+    ...content.sections.sections
+      .filter((section) => section.type === 'static')
+      .flatMap((section) => [section.text?.en ?? '', section.text?.es ?? ''])
+      .flatMap((text) => [
+        ...content.workshops.workshops
+          .filter((w) => text.includes(w.title))
+          .map((w) => w.title),
+        ...content.workshops.discussionGroups
+          .filter((g) => text.includes(g.name))
+          .map((g) => `${g.name} discussion group`),
+      ]),
+  ]);
+
   const baselineOnly = [
     ...fingerprint.workshops.filter((title) => !routedTitles.includes(title)),
     ...fingerprint.discussionGroups.filter(
       (name) => !routedGroups.includes(name),
     ),
-  ];
+  ].filter((item) => !byDesign.has(item));
   const routedOnly = [
     ...routedTitles.filter((title) => !fingerprint.workshops.includes(title)),
     ...routedGroups.filter(

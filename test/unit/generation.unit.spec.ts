@@ -635,3 +635,45 @@ test('a voice violation is fed back and the retry is accepted', async () => {
   expect(report.attempts).toBe(2);
   expect(report.warnings).toEqual([]);
 });
+
+test('citing the schools workshop does not trip the Article of Action ban', () => {
+  // Found by a real generation run, which burned all three attempts and shipped
+  // a violation it had not committed. The Article of Action "Partnering with
+  // Schools" is a substring of the approved workshop "Partnering with Schools
+  // for Your Child's Success".
+  const violations = checkBannedTitles(
+    {
+      keyPriorities: [
+        {
+          recommendationId: 'school-engagement',
+          headline: 'Bring the school in',
+          body: 'Complete the Auxiliary Workshop "Partnering with Schools for Your Child\'s Success" this week.',
+        },
+      ],
+    },
+    content.workshops,
+  );
+  expect(violations).toEqual([]);
+});
+
+test('an Article of Action is still caught when it is not part of a workshop title', () => {
+  // The other half: the fix must not become a blanket exemption. The workshop
+  // "Drug Testing" is a substring of this article, so stripping approved titles
+  // would have silently stopped catching it.
+  const violations = checkBannedTitles(
+    {
+      encouragement:
+        'Read "Drug Testing: A Crucial Step in Intervention" before you start.',
+    },
+    content.workshops,
+  );
+  expect(violations.map((v) => v.ruleId)).toContain('article-of-action-cited');
+});
+
+test('the bare article title still fires on its own', () => {
+  const violations = checkBannedTitles(
+    { encouragement: 'See the Article of Action "Partnering with Schools".' },
+    content.workshops,
+  );
+  expect(violations.map((v) => v.ruleId)).toContain('article-of-action-cited');
+});

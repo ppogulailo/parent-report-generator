@@ -1,0 +1,89 @@
+{
+  "fixture": {
+    "id": "critical-en",
+    "language": "en",
+    "expectedTier": "SERIOUS",
+    "urgentPresent": true,
+    "responses": [
+      4,
+      3,
+      4,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      4,
+      3,
+      3,
+      2,
+      3,
+      2,
+      3,
+      4,
+      3,
+      3,
+      2,
+      2,
+      3,
+      4,
+      3
+    ]
+  },
+  "domainScores": {
+    "Immediate Safety & Urgency": 3.6,
+    "Household Structure": 2.6,
+    "Boundary Consistency": 3,
+    "Communication & Conflict": 3,
+    "Support & Professional Engagement": 3
+  },
+  "topDomains": [
+    "Immediate Safety & Urgency",
+    "Communication & Conflict",
+    "Boundary Consistency"
+  ],
+  "sectionsPresent": [
+    "consideringInpatient",
+    "days4to7",
+    "encouragement",
+    "first72Hours",
+    "headlineSummary",
+    "keyPriorities",
+    "topImmediatePriorities",
+    "urgentConcern",
+    "whatToAvoid"
+  ],
+  "sectionsEmpty": [],
+  "fingerprint": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Drug Testing",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Intervening When Substance Use is Present: First Steps and Next Steps",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 3,
+    "privateSearchLineCount": 2,
+    "standardizedClosingPresent": true
+  },
+  "report": {
+    "urgentConcern": "You found an unknown substance in your child's backpack and your child refuses to say what it is — that jumps this from “worry” to a real safety concern. Call Poison Control at 1-800-222-1222 today and describe exactly what you saw; they will tell you what to watch for and what to do if you suspect ingestion. If at any point you see trouble breathing, extreme sleepiness, blue lips or fingertips, or you simply believe your child may have used an opioid, call 911 immediately and, if you can, keep naloxone (Narcan) accessible — most pharmacies dispense it without a prescription. The rest of this plan picks up from there.",
+    "headlineSummary": "You are in confirmed-use territory, staring at an unknown substance, with a child who shuts down and lies, and you’re losing sleep over safety and long‑term damage. That level of fear, exhaustion, and urgency matches what you wrote — this is not you overreacting. The plan now is to get you steady, gather facts (including a full check of your child’s space), tighten rules, rewards, and consequences, and then go into a conversation where it is you and your child against the drugs, not you against your child.",
+    "topImmediatePriorities": "1. PARENT EMOTIONAL REGULATION  \n- You are running on empty and worrying day and night — that kind of exhaustion and fear will push you toward explosive or desperate moves. That reaction is common in this spot, and it makes conversations backfire. For the next 24 hours, do not address the substance directly with your child; instead, write down what scares you most, take a walk or remove yourself to another room when you feel the surge coming, and only act when your voice and body are steady.\n\n2. CO-PARENT / CAREGIVER ALIGNMENT  \n- Before anything with your child, you and your co-parent (or another parent/guardian on the family side) need one clear plan on rules, rewards, and consequences: driving, curfew, phone, and what happens if you find drugs or your child refuses to cooperate. Disagreement between adults while your child lies and avoids will blow this up fast. Have one private meeting where you decide: what you both will say, what boundaries you both will hold this week, and how you’ll back each other up in front of your child.\n\n3. BUILD YOUR PERSONAL SUPPORT GROUP  \n- BUILD YOUR PERSONAL SUPPORT GROUP — Join and actively post in the \"Monitoring and Intervention discussion group.\" Connecting with other parents facing similar challenges can provide insight and support as you work through this. This group is an invaluable source of shared experience. Tonight, make one post describing: confirmed use, the unknown substance, the secrecy, and your fear about driving and safety — you need real‑time parent voices alongside this plan.",
+    "keyPriorities": "1. IMMEDIATE SAFETY & URGENCY  \n- You have confirmed use, an unknown substance in the backpack, and active fear about risky situations like driving and environments your child is in. This needs a safety plan, not just a talk.  \n- Today, remove access to car keys and any vehicle your child may use until you and your co-parent are confident your child is sober and following the rules, rewards, and consequences you agreed on.  \n- Do a complete, calm search of your child’s room, backpack, and phone with your co-parent, treating it as a fact‑finding mission, not punishment. Conduct any search of your child's room, backpack, or phone privately and without your child present. Leave the room as you found it and document anything relevant. If you discover drugs or paraphernalia, document them, confiscate them, and safely discard them. For fuller guidance on how to do this in line with ASAP, review Auxiliary Workshop \"How and When to Search a Room.\"  \n- Work through Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" so you have a clear, ASAP‑consistent action path for confirmed use.  \n- If you see any sign your child is using and then driving, or leaving the house impaired, the next step is to give a drug test and hold car and social privileges based on the results, using Auxiliary Workshop \"Drug Testing\" to guide how you do it.\n\n2. COMMUNICATION & CONFLICT  \n- Your child “won’t engage at all” and uses secrecy and lying to shut you down — which means most conversations are probably short, tense, or explode fast. When every talk turns into a wall or a fight, you lose your chance to be on the same side against the drugs.  \n- Before you speak with your child about the unknown substance or the rules, outline on paper three things: what you’ve seen (facts only), what worries you most (safety, not morals), and what needs to change this week. Use that outline so the conversation doesn’t wander into old arguments.  \n- Learn how to keep the talk from turning into a blow‑up or a debate by working through Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen.\" Tie what you learn there directly to your first conversation about the substance and the new rules, rewards, and consequences.  \n- In the conversation, frame it as “We have a problem with drugs in this house, and we are going to deal with it together,” instead of “You are the problem.”  \n- If, this week, your child responds to any attempt at calm conversation with total stonewalling or rage, the next step is to end the conversation quickly (“We’re not getting anywhere, we’ll stop for now”) and move straight to the rewards and consequences you and your co-parent agreed on, instead of arguing.\n\n3. BOUNDARY CONSISTENCY  \n- Right now you’re deeply worried about long‑term consequences, but with this level of chaos and exhaustion, rules and follow‑through can easily slip or change day by day. Inconsistent rules, rewards, and consequences are gasoline for lying and secrecy.  \n- With your co-parent, write down no more than 3–4 key rules (for example: no substances at all, no riding or driving with anyone who has been using, phone in kitchen at night, must answer check‑in texts) and tie each rule to clear rewards and consequences. Use Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\" to turn those into a short written agreement you can show your child.  \n- Pair those contracts with the tone taught in Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\" so you stay firm without turning it into a power struggle.  \n- Follow through exactly on the rewards and consequences you write down, even if your child rages, sulks, or withdraws; your consistency is what makes the boundaries real.  \n- If your child breaks the same boundary more than once this week (for example, comes home late or refuses to answer where your child is going), the next step is to tighten privileges in the contract (less freedom with phone, car, or social time) until you see consistent follow‑through for several days.",
+    "whatToAvoid": "- Do not talk with your child about the unknown substance or the rules in the heat of panic, anger, or exhaustion — your child sees the anger, not the love underneath it, and the message gets lost.  \n- Do not search your child's room, backpack, or phone in a confrontational way or while yelling; treat the complete search as a calm, private fact‑finding step and follow the guidance in Auxiliary Workshop \"How and When to Search a Room.\"  \n- Do not bring up long‑term disasters (“You’ll ruin your life”) as your main argument — it pushes your child into denial instead of dealing with the very real, right‑now risk.  \n- Do not threaten rules, rewards, and consequences that you cannot or will not keep; it teaches your child that your word is flexible.  \n- Do not let fear push you into giving up on communication — walking away in the moment to cool down is fine, but the plan and the boundaries still move forward.",
+    "first72Hours": "DAY 1 — EMOTIONAL REGULATION + CO-PARENT ALIGNMENT  \n- Block out one short window today where you are not talking with your child about this at all — just you and your co-parent (or another parent/guardian) going over what you’ve seen: confirmed use, unknown substance in the backpack, lies, and your level of fear.  \n- Each of you writes down your non‑negotiables for safety (driving, sleepovers, who your child is with), then agree on shared rules, rewards, and consequences you can both stand behind this week.  \n- Decide together how you will share the message with your child — who speaks, who backs up, and what exact boundaries you will hold if your child denies or refuses to cooperate.  \n\nDAY 2 — BUILD SUPPORT + GATHER INFORMATION + REVIEW RESOURCES  \n- Join and post in the \"Monitoring and Intervention discussion group\" today with a short summary: confirmed use, unknown substance, constant secrecy, and the steps you’re taking. Ask specifically how others handled the first week after finding something.  \n- Before DAY 3's conversation with your child, review Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" and the substance facts that match what you're seeing — especially fentanyl/opioid risk, overdose warning signs, and medical effects. Having the information in your head means you respond from facts, not fear.  \n- Carry out a complete room search as a calm fact‑finding mission, preferably with your co-parent present. Conduct any search of your child's room, backpack, or phone privately and without your child present. Leave the room as you found it and document anything relevant. If you discover an unknown substance or paraphernalia, document it clearly (photos, notes), confiscate it, and safely discard it. Use the approach from Auxiliary Workshop \"How and When to Search a Room\" so this stays strategic, not reactive.  \n- Based on what you find, confirm or adjust the rules, rewards, and consequences you wrote down on Day 1 (for example, holding keys, limiting certain friends, earlier curfew).",
+    "days4to7": "- Before the week is out, give a drug test that you administer at home, tied directly to the behavioral contract — not as a surprise attack but as part of the safety plan you laid out. Use Auxiliary Workshop \"Drug Testing\" to decide timing, how you explain it, and what rewards and consequences you connect to the results.  \n- Turn the rules into a short written agreement using Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change,\" and review it with your child: what happens when your child follows the plan and what happens when your child does not — both rewards and consequences.  \n- Stay active in the \"Monitoring and Intervention discussion group\" through the week, posting what actually happens in the conversation, the drug test, and any new discoveries, and get feedback on adjusting your plan.  \n- If, over this week, you see continued use, repeated violations of the contract, or you find more unknown substances, the next step is to bring in an ASAP-endorsed therapist this week to add professional structure and support around your family’s plan. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.",
+    "consideringInpatient": "Removing your child from home for inpatient or residential treatment is one of the hardest decisions any parent makes. It should not be made impulsively, and it also cannot be delayed when your child’s safety is clearly at risk. Parents should strongly consider an ASAP-endorsed inpatient treatment program when one or more of the following are true:  \n- Your child is a danger to themselves.  \n- Your child is a danger to others.  \n- Your child's substance use places them at significant risk of overdose or death.  \n- You have exhausted reasonable outpatient interventions and treatment efforts without success.  \nIf these circumstances are present, seeking a higher level of care is not a failure — it is an act of protecting your child's life and future. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.",
+    "encouragement": "You’re living with fear, exhaustion, and a child who won’t talk — and you’re still here doing the work instead of pretending it isn’t happening. That determination, even when you’re running on fumes, is exactly what this stage requires. Keep aiming everything — searches, rules, rewards, consequences, and conversations — at the real opponent: the substance use, not your child. Stay plugged into the \"Monitoring and Intervention discussion group\" and, as this week unfolds, do not hesitate to bring in an ASAP-endorsed therapist if what you’re seeing continues or escalates; a strong outside partner can make a huge difference. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.\n\nRecovery is a journey—not a single event—and protecting the progress your child has already made is one of the most important responsibilities you have as a parent. While many adolescents go on to achieve lasting recovery, setbacks can occur. A setback does not erase the progress that has been made, and it does not have to become a return to the past.\n\nPreparation is one of your greatest strengths. We encourage you to complete the Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks.\" It will help you recognize early warning signs, respond calmly and effectively if challenges arise, and strengthen your family's plan to protect your child's recovery. We also encourage you to participate in the Protecting Recovery Discussion Group, where parents share experiences, encouragement, and practical insights while supporting one another through the ongoing journey of recovery.\n\nRemember, the purpose of monitoring, supervision, conversations, and appropriate boundaries is not simply to discover what happened or when it happened—but to understand why. Identifying and addressing the underlying reasons for substance use gives your child the greatest opportunity for long-term recovery and a healthy, meaningful future."
+  },
+  "sectionsConditionallyAbsent": []
+}

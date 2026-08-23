@@ -28,6 +28,8 @@ flipped deliberately. Nothing on this page needs new development.
 | Answer labels cannot be quoted back at the parent | `checkAnswerLabels` |
 | Baseline comparison runs offline, so it can gate CI | `scripts/compare-baseline.ts` |
 | Switch-over is a build arg, and reversible | `frontend/app/site.ts` → `V1_IS_DEFAULT` |
+| Baseline captured from the current system; no severity moved on any of 8 plans | `baseline/`, `npm run baseline:compare` |
+| Verified against the real model: every wording rule satisfied, two defects found and fixed | `RECOMMENDATION-MATRIX.md` §6.9 |
 | Site origin centralised so the hostname change is config, not code | `frontend/app/site.ts` |
 
 | The endpoint, the guard, the validator and the retry loop tested over real HTTP | `test/v1/api.v1.spec.ts` — 25 tests against a mock model |
@@ -67,11 +69,8 @@ paths a real model takes intermittently and unreproducibly.
 | 5 | **ASAP** | Final wording for the two Universal Guiding Principles and the transition section | Placeholder copy ships verbatim, clearly marked |
 | 6 | **ASAP** | Native-speaker sign-off on `SPANISH-REVIEW.md` | Spanish reports carry unreviewed wording |
 | 7 | **Pavlo / ASAP** | A DNS record for `monitoring.asapcommunity.org` | The site stays on `actionplan.asap-community.org` |
-| 8 | **Pavlo** | Capture the eight baseline plans against production | The parity claim covers severity but not the full routing fingerprint |
-
-Item 8 is the only one on us, and it is **time-sensitive**: the baseline must be
-captured from the live system *before* the old path is switched off. Once it is
-gone there is nothing left to compare against.
+Nothing on this list is on us any more. The baseline is captured and committed
+(`baseline/`), and the pipeline has been verified against the real model.
 
 ```bash
 API_BASE=https://<live-host> API_SECRET_KEY=... npm run baseline:capture
@@ -98,13 +97,14 @@ does, and a reversible switch is worth more than a tidy diff on the day.
 
 **Before flipping it**, in this order:
 
-1. Capture the baseline (item 8 above) — it must come from the old system.
-2. `npm run baseline:compare` — offline, no API key. It fails only on a severity
-   mismatch, and lists separately the resources the old system cited that the
-   matrix does not route. Those are for Dave: each one is either model discretion
-   the methodology never granted, or a gap in the routing table.
-3. Generate one report per language against a real model and read them.
-4. Get Dave's approval on the matrix.
+1. ~~Capture the baseline~~ — done, committed under `baseline/`.
+2. ~~Compare it~~ — done. No severity moved; §6.8 catalogues the resource
+   differences for Dave.
+3. ~~Generate against a real model and read it~~ — done for Serious/English;
+   §6.9 records what it found. Worth repeating for Spanish before launch.
+4. **Get Dave's approval on the matrix**, including the recovered Effective
+   Communication rule in §6.8 and its threshold, which is ours rather than the
+   methodology's.
 
 ### Then delete the old path
 

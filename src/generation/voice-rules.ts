@@ -119,6 +119,56 @@ export function checkRequiredWording(
 }
 
 /**
+ * Whether `needle` appears somewhere that is not inside a longer approved title.
+ *
+ * Needed because one Article of Action — "Partnering with Schools" — is a
+ * substring of an approved workshop, "Partnering with Schools for Your Child's
+ * Success". A plain substring check flags every report that correctly cites that
+ * workshop, which is what a real generation run did: three attempts burned and
+ * the plan shipped with a violation it had not committed.
+ *
+ * Blanket-stripping approved titles first would be the wrong fix. The workshop
+ * "Drug Testing" is itself a substring of the Article "Drug Testing: A Crucial
+ * Step in Intervention", so stripping it would stop that article ever being
+ * caught — trading a false positive for a false negative, which is the worse
+ * direction.
+ *
+ * So the test is positional: only occurrences NOT covered by a longer approved
+ * title count.
+ */
+function occursOutsideApprovedTitles(
+  text: string,
+  needle: string,
+  approvedTitles: string[],
+): boolean {
+  const hay = normalise(text);
+  const need = normalise(needle);
+  if (need.length === 0) return false;
+
+  const covered: [number, number][] = [];
+  for (const title of approvedTitles) {
+    const approved = normalise(title);
+    // Only a strictly longer title can contain the needle.
+    if (approved.length <= need.length) continue;
+    for (
+      let at = hay.indexOf(approved);
+      at !== -1;
+      at = hay.indexOf(approved, at + 1)
+    ) {
+      covered.push([at, at + approved.length]);
+    }
+  }
+
+  for (let at = hay.indexOf(need); at !== -1; at = hay.indexOf(need, at + 1)) {
+    const inside = covered.some(
+      ([start, end]) => at >= start && at + need.length <= end,
+    );
+    if (!inside) return true;
+  }
+  return false;
+}
+
+/**
  * Titles that must never reach a parent — hallucinated resources, retired ones,
  * and real workshops this plan excludes.
  *
@@ -135,8 +185,15 @@ export function checkBannedTitles(
   const whole = proseOf(report).join('\n\n');
   const violations: WordingViolation[] = [];
 
+  // The approved names, so a banned string that only ever appears as part of one
+  // is not counted against the report.
+  const approved = [
+    ...workshops.workshops.map((w) => w.title),
+    ...workshops.discussionGroups.map((g) => g.name),
+  ];
+
   for (const title of workshops.bannedTitles.workshops) {
-    if (contains(whole, title)) {
+    if (occursOutsideApprovedTitles(whole, title, approved)) {
       violations.push({
         ruleId: 'banned-workshop-title',
         detail: `"${title}" must never appear in a plan. Remove it and, if a resource is needed there, use one that was selected for this family.`,
@@ -145,7 +202,7 @@ export function checkBannedTitles(
   }
 
   for (const name of workshops.bannedTitles.discussionGroups) {
-    if (contains(whole, name)) {
+    if (occursOutsideApprovedTitles(whole, name, approved)) {
       violations.push({
         ruleId: 'banned-discussion-group',
         detail: `"${name}" is not an approved discussion group and must not appear.`,
@@ -154,7 +211,7 @@ export function checkBannedTitles(
   }
 
   for (const title of workshops.bannedTitles.articlesOfAction) {
-    if (contains(whole, title)) {
+    if (occursOutsideApprovedTitles(whole, title, approved)) {
       violations.push({
         ruleId: 'article-of-action-cited',
         detail: `"${title}" is an Article of Action. It is taught inside the workshops and must never be recommended to a parent as reading — cite the workshop instead.`,

@@ -1,0 +1,179 @@
+{
+  "mild-en": {
+    "workshops": [
+      "Building a Support Network",
+      "Early Warning Signs – Identifying Substance Use Before It Becomes a Problem",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 1,
+    "privateSearchLineCount": 0,
+    "standardizedClosingPresent": true,
+    "sectionsEmpty": [
+      "consideringInpatient",
+      "urgentConcern"
+    ]
+  },
+  "mild-es": {
+    "workshops": [
+      "Early Warning Signs – Identifying Substance Use Before It Becomes a Problem",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Reflection and Assessment",
+      "The Power of Positive Reinforcement: Rewarding Healthy Behavior"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 1,
+    "privateSearchLineCount": 0,
+    "standardizedClosingPresent": false,
+    "sectionsEmpty": [
+      "consideringInpatient",
+      "urgentConcern"
+    ]
+  },
+  "moderate-en": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Creating a Healthy Home Environment – The Power of Structure and Routine",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 1,
+    "privateSearchLineCount": 1,
+    "standardizedClosingPresent": true,
+    "sectionsEmpty": [
+      "consideringInpatient",
+      "urgentConcern"
+    ]
+  },
+  "moderate-es": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Creating a Healthy Home Environment – The Power of Structure and Routine",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 2,
+    "privateSearchLineCount": 1,
+    "standardizedClosingPresent": true,
+    "sectionsEmpty": [
+      "consideringInpatient",
+      "urgentConcern"
+    ]
+  },
+  "serious-en": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Creating a Healthy Home Environment – The Power of Structure and Routine",
+      "Drug Testing",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Intervening When Substance Use is Present: First Steps and Next Steps",
+      "Managing Stress and Pressure – Helping Your Teen Develop Healthy Coping Skills",
+      "Monitoring and Intervention: Knowing When and How to Step In",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment",
+      "Understanding and Navigating Peer Pressure"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 2,
+    "privateSearchLineCount": 1,
+    "standardizedClosingPresent": true,
+    "sectionsEmpty": [
+      "consideringInpatient",
+      "urgentConcern"
+    ]
+  },
+  "serious-es": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Drug Testing",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Intervening When Substance Use is Present: First Steps and Next Steps",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 3,
+    "privateSearchLineCount": 1,
+    "standardizedClosingPresent": true,
+    "sectionsEmpty": [
+      "consideringInpatient",
+      "urgentConcern"
+    ]
+  },
+  "critical-en": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Drug Testing",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Intervening When Substance Use is Present: First Steps and Next Steps",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 3,
+    "privateSearchLineCount": 2,
+    "standardizedClosingPresent": true,
+    "sectionsEmpty": []
+  },
+  "critical-es": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Drug Testing",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Intervening When Substance Use is Present: First Steps and Next Steps",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 5,
+    "privateSearchLineCount": 1,
+    "standardizedClosingPresent": true,
+    "sectionsEmpty": []
+  }
+}

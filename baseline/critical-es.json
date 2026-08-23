@@ -1,0 +1,89 @@
+{
+  "fixture": {
+    "id": "critical-es",
+    "language": "es",
+    "expectedTier": "SERIOUS",
+    "urgentPresent": true,
+    "responses": [
+      4,
+      3,
+      4,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      4,
+      3,
+      3,
+      2,
+      3,
+      2,
+      3,
+      4,
+      3,
+      3,
+      2,
+      2,
+      3,
+      4,
+      3
+    ]
+  },
+  "domainScores": {
+    "Immediate Safety & Urgency": 3.6,
+    "Household Structure": 2.6,
+    "Boundary Consistency": 3,
+    "Communication & Conflict": 3,
+    "Support & Professional Engagement": 3
+  },
+  "topDomains": [
+    "Immediate Safety & Urgency",
+    "Communication & Conflict",
+    "Boundary Consistency"
+  ],
+  "sectionsPresent": [
+    "consideringInpatient",
+    "days4to7",
+    "encouragement",
+    "first72Hours",
+    "headlineSummary",
+    "keyPriorities",
+    "topImmediatePriorities",
+    "urgentConcern",
+    "whatToAvoid"
+  ],
+  "sectionsEmpty": [],
+  "fingerprint": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Drug Testing",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Intervening When Substance Use is Present: First Steps and Next Steps",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 5,
+    "privateSearchLineCount": 1,
+    "standardizedClosingPresent": true
+  },
+  "report": {
+    "urgentConcern": "Encontraste una sustancia desconocida en la mochila de tu hijo y él se niega a decir qué es. En 2026 muchas sustancias —pastillas prensadas, polvos, vapes, comestibles— pueden contener fentanilo u otros opioides sin que se note a simple vista, así que tómalo en serio. Si en algún momento sospechas que tu hijo ha ingerido algo y muestra dificultad para respirar, no responde, o hay labios o uñas moradas, llama de inmediato al 911 y luego a Poison Control at 1-800-222-1222, y mantén en mente que la naloxona (Narcan) se consigue en la mayoría de las farmacias sin receta. El resto del plan continúa desde aquí.",
+    "headlineSummary": "Lo que describes es consumo confirmado, secretismo total cuando preguntas y un nivel de miedo que ya te roba el sueño casi cada noche. No estás dudando “si hay algo” — ya viste evidencia y ahora la preocupación central es la seguridad real de tu hijo. El peso que sientes (agotamiento constante, miedo por dónde está y con quién, vueltas en la cabeza sobre el futuro) es exactamente el tipo de momento para el que está hecho el trabajo de intervención de ASAP. Vamos a ordenar los siguientes pasos para que esto sea tú y tu hijo contra las drogas, no tú contra tu hijo.\n\n3 PRIORIDADES INMEDIATAS\n- REGULACIÓN EMOCIONAL DE LOS PADRES — Antes de hacer nada hoy, date al menos 10–15 minutos solo: camina, respira profundo, escribe lo que te viene a la cabeza sin filtro. Ese miedo que te despierta en la noche se cuela rápido en la voz; lo que tu hijo ve es lo que llevas al cuarto, no lo que estás sintiendo por dentro, así que primero baja el volumen interno.\n- ALINEACIÓN CO-PADRE / CUIDADOR — Habla en privado con tu co-padre u otro padre/madre o tutor del lado familiar y pónganse de acuerdo en reglas, recompensas y consecuencias específicas para esta etapa: qué pasa con horarios, salidas, uso de celular, y qué recompensas habrá si cumple. Presentarse como equipo es clave; las diferencias se procesan entre adultos, no delante de tu hijo.\n- CONSTRUIR TU GRUPO PERSONAL DE APOYO — Únete y publica activamente en el \"Monitoring and Intervention discussion group.\" Conectar con otros padres que enfrentan retos similares puede dar perspectiva y apoyo mientras trabajas en esto. Este grupo es una fuente invaluable de experiencia compartida. No pelees esta batalla solo; mientras se mueve todo con tu hijo, tú necesitas tu propio lugar para descargar y ajustar la estrategia.",
+    "topImmediatePriorities": "- REGULACIÓN EMOCIONAL DE LOS PADRES — Antes de hacer nada hoy, date al menos 10–15 minutos solo: camina, respira profundo, escribe lo que te viene a la cabeza sin filtro. Ese miedo que te despierta en la noche se cuela rápido en la voz; lo que tu hijo ve es lo que llevas al cuarto, no lo que estás sintiendo por dentro, así que primero baja el volumen interno.\n- ALINEACIÓN CO-PADRE / CUIDADOR — Habla en privado con tu co-padre u otro padre/madre o tutor del lado familiar y pónganse de acuerdo en reglas, recompensas y consecuencias específicas para esta etapa: qué pasa con horarios, salidas, uso de celular, y qué recompensas habrá si cumple. Presentarse como equipo es clave; las diferencias se procesan entre adultos, no delante de tu hijo.\n- CONSTRUIR TU GRUPO PERSONAL DE APOYO — Únete y publica activamente en el \"Monitoring and Intervention discussion group.\" Conectar con otros padres que enfrentan retos similares puede dar perspectiva y apoyo mientras trabajas en esto. Este grupo es una fuente invaluable de experiencia compartida. No pelees esta batalla solo; mientras se mueve todo con tu hijo, tú necesitas tu propio lugar para descargar y ajustar la estrategia.",
+    "keyPriorities": "1) Immediate Safety & Urgency  \nAhora mismo tu mayor miedo es que tu hijo se esté poniendo en riesgo serio y no te diga la verdad, con una sustancia desconocida ya encontrada en su mochila.  \n- Esta semana, tu casa pasa a “modo seguridad”: nada de salidas sin saber con quién, a dónde y cómo vuelve; nada de manejar si es que tiene acceso a un auto; claridad sobre a qué horas debe estar en casa. Replantea estos cambios como reglas, recompensas y consecuencias para cuidar su seguridad, no como castigo.\n- Agenda tiempo para revisar a fondo lo que enseña el Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" y empieza a pensar en qué límites inmediatos necesitas poner para cortar la exposición al consumo.  \n- Si notas en estos días que llega desorientado, con mirada perdida, problemas para coordinar, o hay cualquier señal física preocupante, el próximo paso es llevarlo a urgencias y traer a un terapeuta ASAP-endorsed esta misma semana. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.\n\n2) Communication & Conflict  \nCada vez que intentas hablar del tema, tu hijo se cierra por completo o miente, y las conversaciones fácilmente se pueden ir a pelea o muro de silencio.  \n- Antes de la conversación clave, trabaja tú el Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" para ajustar tono, momento del día y forma de plantear que esto es “nosotros dos contra las drogas”. Microcambios aquí bajan mucha defensiva.\n- En la conversación, abre desde hechos (“vi esto en tu mochila”, “he notado X cambios”) y desde el objetivo común (“me importa tu seguridad, no ganar una discusión”); si empieza a gritar o a dar vueltas, tú paras la escalada diciendo algo como “voy a bajar el tono ahora, pero las reglas, recompensas y consecuencias que acordamos se mantienen”.\n- Si esta semana cada intento de hablar termina en gritos o cerrazón total, el próximo paso es apoyarte en un terapeuta ASAP-endorsed para sostener las siguientes conversaciones. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.\n\n3) Boundary Consistency  \nCon consumo ya confirmado y miedo alto, es común ir de cero a cien: un día mano dura, al otro día cansancio y nada se sostiene.  \n- Junto con tu co-padre, redacten 3–5 reglas claras (por ejemplo: horarios de llegada, no consumo en casa, no salidas si hay señales de uso reciente) con sus recompensas y consecuencias específicas, por escrito. El Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\" y el Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\" te dan modelos concretos de cómo armar esto sin convertirlo en guerra.\n- Asegúrense de que ambos adultos respondan igual: misma consecuencia y misma recompensa sin importar a quién se lo pida tu hijo. La consistencia pesa más que la dureza.\n- Si esta semana ves que vuelves a ceder por agotamiento, el próximo paso es implementar formalmente un behavioral contract usando lo que trabajes en el Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\".",
+    "whatToAvoid": "- No abras la conversación con tu hijo en medio de un pico de rabia o miedo; cuando explotas, el mensaje se vuelve “tú contra él”, no tú y él contra las drogas, y ahí todos pierden.\n- No revises el cuarto, la mochila o el celular de tu hijo de manera confrontativa, anunciándolo como castigo o haciéndolo con él mirando; en su lugar, sigue el enfoque estructurado del Auxiliary Workshop \"How and When to Search a Room\".\n- No des amenazas enormes (“te voy a sacar de la casa”, “nunca más vas a salir”) que luego no vas a cumplir; es mejor pocas reglas, recompensas y consecuencias que siempre se cumplen que castigos gigantes que se diluyen.\n- No minimices la sustancia desconocida que encontraste pensando “seguro no es tan grave”; el riesgo de opioides y fentanilo hace que cada hallazgo cuente, y el Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" está diseñado justo para este momento.",
+    "first72Hours": "DÍA 1 — REGULACIÓN EMOCIONAL + ALINEACIÓN CO-PADRE  \n- Hoy no hay conversación grande con tu hijo. Hoy es bajar tu propio sistema: escribe en una hoja todo lo que quieres decirle, incluso lo más duro; luego tacha lo que sabes que solo saldría desde el cansancio.\n- Habla con tu co-padre u otro adulto familiar clave cuando tu hijo no esté: compartan exactamente qué encontraste, qué has visto antes (cambios de ánimo, ausencias, etc.) y acuerden qué reglas, recompensas y consecuencias entran en vigor ya (por ejemplo: no manejar, no dormir fuera, horarios fijos).\n- Pónganse de acuerdo en que el foco es “cuidar tu vida y tu futuro”, no “castigarte”; ese lenguaje compartido lo van a repetir los dos frente a tu hijo.\n\nDÍA 2 — GRUPO DE APOYO + REUNIR INFORMACIÓN + RECURSOS  \n- Únete hoy al \"Monitoring and Intervention discussion group\" y haz al menos una publicación describiendo que encontraste una sustancia desconocida en la mochila y que tu hijo lo niega. Padres que ya pasaron por esto pueden darte ejemplos muy concretos de reglas, recompensas y consecuencias que les funcionaron.\n- Antes de la conversación del DÍA 3, revisa el Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" y los hechos sobre la sustancia que coinciden con lo que estás viendo — riesgo de fentanilo/opioides, señales de sobredosis, efectos médicos. Tener la información en la cabeza significa que respondes desde los hechos, no desde el miedo.\n- Haz una COMPLETE ROOM SEARCH junto con tu co-padre si es posible: la misión es recolectar hechos, no castigar. Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente. Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante. Revisa siguiendo la guía del Auxiliary Workshop \"How and When to Search a Room\": con calma, nunca estando enojado o alterado, dejando todo lo más parecido posible a como estaba.\n- Si encuentras drogas, parafernalia o cualquier otra sustancia desconocida, documenta con fotos para tu propio registro, confisca y deshazte de todo de forma segura; no armes una escena en el momento, eso se hablará mañana como parte de los límites.",
+    "days4to7": "- Implementa una prueba de drogas esta semana para saber exactamente con qué está lidiando tu hijo — hazlo en el marco de un límite, no como emboscada. El Auxiliary Workshop \"Drug Testing\" te guía paso a paso para elegir la prueba, cuándo hacerla y cómo hablarlo.\n- Si aplicas un behavioral contract, hazlo ya con lo aprendido en el Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\": expectativas claras, recompensas concretas por cumplir (salidas, tiempo de pantalla, actividades que le importan) y consecuencias claras por no cumplir.\n- Mantente activo en el \"Monitoring and Intervention discussion group\" durante estos días, actualizando cómo va la implementación; ahí puedes ajustar detalles de horarios, monitoreo, y cómo responder a nuevas mentiras o evasiones sin perder la calma.\n- Si a lo largo de esta primera semana sigues viendo consumo, mentiras fuertes o arriesgos graves (salirse de casa sin avisar, llegar visible y repetidamente intoxicado), el próximo paso es traer a un terapeuta ASAP-endorsed para sumar un nivel más de intervención. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.",
+    "consideringInpatient": "Sacar a un hijo del hogar para un tratamiento interno o residencial es de las decisiones más duras que un padre puede tomar; no se hace en caliente, pero tampoco se deja pasar cuando la seguridad real está en juego. Debes considerar seriamente un programa de tratamiento interno ASAP-endorsed cuando se dé una o más de estas circunstancias:\n- Tu hijo es un peligro para sí mismo.\n- Tu hijo es un peligro para otros.\n- El consumo de sustancias de tu hijo lo pone en riesgo significativo de sobredosis o muerte.\n- Has agotado las intervenciones ambulatorias razonables y los esfuerzos de tratamiento sin éxito.\nSi estás viendo ya algo de esto, buscar un nivel de cuidado más alto no es un fracaso: es un acto directo de protección de la vida y el futuro de tu hijo. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.",
+    "encouragement": "Has estado viviendo casi sin combustible, con el sueño roto y la cabeza siempre encendida; aun así, estás aquí tratando de hacer un plan en vez de seguir reaccionando. Mantente pegado al \"Monitoring and Intervention discussion group\" y no dudes en traer a un terapeuta ASAP-endorsed cuando veas que, pese a los límites y al plan de esta semana, el consumo o el riesgo siguen igual o peor. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program. Recuerda: tu hijo no es el oponente; el consumo lo es. Todo este plan es para que estén tú y tu hijo del mismo lado de la mesa, contra las drogas.\n\nLa recuperación es un camino, no un solo acontecimiento, y proteger el progreso que tu hijo ya ha logrado es una de las responsabilidades más importantes que tienes como padre. Aunque muchos adolescentes llegan a alcanzar una recuperación duradera, pueden ocurrir recaídas. Una recaída no borra el progreso alcanzado, y no tiene por qué convertirse en un regreso al pasado.\n\nLa preparación es una de tus mayores fortalezas. Te animamos a completar el Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks\". Te ayudará a reconocer las señales de alerta tempranas, a responder con calma y eficacia si surgen dificultades, y a fortalecer el plan de tu familia para proteger la recuperación de tu hijo. También te animamos a participar en el Protecting Recovery Discussion Group, donde los padres comparten experiencias, aliento y conocimientos prácticos mientras se apoyan mutuamente a lo largo del camino continuo de la recuperación.\n\nRecuerda que el propósito del monitoreo, la supervisión, las conversaciones y los límites apropiados no es simplemente descubrir qué pasó o cuándo pasó, sino entender por qué. Identificar y abordar las razones de fondo del consumo de sustancias le da a tu hijo la mayor oportunidad de lograr una recuperación a largo plazo y un futuro sano y significativo."
+  },
+  "sectionsConditionallyAbsent": []
+}

@@ -205,6 +205,31 @@
       "notes": "The live methodology makes this the first immediate priority in every report at every tier, with no exceptions, which is why it is alwaysInclude with an always-true rule and the highest impact — it leads. It is also defaultPrimary: it is the one recommendation guaranteed to be available to every family at every tier, so a submission matching no other primary-eligible rule still receives a real primary rather than a fallback that does not fit. It routes to the parent's own peer-support group and to no workshop, which is what guarantees that group appears in every report."
     },
     {
+      "id": "communication-breakdown",
+      "domainId": "communication-conflict",
+      "title": {
+        "en": "When every conversation turns into a fight",
+        "es": "Cuando cada conversación se vuelve una pelea"
+      },
+      "intent": {
+        "en": "Conversations that end in shouting, or that the parent avoids starting, mean the plan cannot be delivered even if it is right. Rebuilding the ability to talk is not a soft step before the real work; it is what makes every later step possible.",
+        "es": "Las conversaciones que terminan a gritos, o que el padre evita empezar, significan que el plan no se puede ejecutar aunque sea correcto. Reconstruir la capacidad de hablar no es un paso blando antes del trabajo real; es lo que hace posible todo lo que viene después."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 87,
+      "excludes": [],
+      "workshopIds": ["ess-effective-communication-building-trust-and-engagement"],
+      "discussionGroupIds": [],
+      "when": {
+        "any": [
+          { "question": "q05", "gte": 3 },
+          { "question": "q06", "gte": 3 },
+          { "question": "q13", "gte": 3 }
+        ]
+      },
+      "notes": "RECOVERED FROM A GAP FOUND BY THE BASELINE. This routing is stated as a hard rule in the live prompts — \"when communication has broken down... route to the Essential Workshop Effective Communication\" — but it never appears in the twelve-row routing table, so the first transcription missed it entirely. The captured baseline cited this workshop in 8 of 8 plans while the matrix routed it in none, which is how the omission surfaced. THE CONDITION IS OURS, NOT THE METHODOLOGY'S: the prompts say \"communication has broken down\" without naming a threshold, so this fires on conflict intensity, the parent's confidence to raise it, or the child being unable to talk about stress. Flagged for confirmation in RECOMMENDATION-MATRIX.md 6.9."
+    },
+    {
       "id": "co-parent-alignment",
       "domainId": "boundary-consistency",
       "title": {

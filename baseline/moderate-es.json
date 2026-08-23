@@ -1,0 +1,89 @@
+{
+  "fixture": {
+    "id": "moderate-es",
+    "language": "es",
+    "expectedTier": "MODERATE",
+    "urgentPresent": false,
+    "responses": [
+      1,
+      1,
+      3,
+      2,
+      3,
+      3,
+      3,
+      3,
+      2,
+      1,
+      3,
+      2,
+      2,
+      2,
+      2,
+      2,
+      3,
+      3,
+      2,
+      2,
+      2,
+      3,
+      2,
+      2
+    ]
+  },
+  "domainScores": {
+    "Immediate Safety & Urgency": 1.4,
+    "Household Structure": 2.4,
+    "Boundary Consistency": 2.8,
+    "Communication & Conflict": 2.6,
+    "Support & Professional Engagement": 2.4
+  },
+  "topDomains": [
+    "Boundary Consistency",
+    "Communication & Conflict",
+    "Household Structure"
+  ],
+  "sectionsPresent": [
+    "days4to7",
+    "encouragement",
+    "first72Hours",
+    "headlineSummary",
+    "keyPriorities",
+    "topImmediatePriorities",
+    "whatToAvoid"
+  ],
+  "sectionsEmpty": [],
+  "fingerprint": {
+    "workshops": [
+      "Behavioral Contracts – A Tool for Positive Change",
+      "Creating a Healthy Home Environment – The Power of Structure and Routine",
+      "Effective Communication: Building Trust and Engagement with Your Teen",
+      "How and When to Search a Room",
+      "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
+      "Setting Boundaries with Respect: Discipline Without Punishment"
+    ],
+    "discussionGroups": [
+      "Monitoring and Intervention discussion group",
+      "Sustaining Recovery discussion group"
+    ],
+    "articlesOfActionCited": [],
+    "professionalHelpSequenceCount": 2,
+    "privateSearchLineCount": 1,
+    "standardizedClosingPresent": true
+  },
+  "report": {
+    "urgentConcern": "",
+    "headlineSummary": "Lo que describes es un momento en el que todavía no ves consumo, pero sí ves que las reglas se estiran, los límites se prueban y los conflictos suben más de lo que quisieras. Sabes que tu hijo no está usando sustancias y no estás preocupado por su seguridad inmediata, pero sí notas fricción con las reglas, discusiones y una estructura en casa que se desordena. Este plan se enfoca justo ahí: cómo ordenar la casa, alinear las reglas, recompensas y consecuencias, y bajar la intensidad de los choques antes de que esto escale.\n\n3 PRIORIDADES INMEDIATAS\n- REGULACIÓN EMOCIONAL DE LOS PADRES — Antes de hablar del tema con tu hijo, date un rato para bajar la presión: sal a caminar 10 minutos, escribe lo que quieres decir y qué NO quieres decir, y si notas que la rabia sube en medio de una discusión, di “lo hablamos luego” y sal del cuarto; volver después con calma es más fuerte que ganar una pelea en caliente.\n- ALINEACIÓN CO-PADRE / CUIDADOR — Habla en privado con tu co-padre (u otro padre/madre o tutor en el lado familiar) y pónganse de acuerdo en 3–4 reglas concretas, recompensas y consecuencias que ambos van a sostener sin contradecirse delante de tu hijo; lo que ustedes acuerdan en privado es lo que se aplica después.\n- CONSTRUIR TU GRUPO PERSONAL DE APOYO — Únete y publica activamente en el \"Monitoring and Intervention discussion group.\" Conectar con otros padres que enfrentan retos similares puede dar perspectiva y apoyo mientras trabajas en esto. Este grupo es una fuente invaluable de experiencia compartida.",
+    "topImmediatePriorities": "- REGULACIÓN EMOCIONAL DE LOS PADRES — Antes de hablar del tema con tu hijo, date un rato para bajar la presión: sal a caminar 10 minutos, escribe lo que quieres decir y qué NO quieres decir, y si notas que la rabia sube en medio de una discusión, di “lo hablamos luego” y sal del cuarto; volver después con calma es más fuerte que ganar una pelea en caliente.\n- ALINEACIÓN CO-PADRE / CUIDADOR — Habla en privado con tu co-padre (u otro padre/madre o tutor en el lado familiar) y pónganse de acuerdo en 3–4 reglas concretas, recompensas y consecuencias que ambos van a sostener sin contradecirse delante de tu hijo; lo que ustedes acuerdan en privado es lo que se aplica después.\n- CONSTRUIR TU GRUPO PERSONAL DE APOYO — Únete y publica activamente en el \"Monitoring and Intervention discussion group.\" Conectar con otros padres que enfrentan retos similares puede dar perspectiva y apoyo mientras trabajas en esto. Este grupo es una fuente invaluable de experiencia compartida.",
+    "keyPriorities": "1) Boundary Consistency — reglas, recompensas y consecuencias que se cumplen de verdad  \n- Aquí lo que pesa es que a veces dices “hasta aquí” pero otras veces cedes, o la respuesta cambia según tu estado de ánimo; tu hijo aprende rápido dónde hay huecos.  \n- Con tu co-padre, elige 3 reglas claras (por ejemplo: horarios, uso de pantallas, salidas) y define para cada una expectativas claras, recompensas y consecuencias específicas y proporcionales, por escrito, para que no dependan del momento.  \n- Trabaja estas ideas más a fondo en el Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\" y el Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\" para que el acuerdo no se convierta en castigo sino en un plan claro.  \n- Dispara de antemano el siguiente paso: si tu hijo sigue empujando estas mismas reglas esta semana (por ejemplo, ignorando horarios o acuerdos), el próximo paso es formalizar un acuerdo más detallado usando lo que aprendas en el Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\".\n\n2) Communication & Conflict — bajar la pelea, subir la claridad  \n- Notas que las conversaciones sobre límites se vuelven discusión rápido, con respuestas cortantes, evasivas o cierre, y tú terminas agotado o diciendo cosas que no querías.  \n- Practica una estructura sencilla: 1) di lo que ves (“he notado que…”), 2) di por qué te importa, 3) pregunta su versión (“¿cómo lo ves tú?”), y 4) cierra recordando que están del mismo lado, tú y tu hijo contra las drogas y contra las malas decisiones, no tú contra tu hijo.  \n- Refuerza estas habilidades en el Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" para aprender formas concretas de hablar que no escalen la pelea.  \n- Si esta semana las discusiones siguen subiendo de tono (gritos, portazos, silencios largos) cuando toques el tema de reglas, el próximo paso es asistir al Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" y aplicar una sola herramienta específica en la siguiente conversación (por ejemplo, contar hasta 3 antes de responder o cerrar la charla cuando se desborda).\n\n3) Household Structure — que la casa marque el ritmo, no el adolescente  \n- Lo que se ve es una rutina floja: horarios que cambian, discusiones diarias por lo mismo (tareas, pantallas, hora de dormir), y cada día se negocia desde cero.  \n- Define una estructura sencilla de día: hora fija para tareas, para pantallas y para dormir, y comunica que las recompensas y consecuencias que tú y tu co-padre acordaron dependen de seguir esa estructura (por ejemplo, más tiempo de pantalla cuando se cumple, menos cuando no).  \n- Profundiza en esto con el Auxiliary Workshop \"Creating a Healthy Home Environment – The Power of Structure and Routine\", que baja a tierra cómo usar la rutina de manera estable sin convertir la casa en un cuartel.  \n- Si esta semana sigues sintiendo que cada tarde es un caos y que todo se negocia de nuevo, el próximo paso es aplicar al menos una recomendación concreta del Auxiliary Workshop \"Creating a Healthy Home Environment – The Power of Structure and Routine\" (por ejemplo, una rutina visual en la cocina) y revisarla con tu co-padre al final de la semana.",
+    "whatToAvoid": "- No abras conversaciones importantes justo cuando estás ardiendo de enojo o miedo; lo que tu hijo ve es lo que llevas al cuarto, no lo que sentiste hace una hora.  \n- No cambies las reglas, recompensas y consecuencias sobre la marcha solo porque estás cansado o porque tu hijo insiste; eso le enseña que insistir funciona.  \n- No conviertas cada falta en una guerra total; elige las 2–3 batallas clave (horarios, respeto básico, tareas) y conecta las demás con recompensas y consecuencias más ligeras, como se trabaja en el Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\".  \n- No revises el cuarto, la mochila o el celular de tu hijo de manera confrontativa, anunciándolo como castigo o haciéndolo en medio de una pelea; si más adelante decides revisar, hazlo como una misión tranquila de información siguiendo el Auxiliary Workshop \"How and When to Search a Room\".  \n- No hagas comentarios tipo “ya no se puede hablar contigo” o “siempre eres igual” en medio de una discusión; cierran la puerta y van justo en contra de lo que se trabaja en el Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\".",
+    "first72Hours": "DÍA 1 — REGULACIÓN EMOCIONAL + ALINEACIÓN CO-PADRE  \n- Antes de tocar reglas con tu hijo hoy, descarga un poco: escribe 5–10 minutos qué te preocupa exactamente (no “todo está mal”, sino “se acuesta tarde”, “discute por cada cosa”).  \n- Acuerda con tu co-padre una mini-lista de 3 reglas prioritarias, las recompensas cuando se cumplen y las consecuencias cuando no, y quién va a decir qué; esto reduce improvisar delante de tu hijo.  \n- Si en una discusión hoy notas que sube la tensión, pon un límite a ti mismo: “voy a parar aquí y seguimos después”, y retoma cuando estés más tranquilo; eso también es modelo de autocontrol.\n\nDÍA 2 — CONSTRUIR APOYO + REUNIR INFORMACIÓN + REVISAR RECURSOS  \n- Únete hoy al \"Monitoring and Intervention discussion group\" y escribe al menos un mensaje corto describiendo una situación concreta de conflicto de reglas que se te repite; la claridad aumenta cuando la pones en palabras para otros.  \n- Antes de la conversación del DÍA 3, revisa el Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\" y los hechos sobre cómo las reglas consistentes, recompensas y consecuencias ayudan a prevenir riesgos futuros (incluyendo el consumo de sustancias). Tener la información en la cabeza significa que respondes desde los hechos, no desde el miedo.  \n- Si ya sospechas que puede haber cosas que no conoces (por ejemplo, mentiras sobre dónde está o con quién, o uso excesivo del celular para esconderse), considera hacer una revisión completa del cuarto, la mochila y el celular como misión de recolección de hechos, no como castigo, y en coordinación con tu co-padre, siguiendo el Auxiliary Workshop \"How and When to Search a Room\". Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente. Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante.  \n- Si encuentras algo que te preocupe (como una sustancia desconocida o mensajes sobre fiestas de alto riesgo), documéntalo (foto, nota), retíralo sin hacer un show, y úsalo después como parte de la conversación y de las recompensas y consecuencias que tú y tu co-padre acordaron, no como arma para humillar.",
+    "days4to7": "- Mantén las nuevas reglas, recompensas y consecuencias una semana completa sin cambiarlas, aunque te canses de repetir; la consistencia es lo que enseña, no el discurso.  \n- Vuelve al \"Monitoring and Intervention discussion group\" al menos una vez más en estos días y cuenta cómo te fue con la primera conversación; usar al grupo como seguimiento semanal te ayuda a ajustar sin improvisar.  \n- Trabaja a lo largo de la semana el Auxiliary Workshop \"Creating a Healthy Home Environment – The Power of Structure and Routine\" para ajustar horarios, rutinas y espacios en casa de forma que apoyen lo que quieres ver (sueño, tareas, tiempo libre sano).  \n- Si estos patrones de conflicto con las reglas y el desorden en casa continúan o se intensifican durante la próxima semana a pesar de aplicar estos cambios, un terapeuta ASAP-endorsed es el próximo paso. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.",
+    "consideringInpatient": "",
+    "encouragement": "Has dado un paso incómodo: mirar de frente los conflictos de casa aunque todavía no haya consumo de sustancias de por medio. Eso pide constancia y aguante, no perfección. Mantén el foco en que tu hijo no es el oponente; el enemigo son las malas decisiones y, si algún día entran en escena, las drogas.  \nSostén esta semana lo que ya empezaste en el Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" y apóyate de verdad en el \"Monitoring and Intervention discussion group\" para no quedar solo decidiendo qué hacer. Si estos choques siguen subiendo de nivel, un terapeuta ASAP-endorsed es el siguiente escalón de apoyo para ti y tu familia. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.\n\nLa recuperación es un camino, no un solo acontecimiento, y proteger el progreso que tu hijo ya ha logrado es una de las responsabilidades más importantes que tienes como padre. Aunque muchos adolescentes llegan a alcanzar una recuperación duradera, pueden ocurrir recaídas. Una recaída no borra el progreso alcanzado, y no tiene por qué convertirse en un regreso al pasado.\n\nLa preparación es una de tus mayores fortalezas. Te animamos a completar el Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks\". Te ayudará a reconocer las señales de alerta tempranas, a responder con calma y eficacia si surgen dificultades, y a fortalecer el plan de tu familia para proteger la recuperación de tu hijo. También te animamos a participar en el Protecting Recovery Discussion Group, donde los padres comparten experiencias, aliento y conocimientos prácticos mientras se apoyan mutuamente a lo largo del camino continuo de la recuperación.\n\nRecuerda que el propósito del monitoreo, la supervisión, las conversaciones y los límites apropiados no es simplemente descubrir qué pasó o cuándo pasó, sino entender por qué. Identificar y abordar las razones de fondo del consumo de sustancias le da a tu hijo la mayor oportunidad de lograr una recuperación a largo plazo y un futuro sano y significativo."
+  },
+  "sectionsConditionallyAbsent": [
+    "consideringInpatient",
+    "urgentConcern"
+  ]
+}

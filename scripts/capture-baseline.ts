@@ -31,6 +31,13 @@ import { DOMAIN_MAP } from '../src/report/scoring/domain.map';
 
 type Language = 'en' | 'es';
 
+/**
+ * Sections the old response includes as an empty string when they do not apply.
+ * Both are urgent-only, so a blank one on a non-urgent plan is correct, not a
+ * defect — and must not be reported as one.
+ */
+const CONDITIONAL_SECTIONS = ['urgentConcern', 'consideringInpatient'];
+
 interface Fixture {
   id: string;
   language: Language;
@@ -236,8 +243,22 @@ async function main() {
         .filter(([, value]) => value.trim().length > 0)
         .map(([key]) => key)
         .sort(),
+      // The old response always carries every key, using an empty string for a
+      // section that does not apply. So "empty" alone means nothing — the two
+      // urgent-only sections are legitimately blank on a non-urgent plan, and
+      // reporting those as holes would libel the current system.
+      sectionsConditionallyAbsent: Object.entries(body.report)
+        .filter(
+          ([key, value]) =>
+            value.trim().length === 0 && CONDITIONAL_SECTIONS.includes(key),
+        )
+        .map(([key]) => key)
+        .sort(),
       sectionsEmpty: Object.entries(body.report)
-        .filter(([, value]) => value.trim().length === 0)
+        .filter(
+          ([key, value]) =>
+            value.trim().length === 0 && !CONDITIONAL_SECTIONS.includes(key),
+        )
         .map(([key]) => key)
         .sort(),
       fingerprint: fingerprint(prose),

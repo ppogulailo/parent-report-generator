@@ -39,7 +39,8 @@ how we will prove nothing moved.
 - The severity logic: how a plan becomes Mild, Moderate, Serious, or the urgent
   form of Serious.
 - The tie-break order for ranking domains.
-- The twelve-row problem-to-resource routing table.
+- The twelve-row problem-to-resource routing table, plus the communication
+  routing stated in the hard rules but absent from that table (§6.8).
 - The resource library: 4 Essential workshops, 21 Auxiliary workshops, 3
   discussion groups, and the banned titles.
 - The report's nine sections and their order.
@@ -96,9 +97,13 @@ scores is at or below **2.0**; and the child-safety average is below **2.0**.
 
 ## 3. The priority areas
 
-Thirteen rules. When a rule's condition is met, the family receives that priority
+Fourteen rules. When a rule's condition is met, the family receives that priority
 area and the resources beside it. Multiple rules firing means multiple areas —
 nothing is dropped (see §6.6).
+
+Row 14 was added after the baseline showed the current system citing it in every
+plan while our matrix routed it in none. Its condition is our reading, not the
+methodology's — see §6.8.
 
 | # | Priority area | Fires when | Resources it requires |
 |---|---|---|---|
@@ -115,6 +120,7 @@ nothing is dropped (see §6.6).
 | 11 | Know what you are dealing with | Q1 ≥ 3 **and** Serious/Critical | Auxiliary "Drug Testing" |
 | 12 | If the law is now involved | **Disabled** — see §6.3 | Auxiliary "Legal Issues and Substance Use…" |
 | 13 | Risks specific to your child | **Disabled** — see §6.3 | Auxiliary "Supporting LGBTQ+ Teens…" |
+| 14 | When every conversation turns into a fight | Q5 ≥ 3, Q6 ≥ 3 **or** Q13 ≥ 3 — *our threshold* | Essential "Effective Communication…" |
 
 Rows 2 and 7 each name **two** resources, and the live methodology says citing
 only one is a violation. Under the new architecture both are guaranteed: they are
@@ -274,7 +280,72 @@ construction rather than by instruction.
 We have kept the ban as a backstop in case a future rule ever routes there. No
 action needed; noted so you can see what the architecture actually buys.
 
-### 6.8 Inverted-answer annotations are incomplete
+### 6.8 BLOCKING-ish — what the baseline showed the old system citing
+
+We captured eight real plans from the current system and compared them against
+what the matrix routes. **No severity moved on any of the eight** — the tiers are
+identical. The resources differ, in both directions, and both directions matter.
+
+**One genuine gap in our transcription, already fixed.** The current system cited
+the Essential Workshop *"Effective Communication: Building Trust and Engagement
+with Your Teen"* in **8 of 8** plans, and our matrix routed it in none. The
+methodology does require it — *"when communication has broken down… route to the
+Essential Workshop Effective Communication"* — but that instruction lives in a
+hard rule rather than in the twelve-row routing table, so the first transcription
+missed it entirely. It is now a routing rule.
+
+**The condition is ours, not yours.** The prompts say "communication has broken
+down" without naming a threshold, so it fires when conflict is intense (Q5 ≥ 3),
+when the parent lacks confidence to raise it (Q6 ≥ 3), or when the child cannot
+talk about stress (Q13 ≥ 3). **Please confirm or correct that.**
+
+**Five resources the old system cited that no rule requires.** These come from a
+second, softer list in the prompt — a "common matches" section suggesting
+workshops by topic, separate from the hard routing table. We transcribed the hard
+table; this is what the soft list produced:
+
+| Resource | Appeared in | Our reading |
+|---|---|---|
+| Creating a Healthy Home Environment | 3 of 8 | Household structure has no hard rule. Plausibly should. |
+| Monitoring and Intervention (Essential) | 1 of 8 | The workshop the parent has already completed to reach here. |
+| How and When to Search a Room | 8 of 8 | Our rule fires on secrecy (Q3 ≥ 3). The old system cited it even in Mild with no secrecy signal, which the Mild rules do not permit. |
+| Reflection and Assessment | 1 of 8 | Model discretion. |
+| The Power of Positive Reinforcement | 1 of 8 | Model discretion. |
+
+Each is a decision: make it a rule, or accept that it was the model choosing.
+
+**And the other direction, which is the point of this milestone.** The old system
+**omitted required workshops**. "Building a Support Network" is required by two
+routing rows and was missing from every Moderate and Serious plan we captured.
+In the Spanish Serious plan it also omitted Partnering with Schools, Social
+Media, Peer Pressure and Managing Stress — four required citations, silently
+absent, with nothing anywhere reporting a problem. That is the failure the new
+architecture makes impossible.
+
+### 6.9 What the real model actually did
+
+The pipeline has been run against the live model, not just a mock. Two things
+came out of it, and both are worth you knowing:
+
+**A false alarm in our own checker, now fixed.** The Article of Action
+*"Partnering with Schools"* is a substring of the approved workshop *"Partnering
+with Schools for Your Child's Success"*. So when the model correctly cited the
+workshop, our ban on recommending Articles of Action fired on it — three attempts
+burned, and the plan shipped flagged for a rule it had not broken. The check is
+now positional: a banned title only counts where it is not part of a longer
+approved title.
+
+**A real drift by the model, caught and corrected automatically.** On the next
+run it quoted a questionnaire option back at the parent verbatim — *"Rarely know
+where they are"* — which is exactly the tell that a plan was assembled from a
+form. The check caught it, the error was fed back, and the second attempt was
+clean. Under the current system nothing would have noticed.
+
+That is the mechanism working in both directions on its first contact with a real
+model: one of our rules was wrong and one of the model's outputs was, and both
+were visible within minutes rather than in a report someone reads next month.
+
+### 6.10 Inverted-answer annotations are incomplete
 
 Eleven questions are annotated in the source as having answer scales that run
 opposite to the question ("more is better"). Two more — **Q7** (consistency of
@@ -424,15 +495,24 @@ edge case where three 4s land entirely outside the child-safety questions. All
 passing. It compares against the live code directly, not against recorded
 expectations, so it cannot quietly drift.
 
-**A behavioural baseline.** Eight complete plans captured from the live system —
-Mild, Moderate, Serious and the urgent form, in both languages — recording which
-resources each cited, which sections were populated, and whether the required
-wording appeared. When the new engine is in, we compare and show that the routing
-is identical.
+**A behavioural baseline — captured.** Eight complete plans from the current
+system: Mild, Moderate, Serious and the urgent form, in both languages, recording
+which resources each cited and whether the required wording appeared. They are
+committed under `baseline/`, and `npm run baseline:compare` re-runs the
+comparison offline in seconds. **Result: no severity moved on any of the eight.**
+The resource differences are catalogued in §6.8.
 
 We compare which resources a family is pointed at, not the sentences. Two runs of
 an AI never produce identical prose, so comparing text would fail every time and
 prove nothing. What must not change is the routing and the severity register.
+
+**And the new engine has been run against the real model**, not only a mock. A
+Serious plan generated end to end satisfied every rule: the professional-help
+sequence verbatim, the private-search line verbatim, the peer-support group cited,
+your standardized closing and both guiding principles rendered exactly as
+written, and no banned vocabulary. Two defects surfaced in that run and are fixed
+— one a false alarm in our own checker, one a real drift by the model, described
+in §6.10.
 
 Eight rather than six, incidentally: your scope statement asked for baselines
 across Mild, Moderate and Serious, but the urgent path is a fourth report shape
