@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Post,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiKeyGuard } from '../common/guards/api-key.guard';
 import { ContentService } from '../content/content.service';
 import { GenerationService } from '../generation/generation.service';
@@ -88,6 +97,90 @@ export class AssessmentController {
         (w) => w.url !== null,
       ),
     };
+  }
+
+  /**
+   * The same pipeline, streamed as server-sent events.
+   *
+   * A plan takes tens of seconds to write, and none of the matrix's decision
+   * does — so the scores, the severity and the plan's outline go out
+   * immediately, and the sections follow as they are written. A parent reaches
+   * their results screen at once instead of watching a spinner.
+   *
+   * Uses the raw response rather than a Nest interceptor because the stream has
+   * to flush per event; anything that buffers defeats the point.
+   */
+  @Post('stream')
+  @UseGuards(ApiKeyGuard)
+  async stream(
+    @Body() dto: SubmitAssessmentDto,
+    @Res() res: Response,
+  ): Promise<void> {
+    res.writeHead(200, {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache, no-transform',
+      Connection: 'keep-alive',
+      // Fly's proxy and any nginx in front of it will otherwise buffer the
+      // whole response and deliver it at once.
+      'X-Accel-Buffering': 'no',
+    });
+
+    const send = (event: string, data: unknown): void => {
+      res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
+    };
+
+    try {
+      const submission = this.validator.validate(dto);
+      const selection = this.selection.select(
+        submission.responses,
+        submission.urgentConcern,
+        submission.gateAnswers,
+      );
+
+      for await (const event of this.generation.generateStream(
+        selection,
+        submission.language,
+        submission.urgentConcern,
+      )) {
+        if (event.type === 'report') {
+          send('report', {
+            success: true,
+            severity: {
+              tierId: selection.tierId,
+              label: event.report.tierLabel,
+              description: this.content.tier(selection.tierId).description[
+                submission.language
+              ],
+            },
+            report: {
+              sections: event.report.sections,
+              language: event.report.language,
+            },
+            audit: selection.audit,
+          });
+        } else {
+          send(event.type, event);
+        }
+      }
+    } catch (err) {
+      // The stream is already open, so a failure cannot be an HTTP status. It
+      // goes out as an event instead.
+      //
+      // A validation error is the parent's to see — it names which question is
+      // missing. Anything else is deliberately opaque: it can quote the model's
+      // output back, which contains what the family submitted.
+      const isValidation =
+        err instanceof BadRequestException ||
+        (err instanceof Error && err.name === 'BadRequestException');
+      send('failed', {
+        success: false,
+        error: isValidation
+          ? (err as BadRequestException).message
+          : 'Report generation failed. Please try again.',
+      });
+    } finally {
+      res.end();
+    }
   }
 
   @Post('submit')

@@ -497,3 +497,202 @@ test('the old endpoint still answers, so the live site is unaffected', async ({
   // rather than 404ing.
   expect(response.status()).not.toBe(404);
 });
+
+// ------------------------------------------------------------- the SSE stream
+
+/** Reads an event stream into an ordered list of [event, payload] pairs. */
+async function readStream(
+  response: import('@playwright/test').APIResponse,
+): Promise<{ event: string; data: Record<string, unknown> }[]> {
+  const text = await response.text();
+  return text
+    .split('\n\n')
+    .filter((frame) => frame.trim().length > 0)
+    .map((frame) => {
+      const lines = frame.split('\n');
+      const event = lines.find((l) => l.startsWith('event:'))?.slice(6).trim();
+      const data = lines.find((l) => l.startsWith('data:'))?.slice(5).trim();
+      return {
+        event: event ?? '',
+        data: data ? (JSON.parse(data) as Record<string, unknown>) : {},
+      };
+    });
+}
+
+test('the stream sends the matrix decision before any prose', async ({
+  request,
+}) => {
+  const response = await request.post(`${APP_URL}/api/assessment/stream`, {
+    headers,
+    data: { responses: submission(3, { q03: 4, q15: 4 }), language: 'en' },
+  });
+  expect(response.ok(), await response.text()).toBe(true);
+
+  const events = await readStream(response);
+
+  // The decision comes first, because none of it needs the model — which is
+  // what lets a parent reach their results screen instead of a spinner.
+  expect(events[0].event).toBe('decided');
+  const decided = events[0].data as {
+    tierId: string;
+    tierLabel: string;
+    domainScores: Record<string, number>;
+    topDomains: string[];
+    outline: { key: string; type: string; title: string; text?: string }[];
+    recommendations: { recommendationId: string; title: string }[];
+    workshops: { workshopId: string; title: string; url: string | null }[];
+  };
+
+  expect(decided.tierId).toBe('serious');
+  expect(decided.tierLabel).toBeTruthy();
+  expect(Object.keys(decided.domainScores)).toContain(
+    'Immediate Safety & Urgency',
+  );
+  expect(decided.topDomains).toHaveLength(3);
+  expect(decided.outline.length).toBeGreaterThan(5);
+  expect(decided.recommendations.length).toBeGreaterThan(0);
+  expect(decided.workshops.length).toBeGreaterThan(0);
+
+  // Every priority area and workshop already carries the name the platform gave
+  // it, so nothing a parent reads depends on the model getting a title right.
+  for (const rec of decided.recommendations) expect(rec.title).toBeTruthy();
+  for (const workshop of decided.workshops) expect(workshop.title).toBeTruthy();
+
+  // Static copy is the platform's, so it arrives whole rather than as a
+  // placeholder.
+  const principle = decided.outline.find(
+    (s) => s.key === 'universalGuidingPrinciple',
+  );
+  expect(principle?.type).toBe('static');
+  expect(principle?.text).toContain('match what you are actually seeing');
+
+  // Then progress, then the finished report.
+  expect(events.some((e) => e.event === 'partial')).toBe(true);
+  expect(events[events.length - 1].event).toBe('report');
+});
+
+test('the streamed report is the same validated object as the plain endpoint', async ({
+  request,
+}) => {
+  const data = { responses: submission(4), language: 'en' as const };
+
+  const streamed = await readStream(
+    await request.post(`${APP_URL}/api/assessment/stream`, { headers, data }),
+  );
+  const final = streamed[streamed.length - 1].data as {
+    success: boolean;
+    severity: { tierId: string };
+    report: { sections: { key: string }[] };
+  };
+
+  const plain = (await (
+    await request.post(`${APP_URL}/api/assessment/submit`, { headers, data })
+  ).json()) as {
+    severity: { tierId: string };
+    report: { sections: { key: string }[] };
+  };
+
+  // Streaming is a delivery change, not a methodology one: same tier, same
+  // sections, in the same order.
+  expect(final.success).toBe(true);
+  expect(final.severity.tierId).toBe(plain.severity.tierId);
+  expect(final.report.sections.map((s) => s.key)).toEqual(
+    plain.report.sections.map((s) => s.key),
+  );
+});
+
+test('a partial event never contains more than the model has written', async ({
+  request,
+}) => {
+  const events = await readStream(
+    await request.post(`${APP_URL}/api/assessment/stream`, {
+      headers,
+      data: { responses: submission(2), language: 'en' },
+    }),
+  );
+
+  const partials = events.filter((e) => e.event === 'partial');
+  expect(partials.length).toBeGreaterThan(0);
+
+  const outline = (
+    events[0].data as { outline: { key: string; type: string }[] }
+  ).outline;
+  const written = new Set(
+    outline.filter((s) => s.type !== 'static').map((s) => s.key),
+  );
+
+  for (const partial of partials) {
+    const sections = (partial.data as { sections: Record<string, unknown> })
+      .sections;
+    for (const key of Object.keys(sections)) {
+      // A static section must never appear in a partial: the model is not shown
+      // it, so anything claiming to be one is invented.
+      expect(written.has(key), `partial contained "${key}"`).toBe(true);
+    }
+  }
+});
+
+test('a stream that keeps breaking a rule still ends in a report', async ({
+  request,
+}) => {
+  await setMode(request, 'wording-always');
+
+  const events = await readStream(
+    await request.post(`${APP_URL}/api/assessment/stream`, {
+      headers,
+      data: { responses: submission(3), language: 'en' },
+    }),
+  );
+
+  // Three attempts, each announced so the client can discard what it has, then
+  // the plan ships anyway — losing it over wording is the worse outcome.
+  expect(events.filter((e) => e.event === 'revising')).toHaveLength(2);
+  expect(events[events.length - 1].event).toBe('report');
+});
+
+test('a stream that cannot produce valid JSON fails loudly, not silently', async ({
+  request,
+}) => {
+  await setMode(request, 'not-json');
+
+  const events = await readStream(
+    await request.post(`${APP_URL}/api/assessment/stream`, {
+      headers,
+      data: { responses: submission(2), language: 'en' },
+    }),
+  );
+
+  const last = events[events.length - 1];
+  expect(last.event).toBe('failed');
+  expect(last.data.success).toBe(false);
+  // Deliberately opaque: the reason quotes the model's output, which contains
+  // what the family submitted.
+  expect(last.data.error).toBe('Report generation failed. Please try again.');
+});
+
+test('the stream is guarded like every other endpoint', async ({ request }) => {
+  const response = await request.post(`${APP_URL}/api/assessment/stream`, {
+    headers: { 'Content-Type': 'application/json' },
+    data: { responses: submission(2) },
+  });
+  expect(response.status()).toBe(401);
+});
+
+test('an invalid submission fails the stream with the reason', async ({
+  request,
+}) => {
+  const partial = submission(2);
+  delete partial.q07;
+
+  const events = await readStream(
+    await request.post(`${APP_URL}/api/assessment/stream`, {
+      headers,
+      data: { responses: partial },
+    }),
+  );
+
+  const last = events[events.length - 1];
+  expect(last.event).toBe('failed');
+  // A validation problem IS the parent's to see — it names the missing question.
+  expect(String(last.data.error)).toContain('q07');
+});

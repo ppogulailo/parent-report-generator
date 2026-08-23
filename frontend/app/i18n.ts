@@ -601,7 +601,7 @@ export type UIStrings = {
 export const STRINGS: Record<Language, UIStrings> = {
   en: {
     title: 'A calm, clear plan when you need it most',
-    eyebrow: 'Parent Action Plan',
+    eyebrow: 'Parent Risk Assessment & Action Plan',
     heroSub:
       'This tool helps parents quickly create a clear, step-by-step action plan to support their child dealing with substance use — in just a few minutes.',
     benefits: [
@@ -656,7 +656,7 @@ export const STRINGS: Record<Language, UIStrings> = {
   },
   es: {
     title: 'Un plan claro y con los pies en la tierra, cuando más lo necesitas',
-    eyebrow: 'Plan de Acción para Padres',
+    eyebrow: 'Evaluación de Riesgo y Plan de Acción para Padres',
     heroSub:
       'Esta herramienta te ayuda a crear rápidamente un plan claro, paso a paso, para apoyar a tu hijo frente al consumo de sustancias — en apenas unos minutos.',
     benefits: [

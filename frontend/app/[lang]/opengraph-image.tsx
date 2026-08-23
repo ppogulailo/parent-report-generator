@@ -32,79 +32,77 @@ export default async function OpengraphImage({
   const { eyebrow, title } = COPY[lang] ?? COPY.en;
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '96px',
+        background: 'linear-gradient(135deg, #fbfaf9 0%, #f0ede9 100%)',
+        fontFamily: 'sans-serif',
+      }}
+    >
+      {/* Brand row: mark + org name */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <svg width="72" height="72" viewBox="284 34 112 112">
+          <g transform="translate(340,78)">
+            <path
+              d="M -46 26 L 0 -14 L 46 26"
+              fill="none"
+              stroke="#4a8f8c"
+              strokeWidth="7"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <path
+              d="M 0 8 C -6 -2 -20 -1 -20 11 C -20 22 -8 30 0 38 C 8 30 20 22 20 11 C 20 -1 6 -2 0 8 Z"
+              fill="#e8a04b"
+            />
+          </g>
+        </svg>
+        <span
+          style={{
+            fontSize: '34px',
+            fontWeight: 700,
+            color: '#14120f',
+            letterSpacing: '-0.5px',
+          }}
+        >
+          ASAP Community
+        </span>
+      </div>
+
+      {/* Eyebrow */}
       <div
         style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          padding: '96px',
-          background: 'linear-gradient(135deg, #fbfaf9 0%, #f0ede9 100%)',
-          fontFamily: 'sans-serif',
+          marginTop: '64px',
+          fontSize: '30px',
+          fontWeight: 600,
+          color: '#4a8f8c',
+          textTransform: 'uppercase',
+          letterSpacing: '2px',
         }}
       >
-        {/* Brand row: mark + org name */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <svg width="72" height="72" viewBox="284 34 112 112">
-            <g transform="translate(340,78)">
-              <path
-                d="M -46 26 L 0 -14 L 46 26"
-                fill="none"
-                stroke="#4a8f8c"
-                strokeWidth="7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M 0 8 C -6 -2 -20 -1 -20 11 C -20 22 -8 30 0 38 C 8 30 20 22 20 11 C 20 -1 6 -2 0 8 Z"
-                fill="#e8a04b"
-              />
-            </g>
-          </svg>
-          <span
-            style={{
-              fontSize: '34px',
-              fontWeight: 700,
-              color: '#14120f',
-              letterSpacing: '-0.5px',
-            }}
-          >
-            ASAP Community
-          </span>
-        </div>
-
-        {/* Eyebrow */}
-        <div
-          style={{
-            marginTop: '64px',
-            fontSize: '30px',
-            fontWeight: 600,
-            color: '#4a8f8c',
-            textTransform: 'uppercase',
-            letterSpacing: '2px',
-          }}
-        >
-          {eyebrow}
-        </div>
-
-        {/* Title */}
-        <div
-          style={{
-            marginTop: '20px',
-            fontSize: '66px',
-            fontWeight: 700,
-            lineHeight: 1.1,
-            color: '#14120f',
-            letterSpacing: '-1.5px',
-            maxWidth: '900px',
-          }}
-        >
-          {title}
-        </div>
+        {eyebrow}
       </div>
-    ),
+
+      {/* Title */}
+      <div
+        style={{
+          marginTop: '20px',
+          fontSize: '66px',
+          fontWeight: 700,
+          lineHeight: 1.1,
+          color: '#14120f',
+          letterSpacing: '-1.5px',
+          maxWidth: '900px',
+        }}
+      >
+        {title}
+      </div>
+    </div>,
     { ...size },
   );
 }

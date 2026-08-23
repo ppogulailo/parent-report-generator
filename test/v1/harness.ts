@@ -20,7 +20,8 @@ export type MockMode =
   | 'invents-workshop'
   | 'omits-recommendation'
   | 'writes-static-section'
-  | 'not-json';
+  | 'not-json'
+  | 'slow';
 
 export async function setMode(
   request: APIRequestContext,

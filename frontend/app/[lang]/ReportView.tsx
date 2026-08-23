@@ -4,6 +4,7 @@ import { useState } from 'react';
 import {
   CheckIcon,
   ChevronRight,
+  Spinner,
   TIER_COLORS,
   WarningIcon,
   barColorFor,
@@ -67,7 +68,11 @@ interface Props {
   domainDescriptions: Record<string, string>;
   topDomains: string[];
   language: 'en' | 'es';
+  /** True while the model is still writing. Sections with no content yet show a
+   *  placeholder and a cursor rather than an empty card. */
+  writing?: boolean;
   copy: {
+    writingPlaceholder: string;
     planLevelLabel: string;
     domainScoresHeading: string;
     domainScoresHint: string;
@@ -75,9 +80,25 @@ interface Props {
     actionPlanHeading: string;
     readyHeading: string;
     readySub: string;
+    writingHeading: string;
+    writingSub: string;
     workshopsUnlinked: string;
     openWorkshop: string;
   };
+}
+
+/** A section the model has not reached yet. Its card is drawn, so the plan's
+ *  shape is visible from the first moment, but there is nothing in it. */
+function isEmpty(section: ReportSection): boolean {
+  return (
+    !section.body &&
+    !(section.items?.length ?? 0) &&
+    !(section.recommendations?.length ?? 0) &&
+    // A workshop list with titles in it is not empty, even before the model has
+    // written a word about them: the titles and links are content in their own
+    // right, and the reason follows.
+    !(section.workshops?.length ?? 0)
+  );
 }
 
 /** Paragraph breaks are the only formatting asked for, so the body is split
@@ -105,6 +126,7 @@ export default function ReportView({
   domainScores,
   domainDescriptions,
   topDomains,
+  writing = false,
   copy,
 }: Props) {
   const [expandedDomain, setExpandedDomain] = useState<string | null>(null);
@@ -117,16 +139,20 @@ export default function ReportView({
   return (
     <div className="results" translate="no">
       <section aria-live="polite">
-        <div className="status-card done">
-          <span className="status-check" aria-hidden>
-            <CheckIcon size={12} />
-          </span>
+        <div className={`status-card${writing ? ' working' : ' done'}`}>
+          {writing ? (
+            <Spinner size={22} />
+          ) : (
+            <span className="status-check" aria-hidden>
+              <CheckIcon size={12} />
+            </span>
+          )}
           <div>
             <p className="status-heading">
-              <span>{copy.readyHeading}</span>
+              <span>{writing ? copy.writingHeading : copy.readyHeading}</span>
             </p>
             <p className="status-sub">
-              <span>{copy.readySub}</span>
+              <span>{writing ? copy.writingSub : copy.readySub}</span>
             </p>
           </div>
         </div>
@@ -237,9 +263,22 @@ export default function ReportView({
                   <h4 className="scard-title">{section.title}</h4>
                 </div>
                 <div className="scard-body">
+                  {isEmpty(section) ? (
+                    <p className="section-placeholder">
+                      {writing ? copy.writingPlaceholder : ''}
+                    </p>
+                  ) : null}
+
                   {(section.type === 'prose' || section.type === 'static') &&
                   section.body ? (
-                    <Paragraphs text={section.body} />
+                    <>
+                      <Paragraphs text={section.body} />
+                      {writing ? (
+                        <span className="cursor" aria-hidden>
+                          ▍
+                        </span>
+                      ) : null}
+                    </>
                   ) : null}
 
                   {section.type === 'list' && section.items ? (
@@ -292,10 +331,12 @@ export default function ReportView({
                           </div>
                         ))}
                       </div>
+                      {/* Its own class, not `section-placeholder`: that one
+                          means "the model has not written this yet", and a note
+                          about missing URLs is a different statement that
+                          happened to look the same. */}
                       {!anyWorkshopLinked ? (
-                        <p className="section-placeholder">
-                          {copy.workshopsUnlinked}
-                        </p>
+                        <p className="workshops-note">{copy.workshopsUnlinked}</p>
                       ) : null}
                     </>
                   ) : null}

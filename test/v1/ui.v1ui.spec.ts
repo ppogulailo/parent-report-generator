@@ -28,7 +28,14 @@ const NEXT = 'Next';
 const button = (page: Page, name: string) =>
   page.getByRole('button', { name, exact: true });
 
-const submitButton = (page: Page) => button(page, 'Generate Action Plan');
+/**
+ * The step controls appear twice — above and below the questions — so a locator
+ * has to say which. Tests use the bottom one, which sits next to the hint that
+ * explains why Next is disabled.
+ */
+const nav = (page: Page, name: string) => button(page, name).last();
+
+const submitButton = (page: Page) => nav(page, 'Generate Action Plan');
 
 /** Answers every card on the current step; returns how many it answered. */
 async function answerStep(page: Page, index: number): Promise<number> {
@@ -45,7 +52,7 @@ async function answerStep(page: Page, index: number): Promise<number> {
 async function answerAll(page: Page, index: number, next = NEXT) {
   let answered = 0;
   for (let guard = 0; guard < 12; guard++) {
-    const advance = button(page, next);
+    const advance = nav(page, next);
     if ((await advance.count()) === 0) break;
     answered += await answerStep(page, index);
     await advance.click();
@@ -53,9 +60,16 @@ async function answerAll(page: Page, index: number, next = NEXT) {
   expect(answered, 'all 24 questions should have been answered').toBe(24);
 }
 
+// The mock holds one mode at a time, so a test that fails before resetting it
+// would leave every later test talking to a misbehaving model — which reads as a
+// cascade of unrelated failures.
+test.beforeEach(async ({ request }) => {
+  await resetMock(request);
+});
+
 /** Dismisses a resume banner left by an earlier test, so each starts clean. */
 async function freshStart(page: Page, label = 'Start fresh') {
-  const fresh = button(page, label);
+  const fresh = button(page, label).last();
   if (await fresh.isVisible().catch(() => false)) await fresh.click();
 }
 
@@ -97,7 +111,7 @@ test('every question number stays unique across the whole walk', async ({
 
   const numbers: string[] = [];
   for (let guard = 0; guard < 12; guard++) {
-    const next = button(page, NEXT);
+    const next = nav(page, NEXT);
     if ((await next.count()) === 0) break;
     numbers.push(
       ...(await page.locator('#questionnaire .qbadge').allInnerTexts()).map(
@@ -118,7 +132,7 @@ test('Next refuses to advance until the section is complete, and says why', asyn
   await page.goto('/en/v1');
   await freshStart(page);
 
-  const next = button(page, NEXT);
+  const next = nav(page, NEXT);
 
   // Disabled, with the reason already on screen — so a parent never presses a
   // dead button wondering why nothing happened. An earlier version used
@@ -139,18 +153,44 @@ test('Next refuses to advance until the section is complete, and says why', asyn
   await expect(page.locator('.step-count')).toContainText('Step 2 of');
 });
 
+test('the step controls appear above the questions as well as below', async ({
+  page,
+}) => {
+  // On a long section the controls were only reachable by scrolling to the
+  // bottom, which meant scrolling back up to read the heading again.
+  await page.goto('/en/v1');
+  await freshStart(page);
+
+  await expect(button(page, NEXT)).toHaveCount(2);
+  await expect(button(page, 'Back')).toHaveCount(2);
+
+  // The top one is above the first question; the bottom one is below the last.
+  const cards = page.locator('#questionnaire .qcard');
+  const topNav = await button(page, NEXT).first().boundingBox();
+  const firstCard = await cards.first().boundingBox();
+  const bottomNav = await button(page, NEXT).last().boundingBox();
+  const lastCard = await cards.last().boundingBox();
+  expect(topNav!.y).toBeLessThan(firstCard!.y);
+  expect(bottomNav!.y).toBeGreaterThan(lastCard!.y);
+
+  // And the top one advances, so it is a control rather than decoration.
+  await answerStep(page, 0);
+  await button(page, NEXT).first().click();
+  await expect(page.locator('.step-count')).toContainText('Step 2 of');
+});
+
 test('Back returns to the previous section with the answers intact', async ({
   page,
 }) => {
   await page.goto('/en/v1');
   await freshStart(page);
 
-  const back = button(page, 'Back');
+  const back = nav(page, 'Back');
   await expect(back).toBeDisabled();
 
   const firstTitle = await page.locator('.qgroup-title').innerText();
   await answerStep(page, 2);
-  await button(page, NEXT).click();
+  await nav(page, NEXT).click();
   await expect(page.locator('.step-count')).toContainText('Step 2 of');
 
   await back.click();
@@ -183,7 +223,7 @@ test("Next lands the new section's first question at the top of the screen", asy
   await freshStart(page);
 
   await answerStep(page, 1);
-  await button(page, NEXT).click();
+  await nav(page, NEXT).click();
   await expect(page.locator('.step-count')).toContainText('Step 2 of');
 
   // `.qcard` carries scroll-margin-top: 120px, which is what clears the sticky
@@ -269,7 +309,7 @@ test('a saved place is offered back, and Continue lands on the first gap', async
   await freshStart(page);
 
   const answered = await answerStep(page, 0);
-  await button(page, NEXT).click();
+  await nav(page, NEXT).click();
   await expect(page.locator('.step-count')).toContainText('Step 2 of');
 
   await page.reload();
@@ -295,7 +335,7 @@ test('Start fresh discards the saved answers for good', async ({ page }) => {
   await page.reload();
 
   await expect(page.locator('#resume')).toBeVisible();
-  await button(page, 'Start fresh').click();
+  await button(page, 'Start fresh').last().click();
 
   await expect(page.locator('#resume')).toHaveCount(0);
   await expect(page.locator('.progress-label')).toContainText('0');
@@ -379,13 +419,60 @@ test('a parent can complete the questionnaire and read a plan', async ({
   // explaining why they are not links.
   await expect(page.locator('.workshop').first()).toBeVisible();
   await expect(
-    page.locator('.section-placeholder', { hasText: 'coming soon' }),
+    page.locator('.workshops-note', { hasText: 'coming soon' }),
   ).toBeVisible();
 
   // The Universal Guiding Principle is platform copy and must appear verbatim.
   await expect(page.locator('.results')).toContainText(
     'match what you are actually seeing',
   );
+});
+
+test('the results screen arrives before the plan is written', async ({
+  page,
+  request,
+}) => {
+  // The point of streaming. Everything the matrix decided needs no model, so a
+  // parent should be reading their scores while the prose is still arriving —
+  // not watching a spinner on the form for a minute.
+  await setMode(request, 'slow');
+  await page.goto('/en/v1');
+  await freshStart(page);
+  await answerAll(page, 3);
+
+  await submitButton(page).click();
+
+  // Off the form and onto the results almost at once.
+  await expect(page.locator('.results')).toBeVisible({ timeout: 8000 });
+  await expect(page.locator('#questionnaire')).toHaveCount(0);
+
+  // And it is not an empty shell: the decision is all there already.
+  await expect(page.locator('.level-tag')).toContainText('Serious');
+  await expect(page.locator('.domain-card')).toHaveCount(5);
+  await expect(page.locator('.top-domain')).toHaveCount(3);
+  await expect(page.locator('.workshop-title').first()).not.toBeEmpty();
+  // Platform copy is the platform's, so it is whole from the first moment.
+  await expect(page.locator('.results')).toContainText(
+    'match what you are actually seeing',
+  );
+
+  // Still being written: the status says so, and Print is not offered yet.
+  await expect(page.locator('.status-card.working')).toBeVisible();
+  await expect(button(page, 'Save / Print')).toHaveCount(0);
+  // At least one section is still waiting for its prose.
+  await expect(page.locator('.section-placeholder').first()).toBeVisible();
+
+  // Then it finishes on its own.
+  await expect(page.locator('.status-card.done')).toBeVisible({
+    timeout: 60000,
+  });
+  await expect(page.locator('.status-heading')).toContainText(
+    'Your plan is ready.',
+  );
+  await expect(button(page, 'Save / Print')).toBeVisible();
+  await expect(page.locator('.section-placeholder')).toHaveCount(0);
+
+  await resetMock(request);
 });
 
 test('a domain score bar has real height, and expands to its description', async ({
@@ -439,7 +526,7 @@ test('a Spanish parent gets a Spanish plan with English workshop titles', async 
   await page.goto('/es/v1');
   await freshStart(page, 'Empezar de cero');
   await answerAll(page, 3, 'Siguiente');
-  await button(page, 'Generar plan de acción').click();
+  await nav(page, 'Generar plan de acción').click();
 
   await expect(page.locator('.results')).toBeVisible({ timeout: 60000 });
   await expect(page.locator('.status-heading')).toContainText(

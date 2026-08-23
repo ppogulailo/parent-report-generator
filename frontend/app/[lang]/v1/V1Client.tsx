@@ -133,6 +133,112 @@ const EXTRA = {
   },
 } as const;
 
+/** The first stream event: everything the matrix decided. */
+interface StreamDecided {
+  tierId: string;
+  tierLabel: string;
+  tierDescription: string;
+  domainScores: Record<string, number>;
+  topDomains: string[];
+  outline: {
+    key: string;
+    order: number;
+    type: ReportSection['type'];
+    title: string;
+    text?: string;
+  }[];
+  recommendations: { recommendationId: string; title: string }[];
+  workshops: {
+    workshopId: string;
+    title: string;
+    category: string;
+    url: string | null;
+  }[];
+}
+
+/** The plan's shape before any of it is written. Static sections arrive whole —
+ *  that copy is the platform's and needs no model. */
+function skeletonFrom(meta: StreamDecided): ReportSection[] {
+  return meta.outline.map((section) => ({
+    key: section.key,
+    order: section.order,
+    type: section.type,
+    title: section.title,
+    ...(section.type === 'static' ? { body: section.text ?? '' } : {}),
+    // The workshops are the matrix's choice and their titles and links are the
+    // platform's, so they are shown at once with only the "why this family"
+    // line waiting on the model. Making a parent wait for a list we already
+    // hold would be withholding it for no reason.
+    ...(section.type === 'workshopList'
+      ? { workshops: meta.workshops.map((w) => ({ ...w, whyThisFamily: '' })) }
+      : {}),
+  }));
+}
+
+/**
+ * Folds what the model has written so far into the skeleton.
+ *
+ * Ids come from the matrix, never from the stream: a half-written array can hold
+ * a truncated id, and the titles and links a parent sees must not depend on the
+ * model getting them right mid-sentence.
+ */
+function merge(
+  outline: ReportSection[],
+  written: Record<string, unknown>,
+  meta: StreamDecided,
+): ReportSection[] {
+  return outline.map((section) => {
+    const value = written[section.key];
+    if (value === undefined) return section;
+
+    if (section.type === 'prose') {
+      return typeof value === 'string' ? { ...section, body: value } : section;
+    }
+    if (section.type === 'list') {
+      return Array.isArray(value)
+        ? { ...section, items: value.filter((i): i is string => typeof i === 'string') }
+        : section;
+    }
+    if (section.type === 'recommendationList' && Array.isArray(value)) {
+      const items = value as {
+        recommendationId?: string;
+        headline?: string;
+        body?: string;
+      }[];
+      return {
+        ...section,
+        recommendations: meta.recommendations
+          .map((known) => {
+            const match = items.find(
+              (item) => item.recommendationId === known.recommendationId,
+            );
+            if (!match?.headline) return null;
+            return {
+              recommendationId: known.recommendationId,
+              title: known.title,
+              headline: match.headline,
+              body: match.body ?? '',
+            };
+          })
+          .filter((r): r is NonNullable<typeof r> => r !== null),
+      };
+    }
+    if (section.type === 'workshopList' && Array.isArray(value)) {
+      const items = value as { workshopId?: string; whyThisFamily?: string }[];
+      return {
+        ...section,
+        workshops: meta.workshops.map((known) => ({
+          ...known,
+          whyThisFamily:
+            items.find((item) => item.workshopId === known.workshopId)
+              ?.whyThisFamily ?? '',
+        })),
+      };
+    }
+    return section;
+  });
+}
+
 type Step =
   | {
       kind: 'questions';
@@ -157,6 +263,7 @@ export default function V1Client({
   const [urgent, setUrgent] = useState('');
   const [stepIndex, setStepIndex] = useState(0);
   const [stage, setStage] = useState<'form' | 'working' | 'done'>('form');
+  const [writing, setWriting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [sections, setSections] = useState<ReportSection[]>([]);
   const [severity, setSeverity] = useState<ReportSeverity | null>(null);
@@ -330,11 +437,23 @@ export default function V1Client({
     target?.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }, [stepIndex, stage]);
 
+  /**
+   * Opens the stream and moves to the results screen at once.
+   *
+   * The matrix's decision — scores, severity, the workshops with their links,
+   * the platform's own copy — needs no model, so it arrives in the first event
+   * and the parent sees their results immediately. The written sections fill in
+   * behind it. Waiting a minute on the form for all of it was the worst part of
+   * this flow.
+   */
   async function submit() {
     setStage('working');
+    setWriting(true);
     setError(null);
+    setSections([]);
+
     try {
-      const response = await fetch('/api/assessment', {
+      const response = await fetch('/api/assessment/stream', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -345,36 +464,147 @@ export default function V1Client({
         }),
       });
 
-      const body = (await response.json()) as {
-        success?: boolean;
-        error?: string;
-        severity?: ReportSeverity;
-        domainScores?: Record<string, number>;
-        topDomains?: string[];
-        report?: { sections: ReportSection[] };
-      };
-
-      if (!response.ok || !body.success || !body.report) {
-        setError(body.error ?? t.errorHeading);
+      if (!response.ok || !response.body) {
+        const body = (await response.json().catch(() => null)) as {
+          error?: string;
+        } | null;
+        setError(body?.error ?? t.errorHeading);
         setStage('form');
+        setWriting(false);
         return;
       }
 
-      setSections(body.report.sections);
-      setSeverity(body.severity ?? null);
-      setDomainScores(body.domainScores ?? null);
-      setTopDomains(body.topDomains ?? []);
-      setStage('done');
-      // The plan exists now, so the saved answers have done their job. Clearing
-      // them keeps a record of somebody's child out of a browser that is often
-      // on a shared family computer.
-      clearProgress();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let outline: ReportSection[] = [];
+      let meta: StreamDecided | null = null;
+
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        // Events are separated by a blank line; a partial one stays buffered.
+        const frames = buffer.split('\n\n');
+        buffer = frames.pop() ?? '';
+
+        for (const frame of frames) {
+          const event = frame
+            .split('\n')
+            .find((line) => line.startsWith('event:'))
+            ?.slice(6)
+            .trim();
+          const dataLine = frame
+            .split('\n')
+            .find((line) => line.startsWith('data:'));
+          if (!event || !dataLine) continue;
+
+          let payload: unknown;
+          try {
+            payload = JSON.parse(dataLine.slice(5).trim());
+          } catch {
+            continue;
+          }
+
+          if (event === 'decided') {
+            meta = payload as StreamDecided;
+            outline = skeletonFrom(meta);
+            setSeverity({
+              tierId: meta.tierId,
+              label: meta.tierLabel,
+              description: meta.tierDescription,
+            });
+            setDomainScores(meta.domainScores);
+            setTopDomains(meta.topDomains);
+            setSections(outline);
+            // Straight to the results screen, before a word has been written.
+            setStage('done');
+            clearProgress();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+
+          if (event === 'partial' && meta) {
+            const written = (payload as { sections: Record<string, unknown> })
+              .sections;
+            setSections(merge(outline, written, meta));
+          }
+
+          if (event === 'revising' && meta) {
+            // The attempt broke a rule and is being rewritten from scratch, so
+            // what is on screen is not what the parent will keep.
+            setSections(outline);
+          }
+
+          if (event === 'report') {
+            const body = payload as {
+              report: { sections: ReportSection[] };
+              severity?: ReportSeverity;
+            };
+            setSections(body.report.sections);
+            if (body.severity) setSeverity(body.severity);
+            setWriting(false);
+          }
+
+          if (event === 'failed') {
+            setError(
+              (payload as { error?: string }).error ?? t.errorHeading,
+            );
+            setStage('form');
+            setWriting(false);
+            return;
+          }
+        }
+      }
     } catch {
       setError(t.errorHeading);
       setStage('form');
+    } finally {
+      setWriting(false);
     }
   }
+
+  /** Back plus either Next or the generate button. Rendered twice — above and
+   *  below the section — from one definition, so they cannot drift apart. */
+  const stepNav = () => (
+    <div className="stepnav no-print">
+      <button
+        type="button"
+        className="btn btn-secondary"
+        disabled={stepIndex === 0 || loading}
+        onClick={() => goToStep(stepIndex - 1)}
+      >
+        <span>{extra.back}</span>
+      </button>
+
+      {step.kind === 'questions' ? (
+        <button
+          type="button"
+          className="btn btn-primary"
+          // Genuinely disabled, not `aria-disabled`. The first attempt used
+          // aria-disabled so the button stayed pressable and could explain
+          // itself — but aria-disabled tells assistive technology the control IS
+          // disabled, so a screen-reader user got the dead end anyway. The
+          // reason is shown below instead, permanently.
+          disabled={!stepComplete || loading}
+          onClick={() => goToStep(stepIndex + 1)}
+        >
+          <span>{extra.next}</span>
+        </button>
+      ) : (
+        <button
+          type="button"
+          className="btn btn-primary"
+          disabled={!allAnswered || loading}
+          onClick={() => void submit()}
+          aria-busy={loading}
+        >
+          {loading ? <Spinner /> : null}
+          <span>{loading ? t.writing : t.generate}</span>
+        </button>
+      )}
+    </div>
+  );
 
   const questionCard = (question: Question, number: number) => {
     const selected = responses[question.id];
@@ -587,6 +817,11 @@ export default function V1Client({
               </div>
             </div>
 
+            {/* Pagination above the questions as well as below it. On a long
+                section the controls were only reachable by scrolling to the
+                bottom, which meant scrolling back up to read the heading. */}
+            {stepNav()}
+
             {step.kind === 'questions' ? (
               <div className="qgroups">
                 <div>
@@ -731,44 +966,7 @@ export default function V1Client({
               </>
             )}
 
-            <div className="stepnav no-print">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                disabled={stepIndex === 0 || loading}
-                onClick={() => goToStep(stepIndex - 1)}
-              >
-                <span>{extra.back}</span>
-              </button>
-
-              {step.kind === 'questions' ? (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  // Genuinely disabled, not `aria-disabled`. The first attempt
-                  // used aria-disabled so the button stayed pressable and could
-                  // explain itself — but aria-disabled tells assistive
-                  // technology the control IS disabled, so a screen-reader user
-                  // got the dead end anyway. The reason is shown below instead,
-                  // permanently, so nobody has to press it to find out.
-                  disabled={!stepComplete || loading}
-                  onClick={() => goToStep(stepIndex + 1)}
-                >
-                  <span>{extra.next}</span>
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  disabled={!allAnswered || loading}
-                  onClick={() => void submit()}
-                  aria-busy={loading}
-                >
-                  {loading ? <Spinner /> : null}
-                  <span>{loading ? t.writing : t.generate}</span>
-                </button>
-              )}
-            </div>
+            {stepNav()}
 
             {step.kind === 'questions' && !stepComplete ? (
               <p className="generate-hint">
@@ -779,12 +977,6 @@ export default function V1Client({
             {step.kind === 'final' && !allAnswered ? (
               <p className="generate-hint">
                 <span>{t.submitHint}</span>
-              </p>
-            ) : null}
-
-            {loading ? (
-              <p className="generate-hint" aria-live="polite">
-                <span>{t.writingSub}</span>
               </p>
             ) : null}
           </section>
@@ -813,7 +1005,11 @@ export default function V1Client({
               domainDescriptions={domainDescriptions}
               topDomains={topDomains}
               language={language}
+              writing={writing}
               copy={{
+                writingPlaceholder: t.writingPlaceholder,
+                writingHeading: t.writingTitle,
+                writingSub: t.writingSub,
                 planLevelLabel: t.planLevelLabel,
                 domainScoresHeading: t.domainScoresHeading,
                 domainScoresHint: t.domainScoresHint,
@@ -825,7 +1021,8 @@ export default function V1Client({
                 openWorkshop: extra.openWorkshop,
               }}
             />
-            <div className="done-actions no-print">
+            {!writing ? (
+              <div className="done-actions no-print">
               <button
                 type="button"
                 className="btn btn-secondary"
@@ -834,20 +1031,21 @@ export default function V1Client({
                 <span>{t.printButton}</span>
               </button>
               <button
-                type="button"
-                className="btn btn-ghost"
-                onClick={() => {
-                  setStage('form');
-                  setSections([]);
-                  setSeverity(null);
-                  setDomainScores(null);
-                  setTopDomains([]);
-                  goToStep(0);
-                }}
-              >
-                <span>{t.startOverButton}</span>
-              </button>
-            </div>
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    setStage('form');
+                    setSections([]);
+                    setSeverity(null);
+                    setDomainScores(null);
+                    setTopDomains([]);
+                    goToStep(0);
+                  }}
+                >
+                  <span>{t.startOverButton}</span>
+                </button>
+              </div>
+            ) : null}
             <p className="qgroup-desc no-print" style={{ textAlign: 'center' }}>
               {methodologyVersion}
             </p>

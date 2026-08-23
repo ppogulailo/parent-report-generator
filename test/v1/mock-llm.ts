@@ -32,7 +32,15 @@ export type MockMode =
   /** Write one of the static sections the platform owns. */
   | 'writes-static-section'
   /** Return prose instead of JSON. */
-  | 'not-json';
+  | 'not-json'
+  /**
+   * Answer correctly, but slowly, spacing the frames out.
+   *
+   * The mock is otherwise instant, which makes "the results screen appears
+   * before the plan is written" impossible to observe — the whole plan arrives
+   * inside one animation frame. This mode is what lets that claim be tested.
+   */
+  | 'slow';
 
 interface ParsedPrompt {
   sections: { key: string; kind: string; count: number }[];
@@ -210,6 +218,7 @@ export async function startMockLlm(port: number): Promise<MockLlm> {
       let body: {
         messages?: { role: string; content: string }[];
         response_format?: { type: string };
+        stream?: boolean;
       } = {};
       try {
         body = raw ? JSON.parse(raw) : {};
@@ -229,6 +238,67 @@ export async function startMockLlm(port: number): Promise<MockLlm> {
         mode === 'not-json'
           ? 'Here is your plan, in prose, as no one asked.'
           : JSON.stringify(buildValidBody(parsePrompt(user), mode, isRetry));
+
+      // The streaming path asks for SSE. Answering it with a single JSON body
+      // leaves the client waiting for `data:` frames that never arrive — which
+      // is exactly what happened the first time this was written, and it looked
+      // like a bug in the reader rather than in the mock.
+      if (body.stream) {
+        res.writeHead(200, {
+          'Content-Type': 'text/event-stream',
+          'Cache-Control': 'no-cache, no-transform',
+          Connection: 'keep-alive',
+        });
+
+        const frame = (delta: string): void => {
+          res.write(
+            'data: ' +
+              JSON.stringify({
+                choices: [{ delta: { content: delta }, finish_reason: null }],
+              }) +
+              '\n\n',
+          );
+        };
+
+        // Chunked mid-value on purpose: a stream that only ever split on section
+        // boundaries would never exercise the partial-JSON parser, which is the
+        // part most likely to be wrong.
+        const size = 180;
+        const chunks: string[] = [];
+        for (let at = 0; at < content.length; at += size) {
+          chunks.push(content.slice(at, at + size));
+        }
+
+        const finish = (): void => {
+          res.write(
+            'data: ' +
+              JSON.stringify({
+                choices: [{ delta: {}, finish_reason: 'stop' }],
+              }) +
+              '\n\n',
+          );
+          res.write('data: [DONE]\n\n');
+          res.end();
+        };
+
+        if (mode === 'slow') {
+          let index = 0;
+          const tick = setInterval(() => {
+            const next = chunks[index++];
+            if (next === undefined) {
+              clearInterval(tick);
+              finish();
+              return;
+            }
+            frame(next);
+          }, 300);
+          return;
+        }
+
+        for (const chunk of chunks) frame(chunk);
+        finish();
+        return;
+      }
 
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(

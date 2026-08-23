@@ -154,47 +154,120 @@ function renderSectionBody(body: string): React.ReactNode {
 }
 
 // ── Inline icons ─────────────────────────────────────────────
-const CheckIcon = ({ size = 11, stroke = 'currentColor' }: { size?: number; stroke?: string }) => (
+const CheckIcon = ({
+  size = 11,
+  stroke = 'currentColor',
+}: {
+  size?: number;
+  stroke?: string;
+}) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-    <path d="M4 12.5 9.5 18 20 6" stroke={stroke} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M4 12.5 9.5 18 20 6"
+      stroke={stroke}
+      strokeWidth="3"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 const WarningIcon = ({ size = 18 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-    <path d="M12 9v4m0 4h.01M10.3 3.86 1.8 18a1.5 1.5 0 0 0 1.3 2.25h17.8A1.5 1.5 0 0 0 22.2 18L13.7 3.86a1.5 1.5 0 0 0-2.6 0Z" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M12 9v4m0 4h.01M10.3 3.86 1.8 18a1.5 1.5 0 0 0 1.3 2.25h17.8A1.5 1.5 0 0 0 22.2 18L13.7 3.86a1.5 1.5 0 0 0-2.6 0Z"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 const Spinner = ({ size = 16 }: { size?: number }) => (
-  <svg className="spinner" width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-    <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2.5" opacity="0.25" />
-    <path d="M21 12a9 9 0 0 0-9-9" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
+  <svg
+    className="spinner"
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    aria-hidden
+  >
+    <circle
+      cx="12"
+      cy="12"
+      r="9"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      opacity="0.25"
+    />
+    <path
+      d="M21 12a9 9 0 0 0-9-9"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+    />
   </svg>
 );
 const ChevronDown = ({ size = 26 }: { size?: number }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden>
-    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M6 9l6 6 6-6"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 const ChevronRight = () => (
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-    <path d="M9 6l6 6-6 6" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M9 6l6 6-6 6"
+      stroke="currentColor"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 const MoonIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
-    <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+    <path
+      d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 const SunIcon = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden>
     <circle cx="12" cy="12" r="5" stroke="currentColor" strokeWidth="1.75" />
-    <path d="M12 2v2m0 16v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M2 12h2m16 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    <path
+      d="M12 2v2m0 16v2M4.2 4.2l1.4 1.4m12.8 12.8 1.4 1.4M2 12h2m16 0h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+    />
   </svg>
 );
 const LockIcon = () => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden>
-    <rect x="4" y="10" width="16" height="10" rx="2" stroke="currentColor" strokeWidth="1.75" />
-    <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" />
+    <rect
+      x="4"
+      y="10"
+      width="16"
+      height="10"
+      rx="2"
+      stroke="currentColor"
+      strokeWidth="1.75"
+    />
+    <path
+      d="M8 10V7a4 4 0 0 1 8 0v3"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+    />
   </svg>
 );
 
@@ -214,7 +287,9 @@ function barColorFor(score: number): string {
 type Props = { language: Language };
 
 export default function PageClient({ language }: Props) {
-  const [responses, setResponses] = useState<Array<number | null>>(Array(24).fill(null));
+  const [responses, setResponses] = useState<Array<number | null>>(
+    Array(24).fill(null),
+  );
   const [crisis, setCrisis] = useState<string>('');
   const [stage, setStage] = useState<Stage>('idle');
   const [error, setError] = useState<string | null>(null);
@@ -276,7 +351,10 @@ export default function PageClient({ language }: Props) {
     setReport(EMPTY_REPORT);
 
     requestAnimationFrame(() => {
-      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      resultsRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      });
     });
 
     try {
@@ -320,7 +398,10 @@ export default function PageClient({ language }: Props) {
           return;
         }
         if (eventName === 'scores') {
-          setScores({ domainScores: data.domainScores, topDomains: data.topDomains });
+          setScores({
+            domainScores: data.domainScores,
+            topDomains: data.topDomains,
+          });
           if (data.severity) setSeverity(data.severity as SeverityTier);
           setStage('writing');
         } else if (eventName === 'text') {
@@ -351,9 +432,11 @@ export default function PageClient({ language }: Props) {
           const dataParts: string[] = [];
           for (const line of lines) {
             if (line.startsWith('event:')) eventName = line.slice(6).trim();
-            else if (line.startsWith('data:')) dataParts.push(line.slice(5).trim());
+            else if (line.startsWith('data:'))
+              dataParts.push(line.slice(5).trim());
           }
-          if (dataParts.length > 0) handleEvent(eventName, dataParts.join('\n'));
+          if (dataParts.length > 0)
+            handleEvent(eventName, dataParts.join('\n'));
         }
       }
 
@@ -365,19 +448,25 @@ export default function PageClient({ language }: Props) {
   };
 
   const startQuestionnaire = () => {
-    document.getElementById('questionnaire')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document
+      .getElementById('questionnaire')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
   const jumpToFirstUnanswered = () => {
     const idx = responses.findIndex((v) => v === null);
     if (idx >= 0)
-      document.getElementById(`q-${idx}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document
+        .getElementById(`q-${idx}`)
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   const hasAnyReport =
     stage !== 'idle' ||
     scores !== null ||
-    sectionLabels.some(([key]) => report[key as keyof ReportSections].length > 0);
+    sectionLabels.some(
+      ([key]) => report[key as keyof ReportSections].length > 0,
+    );
 
   useEffect(() => {
     document.documentElement.lang = language;
@@ -393,7 +482,8 @@ export default function PageClient({ language }: Props) {
     try {
       const stored = localStorage.getItem('apap-theme');
       if (stored === 'dark' || stored === 'light') initial = stored;
-      else if (window.matchMedia('(prefers-color-scheme: dark)').matches) initial = 'dark';
+      else if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+        initial = 'dark';
     } catch {
       /* ignore */
     }
@@ -416,17 +506,31 @@ export default function PageClient({ language }: Props) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  const submitLabel = loading ? (stage === 'scoring' ? t.scoring : t.writing) : t.generate;
+  const submitLabel = loading
+    ? stage === 'scoring'
+      ? t.scoring
+      : t.writing
+    : t.generate;
   const statusHeading =
-    stage === 'scoring' ? t.scoringTitle : stage === 'writing' ? t.writingTitle : t.doneTitle;
+    stage === 'scoring'
+      ? t.scoringTitle
+      : stage === 'writing'
+        ? t.writingTitle
+        : t.doneTitle;
   const statusSub =
-    stage === 'scoring' ? t.scoringSub : stage === 'writing' ? t.writingSub : t.doneSub;
+    stage === 'scoring'
+      ? t.scoringSub
+      : stage === 'writing'
+        ? t.writingSub
+        : t.doneSub;
 
   // Build display-only domain groups (skip empties), with sequential numbering.
   let displayNo = 0;
   const groups = DOMAIN_ORDER.map((name) => ({
     name,
-    indices: QUESTION_DOMAIN.map((d, i) => (d === name ? i : -1)).filter((i) => i >= 0),
+    indices: QUESTION_DOMAIN.map((d, i) => (d === name ? i : -1)).filter(
+      (i) => i >= 0,
+    ),
   }))
     .filter((g) => g.indices.length > 0)
     .map((g, gi) => {
@@ -469,11 +573,19 @@ export default function PageClient({ language }: Props) {
               type="button"
               className="theme-toggle"
               onClick={() => setTheme((v) => (v === 'dark' ? 'light' : 'dark'))}
-              aria-label={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={
+                theme === 'dark'
+                  ? 'Switch to light mode'
+                  : 'Switch to dark mode'
+              }
             >
               {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
             </button>
-            <nav className="langswitch" aria-label={t.languageLabel} role="radiogroup">
+            <nav
+              className="langswitch"
+              aria-label={t.languageLabel}
+              role="radiogroup"
+            >
               {(['en', 'es'] as Language[]).map((code) => (
                 <Link
                   key={code}
@@ -542,7 +654,11 @@ export default function PageClient({ language }: Props) {
                 </li>
               ))}
             </ul>
-            <button type="button" className="btn btn-primary cta-shine" onClick={startQuestionnaire}>
+            <button
+              type="button"
+              className="btn btn-primary cta-shine"
+              onClick={startQuestionnaire}
+            >
               <span>{t.ctaStart}</span>
             </button>
             <p className="hero-meta">{t.meta}</p>
@@ -556,7 +672,11 @@ export default function PageClient({ language }: Props) {
             </div>
             {!showTopProgress && (
               <div className="scrollcue no-print">
-                <button type="button" onClick={startQuestionnaire} aria-label={t.ctaStart}>
+                <button
+                  type="button"
+                  onClick={startQuestionnaire}
+                  aria-label={t.ctaStart}
+                >
                   <ChevronDown />
                 </button>
               </div>
@@ -573,7 +693,11 @@ export default function PageClient({ language }: Props) {
             <span>{t.severityLegend}</span>
             <span className="scale-swatches" aria-hidden>
               {SEV_COLORS.map((c) => (
-                <span key={c} className="scale-swatch" style={{ background: c }} />
+                <span
+                  key={c}
+                  className="scale-swatch"
+                  style={{ background: c }}
+                />
               ))}
             </span>
             <span>{t.severityLegendHigh}</span>
@@ -585,13 +709,20 @@ export default function PageClient({ language }: Props) {
                 <span>{t.answeredOf(answeredCount)}</span>
               </span>
               {!allAnswered && answeredCount > 0 && (
-                <button type="button" className="progress-jump" onClick={jumpToFirstUnanswered}>
+                <button
+                  type="button"
+                  className="progress-jump"
+                  onClick={jumpToFirstUnanswered}
+                >
                   <span>{t.jumpToNext}</span>
                 </button>
               )}
             </div>
             <div className="progress-track" aria-hidden>
-              <div className="progress-fill" style={{ width: `${progressPct}%` }} />
+              <div
+                className="progress-fill"
+                style={{ width: `${progressPct}%` }}
+              />
             </div>
           </div>
 
@@ -601,13 +732,20 @@ export default function PageClient({ language }: Props) {
                 <div className="qgroup-head">
                   <span className="qgroup-badge">{g.gi + 1}</span>
                   <div style={{ minWidth: 0 }}>
-                    <h3 className="qgroup-title">{domainLabel(language, g.name)}</h3>
-                    <p className="qgroup-desc">{domainDescription(language, g.name)}</p>
+                    <h3 className="qgroup-title">
+                      {domainLabel(language, g.name)}
+                    </h3>
+                    <p className="qgroup-desc">
+                      {domainDescription(language, g.name)}
+                    </p>
                   </div>
                   <span
                     className="qgroup-count"
                     style={{
-                      color: g.answered === g.total ? 'var(--positive)' : 'var(--grey-500)',
+                      color:
+                        g.answered === g.total
+                          ? 'var(--positive)'
+                          : 'var(--grey-500)',
                     }}
                   >
                     {g.answered}/{g.total}
@@ -618,7 +756,11 @@ export default function PageClient({ language }: Props) {
                     const selected = responses[i];
                     const answered = selected !== null;
                     return (
-                      <div className={`qcard${answered ? ' answered' : ''}`} key={i} id={`q-${i}`}>
+                      <div
+                        className={`qcard${answered ? ' answered' : ''}`}
+                        key={i}
+                        id={`q-${i}`}
+                      >
                         <div className="qcard-head">
                           <span className="qbadge">
                             {number}
@@ -630,7 +772,11 @@ export default function PageClient({ language }: Props) {
                           </span>
                           <p className="qtext">{questions[i]}</p>
                         </div>
-                        <div className="opts" role="radiogroup" aria-label={questions[i]}>
+                        <div
+                          className="opts"
+                          role="radiogroup"
+                          aria-label={questions[i]}
+                        >
                           {[1, 2, 3, 4].map((v) => {
                             const checked = selected === v;
                             const c = SEV_COLORS[v - 1];
@@ -659,14 +805,18 @@ export default function PageClient({ language }: Props) {
                                 <span
                                   className="opt-chip"
                                   style={{
-                                    borderColor: checked ? c : `color-mix(in srgb, ${c} 45%, var(--border))`,
+                                    borderColor: checked
+                                      ? c
+                                      : `color-mix(in srgb, ${c} 45%, var(--border))`,
                                     background: checked ? c : 'transparent',
                                     color: checked ? '#fff' : c,
                                   }}
                                 >
                                   {v}
                                 </span>
-                                <span className="opt-text">{answerLabels[i][v - 1]}</span>
+                                <span className="opt-text">
+                                  {answerLabels[i][v - 1]}
+                                </span>
                               </label>
                             );
                           })}
@@ -696,7 +846,9 @@ export default function PageClient({ language }: Props) {
               id="crisis-textarea"
               className="crisis-textarea"
               value={crisis}
-              onChange={(e) => setCrisis(e.target.value.slice(0, CRISIS_MAX_LENGTH))}
+              onChange={(e) =>
+                setCrisis(e.target.value.slice(0, CRISIS_MAX_LENGTH))
+              }
               placeholder={t.crisisPlaceholder}
               maxLength={CRISIS_MAX_LENGTH}
               rows={4}
@@ -731,7 +883,11 @@ export default function PageClient({ language }: Props) {
           <div className="error" role="alert">
             <strong>{t.errorHeading}</strong>
             <span>{error}</span>
-            <button type="button" className="btn btn-secondary" onClick={submit}>
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={submit}
+            >
               <span>{t.retry}</span>
             </button>
           </div>
@@ -743,7 +899,9 @@ export default function PageClient({ language }: Props) {
         {hasAnyReport && (
           <div className="results" translate="no" ref={resultsRef}>
             <section aria-live="polite">
-              <div className={`status-card${loading ? ' working' : ''}${stage === 'done' ? ' done' : ''}`}>
+              <div
+                className={`status-card${loading ? ' working' : ''}${stage === 'done' ? ' done' : ''}`}
+              >
                 {loading && <Spinner size={22} />}
                 {stage === 'done' && (
                   <span className="status-check" aria-hidden>
@@ -761,15 +919,26 @@ export default function PageClient({ language }: Props) {
               </div>
 
               {scores && severity && (
-                <div className="level-card" style={{ background: TIER_COLORS[severity].bg }}>
-                  <span className="level-tag" style={{ background: TIER_COLORS[severity].fg }}>
+                <div
+                  className="level-card"
+                  style={{ background: TIER_COLORS[severity].bg }}
+                >
+                  <span
+                    className="level-tag"
+                    style={{ background: TIER_COLORS[severity].fg }}
+                  >
                     {TIERS[language][severity].label}
                   </span>
                   <div>
-                    <p className="level-overline" style={{ color: TIER_COLORS[severity].fg }}>
+                    <p
+                      className="level-overline"
+                      style={{ color: TIER_COLORS[severity].fg }}
+                    >
                       {t.planLevelLabel}
                     </p>
-                    <p className="level-desc">{TIERS[language][severity].desc}</p>
+                    <p className="level-desc">
+                      {TIERS[language][severity].desc}
+                    </p>
                   </div>
                 </div>
               )}
@@ -777,53 +946,72 @@ export default function PageClient({ language }: Props) {
               {scores && (
                 <>
                   <div className="results-group">
-                    <h3 className="results-group-heading">{t.domainScoresHeading}</h3>
-                    <p className="block-sub" style={{ marginBottom: 14 }}>{t.domainScoresHint}</p>
+                    <h3 className="results-group-heading">
+                      {t.domainScoresHeading}
+                    </h3>
+                    <p className="block-sub" style={{ marginBottom: 14 }}>
+                      {t.domainScoresHint}
+                    </p>
                     <div className="scores">
-                      {Object.entries(scores.domainScores).map(([name, score]) => {
-                        const open = expandedDomain === name;
-                        const desc = domainDescription(language, name);
-                        return (
-                          <div className={`domain-card${open ? ' open' : ''}`} key={name}>
-                            <button
-                              type="button"
-                              className="domain-card-btn"
-                              aria-expanded={open}
-                              onClick={() => toggleDomain(name)}
+                      {Object.entries(scores.domainScores).map(
+                        ([name, score]) => {
+                          const open = expandedDomain === name;
+                          const desc = domainDescription(language, name);
+                          return (
+                            <div
+                              className={`domain-card${open ? ' open' : ''}`}
+                              key={name}
                             >
-                              <span className="domain-chevron">
-                                <ChevronRight />
-                              </span>
-                              <div className="domain-card-main">
-                                <div className="domain-card-top">
-                                  <span className="domain-card-name">{domainLabel(language, name)}</span>
-                                  <span className="domain-card-score">{score.toFixed(2)}</span>
+                              <button
+                                type="button"
+                                className="domain-card-btn"
+                                aria-expanded={open}
+                                onClick={() => toggleDomain(name)}
+                              >
+                                <span className="domain-chevron">
+                                  <ChevronRight />
+                                </span>
+                                <div className="domain-card-main">
+                                  <div className="domain-card-top">
+                                    <span className="domain-card-name">
+                                      {domainLabel(language, name)}
+                                    </span>
+                                    <span className="domain-card-score">
+                                      {score.toFixed(2)}
+                                    </span>
+                                  </div>
+                                  <div className="domain-card-track">
+                                    <div
+                                      className="domain-card-fill"
+                                      style={{
+                                        width: `${Math.max(4, ((score - 1) / 3) * 100)}%`,
+                                        background: barColorFor(score),
+                                      }}
+                                    />
+                                  </div>
                                 </div>
-                                <div className="domain-card-track">
-                                  <div
-                                    className="domain-card-fill"
-                                    style={{
-                                      width: `${Math.max(4, ((score - 1) / 3) * 100)}%`,
-                                      background: barColorFor(score),
-                                    }}
-                                  />
-                                </div>
-                              </div>
-                            </button>
-                            {open && desc && <p className="domain-card-desc">{desc}</p>}
-                          </div>
-                        );
-                      })}
+                              </button>
+                              {open && desc && (
+                                <p className="domain-card-desc">{desc}</p>
+                              )}
+                            </div>
+                          );
+                        },
+                      )}
                     </div>
                   </div>
 
                   <div className="results-group">
-                    <h3 className="results-group-heading">{t.topPrioritiesHeading}</h3>
+                    <h3 className="results-group-heading">
+                      {t.topPrioritiesHeading}
+                    </h3>
                     <div className="top-domains">
                       {scores.topDomains.map((d, i) => (
                         <div className="top-domain" key={d}>
                           <span className="top-rank">{i + 1}</span>
-                          <span className="top-domain-name">{domainLabel(language, d)}</span>
+                          <span className="top-domain-name">
+                            {domainLabel(language, d)}
+                          </span>
                         </div>
                       ))}
                     </div>
@@ -839,14 +1027,18 @@ export default function PageClient({ language }: Props) {
                   // (crisis report only) — skip their cards entirely when empty
                   // so non-crisis plans don't render an empty section box.
                   if (
-                    (key === 'urgentConcern' || key === 'consideringInpatient') &&
+                    (key === 'urgentConcern' ||
+                      key === 'consideringInpatient') &&
                     body.length === 0
                   )
                     return null;
                   const isUrgent = key === 'urgentConcern';
                   const isActive = stage === 'writing' && body.length > 0;
                   return (
-                    <div className={`scard${isUrgent ? ' urgent' : ''}`} key={key}>
+                    <div
+                      className={`scard${isUrgent ? ' urgent' : ''}`}
+                      key={key}
+                    >
                       <div className="scard-head">
                         {isUrgent && <WarningIcon size={17} />}
                         <h4 className="scard-title">{label}</h4>
@@ -874,10 +1066,18 @@ export default function PageClient({ language }: Props) {
 
               {stage === 'done' && (
                 <div className="done-actions no-print">
-                  <button type="button" className="btn btn-secondary" onClick={onPrint}>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={onPrint}
+                  >
                     <span>{t.printButton}</span>
                   </button>
-                  <button type="button" className="btn btn-ghost" onClick={startOver}>
+                  <button
+                    type="button"
+                    className="btn btn-ghost"
+                    onClick={startOver}
+                  >
                     <span>{t.startOverButton}</span>
                   </button>
                 </div>

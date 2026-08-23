@@ -1557,6 +1557,15 @@ main > .block:first-child {
   color: var(--text-tertiary);
 }
 
+/* "Links are coming soon" — a statement about the content ASAP still owes, not
+   about generation being unfinished. Kept distinct from `.section-placeholder`
+   so the two cannot be confused by a reader or a test. */
+.workshops-note {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--text-tertiary);
+}
+
 /* The plan is what a parent takes into a conversation, so it has to survive the
    printer: no card broken across a page, and no link promising a click. */
 @media print {

@@ -36,7 +36,6 @@ export function generateStaticParams() {
   return SUPPORTED.map((lang) => ({ lang }));
 }
 
-
 // Localized <head> metadata. These strings are head-only (title/meta), not
 // visible on-page copy, and target parent-intent search queries on the
 // landing/tool page. Titles ~50–60 chars, descriptions ~140–160 chars.
@@ -174,7 +173,9 @@ export default async function RootLayout({
       <body>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd(lang)) }}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(buildJsonLd(lang)),
+          }}
         />
         {children}
       </body>

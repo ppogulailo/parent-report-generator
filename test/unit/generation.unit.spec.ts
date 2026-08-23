@@ -680,3 +680,94 @@ test('the bare article title still fires on its own', () => {
   );
   expect(violations.map((v) => v.ruleId)).toContain('article-of-action-cited');
 });
+
+// ------------------------------------------------------------ streamed output
+
+/** A stub that streams a canned body in chunks, like the real client does. */
+function streamingLlm(body: string, chunk = 120): LlmClient {
+  return {
+    streamJson: (_messages: unknown, onText: (text: string) => void) => {
+      let accumulated = '';
+      for (let at = 0; at < body.length; at += chunk) {
+        accumulated += body.slice(at, at + chunk);
+        onText(accumulated);
+      }
+      return Promise.resolve(body);
+    },
+  } as unknown as LlmClient;
+}
+
+test('the stream announces the decision before the model is called', async () => {
+  const service = new GenerationService(
+    content,
+    prompts,
+    streamingLlm(JSON.stringify(validResponse())),
+  );
+
+  const events = [];
+  for await (const event of service.generateStream(selection, 'en')) {
+    events.push(event);
+  }
+
+  expect(events[0].type).toBe('decided');
+  const decided = events[0] as Extract<
+    (typeof events)[number],
+    { type: 'decided' }
+  >;
+  expect(decided.tierId).toBe(selection.tierId);
+  expect(decided.recommendations.length).toBeGreaterThan(0);
+  expect(decided.workshops.length).toBe(selection.workshopIds.length);
+  // Static copy needs no model, so it is there from the first event.
+  expect(
+    decided.outline.find((s) => s.key === 'universalGuidingPrinciple')?.text,
+  ).toContain('match what you are actually seeing');
+});
+
+test('the stream reports progress while the plan is being written', async () => {
+  const service = new GenerationService(
+    content,
+    prompts,
+    streamingLlm(JSON.stringify(validResponse())),
+  );
+
+  const events = [];
+  for await (const event of service.generateStream(selection, 'en')) {
+    events.push(event);
+  }
+
+  const partials = events.filter((e) => e.type === 'partial');
+  expect(partials.length, 'a plan written in chunks should report progress')
+    .toBeGreaterThan(0);
+
+  // Progress grows and never shrinks: each snapshot is a superset of the last.
+  let previous = 0;
+  for (const partial of partials) {
+    const count = Object.keys(
+      (partial as Extract<(typeof events)[number], { type: 'partial' }>)
+        .sections,
+    ).length;
+    expect(count).toBeGreaterThanOrEqual(previous);
+    previous = count;
+  }
+
+  expect(events[events.length - 1].type).toBe('report');
+});
+
+test('a static section never appears in progress', async () => {
+  // The model is not shown them, so anything claiming to be one is invented.
+  const service = new GenerationService(
+    content,
+    prompts,
+    streamingLlm(JSON.stringify(validResponse())),
+  );
+
+  for await (const event of service.generateStream(selection, 'en')) {
+    if (event.type !== 'partial') continue;
+    for (const key of Object.keys(event.sections)) {
+      expect(
+        content.sections.sections.find((s) => s.key === key)?.type,
+        key,
+      ).not.toBe('static');
+    }
+  }
+});

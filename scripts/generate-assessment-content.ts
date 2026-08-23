@@ -225,15 +225,15 @@ function build() {
           {
             value: 'post-treatment-unstable',
             label: {
-              en: 'Has been through treatment; use has continued or returned',
-              es: 'Ya pasó por tratamiento; el consumo continuó o regresó',
+              en: 'Been through treatment — use has continued or returned',
+              es: 'Pasó por tratamiento — el consumo continuó o regresó',
             },
           },
           {
             value: 'post-treatment-stable',
             label: {
-              en: 'Has been through treatment and has held a meaningful period without use',
-              es: 'Ya pasó por tratamiento y ha mantenido un periodo significativo sin consumo',
+              en: 'Been through treatment — a meaningful period without use',
+              es: 'Pasó por tratamiento — un periodo significativo sin consumo',
             },
           },
         ],
