@@ -39,6 +39,17 @@ export class AssessmentController {
       title: assessment.title,
       intro: assessment.intro,
       scale: assessment.scale,
+      // The domains, with the questions each one owns, so the questionnaire can
+      // render grouped exactly as the existing one does. The old frontend keeps
+      // its own copy of this map; reading it from content is what stops the two
+      // drifting.
+      domains: assessment.domains.map((d) => ({
+        id: d.id,
+        order: d.order,
+        label: d.label,
+        description: d.description,
+        questionIds: d.questionIds,
+      })),
       questions: assessment.questions.map((q) => ({
         id: q.id,
         order: q.order,

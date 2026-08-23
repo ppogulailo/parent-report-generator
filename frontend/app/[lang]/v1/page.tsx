@@ -25,6 +25,13 @@ interface Questionnaire {
   title: { en: string; es: string };
   intro: { en: string; es: string };
   scale: { min: number; max: number };
+  domains: {
+    id: string;
+    order: number;
+    label: { en: string; es: string };
+    description: { en: string; es: string };
+    questionIds: string[];
+  }[];
   questions: {
     id: string;
     order: number;
@@ -80,7 +87,7 @@ export default async function V1Page({
 
   if (!questionnaire) {
     return (
-      <main className="rv-unavailable">
+      <main className="block">
         <h1>
           {lang === 'es'
             ? 'El cuestionario no está disponible en este momento.'

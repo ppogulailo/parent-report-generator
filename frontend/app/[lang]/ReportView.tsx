@@ -1,16 +1,26 @@
 'use client';
 
+import { useState } from 'react';
+import {
+  CheckIcon,
+  ChevronRight,
+  TIER_COLORS,
+  WarningIcon,
+  barColorFor,
+} from './ui';
+
 /**
- * Renders a Version 1.0 plan.
+ * Renders a Version 1.0 plan in the existing design.
  *
- * The plan arrives as structured sections rather than one block of text, which is
- * what makes two things possible that the streaming view cannot do: a workshop
- * can carry a link, and a section that the model failed to write is visibly
- * absent rather than silently empty.
+ * Every class here already exists in `globals.css` and is what the live
+ * questionnaire uses — `results`, `level-card`, `results-group`, `domain-card`,
+ * `scard`. The plan arrives structured rather than as one block of streamed
+ * text, which is what lets a workshop carry a link and a priority area carry its
+ * own heading, but it should look like the same product.
  *
- * Section types map to shapes, not to hard-coded keys — adding a section in
- * `content/report-templates/sections.json` renders here without a frontend
- * change, which is the point of keeping the report structure in content.
+ * Section types map to shapes rather than to hard-coded keys, so adding a
+ * section in `content/report-templates/sections.json` renders here without a
+ * frontend change.
  */
 
 export type SectionType =
@@ -51,34 +61,37 @@ export interface ReportSeverity {
 interface Props {
   sections: ReportSection[];
   severity: ReportSeverity | null;
+  domainScores: Record<string, number> | null;
+  /** Domain descriptions keyed by the same label the scores use, so an expanded
+   *  card explains what the area means rather than opening onto nothing. */
+  domainDescriptions: Record<string, string>;
+  topDomains: string[];
   language: 'en' | 'es';
+  copy: {
+    planLevelLabel: string;
+    domainScoresHeading: string;
+    domainScoresHint: string;
+    topPrioritiesHeading: string;
+    actionPlanHeading: string;
+    readyHeading: string;
+    readySub: string;
+    workshopsUnlinked: string;
+    openWorkshop: string;
+  };
 }
 
-const COPY = {
-  en: {
-    severity: 'Where this plan sits',
-    workshopsUnlinked: 'Links to these workshops are coming soon.',
-    openWorkshop: 'Open in ASAP Community',
-  },
-  es: {
-    severity: 'Dónde se ubica este plan',
-    workshopsUnlinked: 'Los enlaces a estos workshops estarán disponibles pronto.',
-    openWorkshop: 'Abrir en ASAP Community',
-  },
-} as const;
-
-/** Paragraph breaks are the only formatting the model is asked for, so the body
- *  is split rather than parsed. Nothing here interprets markdown: a stray
- *  asterisk in a parent's plan should read as an asterisk. */
+/** Paragraph breaks are the only formatting asked for, so the body is split
+ *  rather than parsed. Nothing here interprets markdown — a stray asterisk in a
+ *  parent's plan should read as an asterisk. */
 function Paragraphs({ text }: { text: string }) {
   return (
     <>
       {text
         .split(/\n{2,}/)
-        .map((paragraph) => paragraph.trim())
+        .map((p) => p.trim())
         .filter(Boolean)
         .map((paragraph, index) => (
-          <p key={index} className="rv-p">
+          <p className="section-para" key={index}>
             {paragraph}
           </p>
         ))}
@@ -86,94 +99,212 @@ function Paragraphs({ text }: { text: string }) {
   );
 }
 
-export default function ReportView({ sections, severity, language }: Props) {
-  const copy = COPY[language];
+export default function ReportView({
+  sections,
+  severity,
+  domainScores,
+  domainDescriptions,
+  topDomains,
+  copy,
+}: Props) {
+  const [expandedDomain, setExpandedDomain] = useState<string | null>(null);
   const ordered = [...sections].sort((a, b) => a.order - b.order);
-  const anyWorkshopLinked = ordered.some((section) =>
-    section.workshops?.some((workshop) => workshop.url !== null),
+  const tier = severity ? TIER_COLORS[severity.tierId] : undefined;
+  const anyWorkshopLinked = ordered.some((s) =>
+    s.workshops?.some((w) => w.url !== null),
   );
 
   return (
-    <div className="rv">
-      {severity ? (
-        <div className="rv-severity">
-          <span className="rv-severity-label">{copy.severity}</span>
-          <strong className="rv-severity-tier">{severity.label}</strong>
-          <p className="rv-severity-desc">{severity.description}</p>
+    <div className="results" translate="no">
+      <section aria-live="polite">
+        <div className="status-card done">
+          <span className="status-check" aria-hidden>
+            <CheckIcon size={12} />
+          </span>
+          <div>
+            <p className="status-heading">
+              <span>{copy.readyHeading}</span>
+            </p>
+            <p className="status-sub">
+              <span>{copy.readySub}</span>
+            </p>
+          </div>
         </div>
-      ) : null}
 
-      {ordered.map((section) => (
-        <section key={section.key} className="rv-section">
-          <h2 className="rv-h2">{section.title}</h2>
-
-          {(section.type === 'prose' || section.type === 'static') &&
-          section.body ? (
-            <Paragraphs text={section.body} />
-          ) : null}
-
-          {section.type === 'list' && section.items ? (
-            <ul className="rv-list">
-              {section.items.map((item, index) => (
-                <li key={index}>{item}</li>
-              ))}
-            </ul>
-          ) : null}
-
-          {section.type === 'recommendationList' && section.recommendations ? (
-            <div className="rv-recs">
-              {section.recommendations.map((rec) => (
-                <article key={rec.recommendationId} className="rv-rec">
-                  <h3 className="rv-h3">{rec.headline}</h3>
-                  {/* The area's own name, from the matrix — so a parent can see
-                      the methodology's framing alongside the model's headline. */}
-                  <span className="rv-rec-area">{rec.title}</span>
-                  <Paragraphs text={rec.body} />
-                </article>
-              ))}
+        {severity && tier ? (
+          <div className="level-card" style={{ background: tier.bg }}>
+            <span className="level-tag" style={{ background: tier.fg }}>
+              {severity.label}
+            </span>
+            <div>
+              <p className="level-overline" style={{ color: tier.fg }}>
+                {copy.planLevelLabel}
+              </p>
+              <p className="level-desc">{severity.description}</p>
             </div>
-          ) : null}
+          </div>
+        ) : null}
 
-          {section.type === 'workshopList' && section.workshops ? (
-            <>
-              <ul className="rv-workshops">
-                {section.workshops.map((workshop) => (
-                  <li key={workshop.workshopId} className="rv-workshop">
-                    <span className="rv-workshop-cat">{workshop.category}</span>
-                    {workshop.url ? (
-                      <a
-                        className="rv-workshop-title rv-link"
-                        href={workshop.url}
-                        target="_blank"
-                        // noopener is the security half; noreferrer keeps the
-                        // plan's URL out of the destination's logs, which for a
-                        // document about a family's child is the point.
-                        rel="noopener noreferrer"
+        {domainScores ? (
+          <>
+            <div className="results-group">
+              <h3 className="results-group-heading">
+                {copy.domainScoresHeading}
+              </h3>
+              <p className="block-sub" style={{ marginBottom: 14 }}>
+                {copy.domainScoresHint}
+              </p>
+              <div className="scores">
+                {Object.entries(domainScores).map(([name, score]) => {
+                  const open = expandedDomain === name;
+                  const description = domainDescriptions[name];
+                  return (
+                    <div
+                      className={`domain-card${open ? ' open' : ''}`}
+                      key={name}
+                    >
+                      <button
+                        type="button"
+                        className="domain-card-btn"
+                        aria-expanded={open}
+                        onClick={() => setExpandedDomain(open ? null : name)}
                       >
-                        {workshop.title}
-                        <span className="rv-workshop-cta">
-                          {copy.openWorkshop}
+                        <span className="domain-chevron">
+                          <ChevronRight />
                         </span>
-                      </a>
-                    ) : (
-                      <span className="rv-workshop-title">
-                        {workshop.title}
-                      </span>
-                    )}
-                    <p className="rv-p rv-workshop-why">
-                      {workshop.whyThisFamily}
-                    </p>
-                  </li>
-                ))}
-              </ul>
-              {!anyWorkshopLinked ? (
-                <p className="rv-note">{copy.workshopsUnlinked}</p>
-              ) : null}
-            </>
-          ) : null}
-        </section>
-      ))}
+                        {/* Divs, not spans: `.domain-card-track` is 6px tall and
+                            an inline element ignores height, which silently
+                            renders the score bar as nothing at all. */}
+                        <div className="domain-card-main">
+                          <div className="domain-card-top">
+                            <span className="domain-card-name">{name}</span>
+                            <span className="domain-card-score">
+                              {score.toFixed(2)}
+                            </span>
+                          </div>
+                          <div className="domain-card-track">
+                            <div
+                              className="domain-card-fill"
+                              style={{
+                                // The scale starts at 1, so 1 is an empty bar
+                                // and 4 is a full one. Dividing by 4 would show
+                                // a quarter-full bar for the healthiest answer.
+                                width: `${Math.max(4, ((score - 1) / 3) * 100)}%`,
+                                background: barColorFor(score),
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </button>
+                      {open && description ? (
+                        <p className="domain-card-desc">{description}</p>
+                      ) : null}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
 
+            {topDomains.length > 0 ? (
+              <div className="results-group">
+                <h3 className="results-group-heading">
+                  {copy.topPrioritiesHeading}
+                </h3>
+                <div className="top-domains">
+                  {topDomains.map((name, index) => (
+                    <div className="top-domain" key={name}>
+                      <span className="top-rank">{index + 1}</span>
+                      <span className="top-domain-name">{name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </>
+        ) : null}
+
+        <h3 className="results-group-heading">{copy.actionPlanHeading}</h3>
+        <div className="sections">
+          {ordered.map((section) => {
+            const isUrgent = section.key === 'urgentConcern';
+            return (
+              <div
+                className={`scard${isUrgent ? ' urgent' : ''}`}
+                key={section.key}
+              >
+                <div className="scard-head">
+                  {isUrgent ? <WarningIcon size={17} /> : null}
+                  <h4 className="scard-title">{section.title}</h4>
+                </div>
+                <div className="scard-body">
+                  {(section.type === 'prose' || section.type === 'static') &&
+                  section.body ? (
+                    <Paragraphs text={section.body} />
+                  ) : null}
+
+                  {section.type === 'list' && section.items ? (
+                    <ul className="section-list">
+                      {section.items.map((item, index) => (
+                        <li key={index}>{item}</li>
+                      ))}
+                    </ul>
+                  ) : null}
+
+                  {section.type === 'recommendationList' &&
+                  section.recommendations
+                    ? section.recommendations.map((rec) => (
+                        <div className="priority" key={rec.recommendationId}>
+                          <p className="priority-area">{rec.title}</p>
+                          <h5 className="priority-headline">{rec.headline}</h5>
+                          <Paragraphs text={rec.body} />
+                        </div>
+                      ))
+                    : null}
+
+                  {section.type === 'workshopList' && section.workshops ? (
+                    <>
+                      <div className="workshops">
+                        {section.workshops.map((workshop) => (
+                          <div className="workshop" key={workshop.workshopId}>
+                            <p className="workshop-cat">{workshop.category}</p>
+                            {workshop.url ? (
+                              <a
+                                className="workshop-title workshop-link"
+                                href={workshop.url}
+                                target="_blank"
+                                // noopener is the security half; noreferrer keeps
+                                // the plan's URL out of the destination's logs,
+                                // which for a document about a family's child is
+                                // the point rather than a formality.
+                                rel="noopener noreferrer"
+                              >
+                                {workshop.title}
+                                <span className="workshop-cta">
+                                  {copy.openWorkshop}
+                                </span>
+                              </a>
+                            ) : (
+                              <p className="workshop-title">{workshop.title}</p>
+                            )}
+                            <p className="section-para">
+                              {workshop.whyThisFamily}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                      {!anyWorkshopLinked ? (
+                        <p className="section-placeholder">
+                          {copy.workshopsUnlinked}
+                        </p>
+                      ) : null}
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }

@@ -1411,269 +1411,90 @@ html[data-theme='dark'] .orb-2 {
 }
 
 /* ---------------------------------------------------------------------------
-   Version 1.0 report view (ReportView.tsx)
+   Version 1.0 additions
 
-   The plan arrives as structured sections rather than one block of streamed
-   text, so each section type gets a shape rather than the whole report sharing
-   one prose style.
+   The V1 flow reuses the existing design wholesale — brandbar, block, qgroups,
+   qcard, opts, crisis-card, results, level-card, domain-card, scard. These are
+   the only two shapes the old report could not have, because it was one block of
+   streamed text: a priority area with its own heading, and a workshop that can
+   carry a link.
    --------------------------------------------------------------------------- */
-.rv {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.priority {
+  padding-bottom: 14px;
+  margin-bottom: 14px;
+  border-bottom: 1px solid var(--border);
 }
-.rv-severity {
-  border: 1px solid var(--border);
-  background: var(--surface-sunken);
-  border-radius: var(--radius-lg);
-  padding: 1rem 1.25rem;
+.priority:last-child {
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-bottom: 0;
 }
-.rv-severity-label {
-  display: block;
-  font-size: 0.75rem;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-.rv-severity-tier {
-  display: block;
-  font-size: 1.25rem;
-  margin-top: 0.25rem;
-}
-.rv-severity-desc {
-  margin: 0.5rem 0 0;
-  color: var(--text-secondary);
-}
-.rv-section {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-.rv-h2 {
-  font-size: 1.35rem;
-  line-height: 1.25;
-  margin: 0;
-}
-.rv-h3 {
-  font-size: 1.05rem;
-  margin: 0;
-}
-.rv-p {
-  margin: 0;
-  color: var(--text-secondary);
-  line-height: 1.65;
-}
-.rv-list {
-  margin: 0;
-  padding-left: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-.rv-recs {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-.rv-rec {
-  border-left: 3px solid var(--border-strong);
-  padding-left: 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.rv-rec-area {
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--text-tertiary);
-}
-.rv-workshops {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-.rv-workshop {
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 0.875rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-.rv-workshop-cat {
+.priority-area {
+  margin: 0 0 2px;
   font-size: 0.7rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text-tertiary);
 }
-.rv-workshop-title {
-  font-weight: 600;
+.priority-headline {
+  margin: 0 0 6px;
+  font-size: 1rem;
+  line-height: 1.35;
   color: var(--text-primary);
 }
-.rv-link {
-  color: var(--accent-violet);
+.workshops {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.workshop {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  background: var(--surface);
+}
+.workshop-cat {
+  margin: 0 0 2px;
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.workshop-title {
+  display: block;
+  margin: 0 0 4px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--text-primary);
   text-decoration: none;
 }
-.rv-link:hover {
+.workshop-link {
+  color: var(--accent-violet);
+}
+.workshop-link:hover .workshop-cta,
+.workshop-link:focus-visible .workshop-cta {
   text-decoration: underline;
 }
-.rv-workshop-cta {
+.workshop-cta {
   display: block;
+  margin-top: 2px;
   font-size: 0.75rem;
   font-weight: 400;
   color: var(--text-tertiary);
 }
-.rv-workshop-why {
-  font-size: 0.95rem;
-}
-.rv-note {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--text-tertiary);
-}
 
-/* The plan is the thing parents print and take to a conversation, so it
-   has to survive the printer: no cards broken across pages, and links
-   that still say where they go on paper. */
+/* The plan is what a parent takes into a conversation, so it has to survive the
+   printer: no card broken across a page, and no link promising a click. */
 @media print {
-  .rv-section,
-  .rv-rec,
-  .rv-workshop {
+  .priority,
+  .workshop {
     break-inside: avoid;
   }
-  .rv-link {
+  .workshop-link {
     color: var(--text-primary);
     text-decoration: underline;
   }
-  .rv-workshop-cta {
+  .workshop-cta {
     display: none;
-  }
-}
-
-/* ---------------------------------------------------------------------------
-   Version 1.0 questionnaire (v1/V1Client.tsx)
-
-   A separate route while the existing questionnaire keeps serving parents. See
-   LAUNCH-READINESS.md for the switch-over.
-   --------------------------------------------------------------------------- */
-.v1-main {
-  max-width: 44rem;
-  margin: 0 auto;
-  padding: 2rem 1.25rem 4rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-.v1-title {
-  font-size: 1.75rem;
-  line-height: 1.2;
-  margin: 0;
-}
-.v1-intro {
-  margin: 0;
-  color: var(--text-secondary);
-  line-height: 1.6;
-}
-.v1-draft {
-  margin: 0;
-  padding: 0.75rem 1rem;
-  border-radius: var(--radius-md);
-  background: var(--warning-surface);
-  color: var(--warning);
-  font-size: 0.9rem;
-}
-.v1-questions {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-.v1-fieldset {
-  border: 0;
-  margin: 0;
-  padding: 0;
-}
-.v1-legend {
-  padding: 0;
-  font-weight: 600;
-  line-height: 1.45;
-  display: block;
-}
-.v1-optional {
-  font-weight: 400;
-  font-size: 0.8rem;
-  color: var(--text-tertiary);
-}
-.v1-help {
-  margin: 0.35rem 0 0;
-  font-size: 0.875rem;
-  color: var(--text-tertiary);
-  line-height: 1.5;
-}
-.v1-options {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-  margin-top: 0.6rem;
-}
-.v1-option {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.6rem;
-  padding: 0.6rem 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  line-height: 1.45;
-}
-.v1-option:hover {
-  border-color: var(--border-strong);
-}
-/* Focus lands on the input, but the box is what a sighted keyboard user is
-   tracking, so the ring goes round the box. */
-.v1-option:focus-within {
-  outline: 2px solid var(--focus-ring);
-  outline-offset: 2px;
-}
-.v1-gate,
-.v1-urgent {
-  border-top: 1px solid var(--border);
-  padding-top: 1.25rem;
-  margin-top: 0.5rem;
-}
-.v1-done-actions {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
-}
-.v1-version {
-  margin: 0;
-  font-size: 0.75rem;
-  color: var(--text-tertiary);
-}
-.rv-unavailable {
-  max-width: 32rem;
-  margin: 4rem auto;
-  padding: 0 1.25rem;
-}
-
-@media print {
-  .v1-done-actions,
-  .v1-draft,
-  .v1-version {
-    display: none;
-  }
-  .v1-main {
-    padding: 0;
-    max-width: none;
   }
 }
