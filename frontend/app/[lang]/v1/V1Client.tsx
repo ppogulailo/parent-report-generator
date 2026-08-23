@@ -172,7 +172,7 @@ export default function V1Client({
     answered: number;
   } | null>(null);
 
-  const stepTop = useRef<HTMLDivElement | null>(null);
+  const stepRoot = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const stored = localStorage.getItem('apap-theme');
@@ -270,9 +270,8 @@ export default function V1Client({
 
   const stepAnswered =
     step.kind === 'questions'
-      ? step.items.filter(
-          (item) => responses[item.question.id] !== undefined,
-        ).length
+      ? step.items.filter((item) => responses[item.question.id] !== undefined)
+          .length
       : 0;
   const stepComplete =
     step.kind === 'final' || stepAnswered === step.items.length;
@@ -308,10 +307,28 @@ export default function V1Client({
 
   function goToStep(next: number) {
     setStepIndex(next);
-    // The step header, not the top of the document: the parent has already read
-    // the title and should not scroll past it once per section.
-    stepTop.current?.scrollIntoView({ block: 'start', behavior: 'smooth' });
   }
+
+  /**
+   * Put the new step's first question at the top of the screen.
+   *
+   * In an effect rather than in `goToStep`, because the new step's cards do not
+   * exist until React has rendered them — scrolling in the click handler moved
+   * to wherever the OLD step's content happened to be, which is why pressing
+   * Next used to leave a parent halfway down the previous section.
+   *
+   * `.qcard` carries `scroll-margin-top: 120px`, so `scrollIntoView` clears the
+   * sticky brandbar without this needing to know how tall it is. The step header
+   * is the fallback for the final step, which has no question cards.
+   */
+  useEffect(() => {
+    if (stage !== 'form') return;
+    const root = stepRoot.current;
+    if (!root) return;
+    const target =
+      root.querySelector('.qcard') ?? root.querySelector('.qgroup-head');
+    target?.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  }, [stepIndex, stage]);
 
   async function submit() {
     setStage('working');
@@ -535,8 +552,7 @@ export default function V1Client({
         ) : null}
 
         {stage !== 'done' && !saved ? (
-          <section className="block" id="questionnaire">
-            <div ref={stepTop} />
+          <section className="block" id="questionnaire" ref={stepRoot}>
             <h2 className="block-heading">{t.questionnaireHeading}</h2>
             <p className="block-sub">{t.questionnaireSub}</p>
 
@@ -608,59 +624,85 @@ export default function V1Client({
                   </div>
                 </div>
 
-                {questionnaire.gates.map((gate) => (
-                  <div className="crisis-card" key={gate.id}>
-                    <h2 className="crisis-heading">
-                      {gate.prompt[language]}{' '}
-                      <span className="qgroup-desc">({extra.optional})</span>
-                    </h2>
-                    {gate.help ? (
-                      <p className="crisis-intro">{gate.help[language]}</p>
-                    ) : null}
+                {/* A question, so it looks like one. It was a grey note card,
+                    which read as an aside next to the urgent field rather than
+                    as something to answer — and with no 1–4 chip the options
+                    were bare text with nothing to aim at. */}
+                {questionnaire.gates.map((gate) => {
+                  const chosen = gates[gate.id];
+                  return (
                     <div
-                      className="opts"
-                      role="radiogroup"
-                      aria-label={gate.prompt[language]}
+                      className={`qcard${chosen ? ' answered' : ''}`}
+                      key={gate.id}
                     >
-                      {gate.options.map((option) => {
-                        const checked = gates[gate.id] === option.value;
-                        return (
-                          <label
-                            key={option.value}
-                            className="opt"
-                            style={
-                              checked
-                                ? {
-                                    borderColor: 'var(--accent-violet)',
-                                    background:
-                                      'color-mix(in srgb, var(--accent-violet) 10%, var(--surface))',
-                                  }
-                                : undefined
-                            }
-                          >
-                            <input
-                              type="radio"
-                              className="visually-hidden"
-                              name={gate.id}
-                              value={option.value}
-                              checked={checked}
-                              onChange={() =>
-                                setGates((previous) => ({
-                                  ...previous,
-                                  [gate.id]: option.value,
-                                }))
-                              }
-                              aria-label={option.label[language]}
-                            />
-                            <span className="opt-text">
-                              {option.label[language]}
+                      {/* No number badge: this question is outside the scored
+                          twenty-four, and borrowing their numbering would imply
+                          it counts toward the plan. It does not. */}
+                      <div className="qcard-head">
+                        <div style={{ minWidth: 0 }}>
+                          <p className="qtext">
+                            {gate.prompt[language]}{' '}
+                            <span className="opt-optional">
+                              {extra.optional}
                             </span>
-                          </label>
-                        );
-                      })}
+                          </p>
+                          {gate.help ? (
+                            <p className="qgroup-desc">{gate.help[language]}</p>
+                          ) : null}
+                        </div>
+                      </div>
+                      <div
+                        className="opts"
+                        role="radiogroup"
+                        aria-label={gate.prompt[language]}
+                      >
+                        {gate.options.map((option) => {
+                          const checked = chosen === option.value;
+                          return (
+                            <label
+                              key={option.value}
+                              className="opt"
+                              style={
+                                checked
+                                  ? {
+                                      borderColor: 'var(--accent-violet)',
+                                      background:
+                                        'color-mix(in srgb, var(--accent-violet) 10%, var(--surface))',
+                                    }
+                                  : undefined
+                              }
+                            >
+                              <input
+                                type="radio"
+                                className="visually-hidden"
+                                name={gate.id}
+                                value={option.value}
+                                checked={checked}
+                                onChange={() =>
+                                  setGates((previous) => ({
+                                    ...previous,
+                                    [gate.id]: option.value,
+                                  }))
+                                }
+                                aria-label={option.label[language]}
+                              />
+                              {/* Stands in for the 1–4 chip: without something
+                                  to aim at, the options read as a list rather
+                                  than a set of choices. */}
+                              <span
+                                className={`opt-radio${checked ? ' checked' : ''}`}
+                                aria-hidden
+                              />
+                              <span className="opt-text">
+                                {option.label[language]}
+                              </span>
+                            </label>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
 
                 <div className="crisis-card">
                   <h2 className="crisis-heading">{t.crisisHeading}</h2>

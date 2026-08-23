@@ -195,8 +195,10 @@ function build() {
           es: '¿En qué punto está tu hijo con el tratamiento o la consejería en este momento?',
         },
         help: {
-          en: 'Optional. This does not affect your plan’s priorities — it only tells us whether to point you toward the Sustaining Recovery track.',
-          es: 'Opcional. Esto no afecta las prioridades de tu plan — solo nos dice si conviene orientarte hacia el camino de Sustaining Recovery.',
+          // No leading "Optional." — the question already carries an Optional
+          // tag, and saying it twice reads as a warning rather than a note.
+          en: 'This does not affect your plan’s priorities. It only tells us whether to point you toward the Sustaining Recovery track.',
+          es: 'Esto no afecta las prioridades de tu plan. Solo nos dice si conviene orientarte hacia el camino de Sustaining Recovery.',
         },
         options: [
           {

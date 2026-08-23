@@ -1421,6 +1421,43 @@ main > .block:first-child {
   padding-top: 40px;
 }
 
+/* The choice questions have no 1–4 scale, so they get a radio dot where the
+   scored questions get their numbered chip. Same size and position, so a column
+   of options lines up whichever kind of question it belongs to. */
+.opt-radio {
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border-strong);
+  background: transparent;
+  position: relative;
+  transition: var(--t-control, 120ms ease);
+  /* Decorative and aria-hidden, so it must not absorb a click. `.visually-hidden`
+     positions the real input absolutely at the label's origin — directly under
+     this dot — so without this the dot intercepts pointer events aimed at the
+     input. A person clicking the label was unaffected, since the label fires
+     either way, but anything targeting the control itself was blocked. */
+  pointer-events: none;
+}
+.opt-radio.checked {
+  border-color: var(--accent-violet);
+}
+.opt-radio.checked::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border-radius: 50%;
+  background: var(--accent-violet);
+}
+/* "Optional" beside a question, quiet enough not to compete with the question. */
+.opt-optional {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
 /* Step navigation. The questionnaire is stepped one concern domain at a time, so
    Back and Next sit together under the section; on the last step Next becomes
    the generate button. `space-between` rather than a flex-end row, so Back stays

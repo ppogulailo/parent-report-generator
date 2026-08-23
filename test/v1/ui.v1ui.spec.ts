@@ -174,6 +174,71 @@ test('the last step holds the optional questions and the generate button', async
   await expect(button(page, NEXT)).toHaveCount(0);
 });
 
+test("Next lands the new section's first question at the top of the screen", async ({
+  page,
+}) => {
+  // Pressing Next used to scroll to wherever the OLD step's content happened to
+  // be, because the click handler ran before React had rendered the new cards.
+  await page.goto('/en/v1');
+  await freshStart(page);
+
+  await answerStep(page, 1);
+  await button(page, NEXT).click();
+  await expect(page.locator('.step-count')).toContainText('Step 2 of');
+
+  // `.qcard` carries scroll-margin-top: 120px, which is what clears the sticky
+  // brandbar. Anything much larger means the parent has to scroll to find the
+  // question they were sent to.
+  await expect
+    .poll(
+      async () =>
+        Math.round(
+          (await page.locator('#questionnaire .qcard').first().boundingBox())
+            ?.y ?? 9999,
+        ),
+      { timeout: 5000 },
+    )
+    .toBeLessThan(200);
+
+  // And the brandbar is still the only thing above it.
+  const bar = await page.locator('.brandbar').boundingBox();
+  expect((bar?.y ?? 0) + (bar?.height ?? 0)).toBeLessThanOrEqual(130);
+});
+
+test('the optional treatment question reads as a question, not an aside', async ({
+  page,
+}) => {
+  await page.goto('/en/v1');
+  await freshStart(page);
+  await answerAll(page, 1);
+
+  // A question card like the scored ones, not the grey note card it used to be.
+  const gate = page.locator('.qcard', {
+    has: page.locator('input[name="treatment-status"]'),
+  });
+  await expect(gate).toBeVisible();
+  await expect(gate.locator('.qtext')).toContainText(
+    'treatment or counselling',
+  );
+  await expect(gate.locator('.opt-optional')).toHaveText('Optional');
+
+  // It carries no number badge: it sits outside the scored twenty-four, and
+  // borrowing their numbering would imply it counts toward the plan.
+  await expect(gate.locator('.qbadge')).toHaveCount(0);
+
+  // "Optional" is said once, by the tag — not again at the start of the help.
+  await expect(gate.locator('.qgroup-desc')).not.toContainText('Optional.');
+
+  // Each option has something to aim at, and only the chosen one is filled.
+  const dots = gate.locator('.opt-radio');
+  await expect(dots).toHaveCount(5);
+  await expect(gate.locator('.opt-radio.checked')).toHaveCount(0);
+
+  await page.locator('input[name="treatment-status"]').nth(4).check();
+  await expect(gate.locator('.opt-radio.checked')).toHaveCount(1);
+  await expect(gate).toHaveClass(/answered/);
+});
+
 test('the draft notice is shown while the content is unapproved', async ({
   page,
 }) => {
