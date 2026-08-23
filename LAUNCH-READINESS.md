@@ -29,13 +29,14 @@ flipped deliberately. Nothing on this page needs new development.
 | Baseline comparison runs offline, so it can gate CI | `scripts/compare-baseline.ts` |
 | Switch-over is a build arg, and reversible | `frontend/app/site.ts` → `V1_IS_DEFAULT` |
 | Baseline captured from the current system; no severity moved on any of 8 plans | `baseline/`, `npm run baseline:compare` |
-| Verified against the real model: every wording rule satisfied, two defects found and fixed | `RECOMMENDATION-MATRIX.md` §6.9 |
+| Verified against the real model — all 4 severities × both languages, every rule satisfied | `verification/`, `npm run verify:real-model` |
+| Five defects found by those runs and fixed | `RECOMMENDATION-MATRIX.md` §6.8–§6.10 |
 | Site origin centralised so the hostname change is config, not code | `frontend/app/site.ts` |
 
 | The endpoint, the guard, the validator and the retry loop tested over real HTTP | `test/v1/api.v1.spec.ts` — 25 tests against a mock model |
 | A parent can complete the questionnaire and read a plan, in a browser | `test/v1/ui.v1ui.spec.ts` — 8 tests, self-contained stack |
 
-**Test state:** 92 tests — 59 unit, 25 API, 8 browser. `npm run content:validate`
+**Test state:** 96 tests — 63 unit, 25 API, 8 browser, plus 8 real-model plans. `npm run content:validate`
 clean. `npm run build` and the frontend build both clean.
 
 ```bash
@@ -100,8 +101,9 @@ does, and a reversible switch is worth more than a tidy diff on the day.
 1. ~~Capture the baseline~~ — done, committed under `baseline/`.
 2. ~~Compare it~~ — done. No severity moved; §6.8 catalogues the resource
    differences for Dave.
-3. ~~Generate against a real model and read it~~ — done for Serious/English;
-   §6.9 records what it found. Worth repeating for Spanish before launch.
+3. ~~Generate against a real model and read it~~ — done for all four severities
+   in both languages; §6.8–§6.10 record what it found. Re-run with
+   `npm run verify:real-model` after any prompt or content change.
 4. **Get Dave's approval on the matrix**, including the recovered Effective
    Communication rule in §6.8 and its threshold, which is ours rather than the
    methodology's.

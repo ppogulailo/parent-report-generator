@@ -1,0 +1,130 @@
+{
+  "mild-en": {
+    "tier": "mild",
+    "sections": 10,
+    "checks": {
+      "every section written": true,
+      "professional-help sequence when triggered": true,
+      "private-search line when triggered": true,
+      "guiding principles rendered verbatim": true,
+      "standardized closing correct for tier": true,
+      "urgent sections correct for input": true,
+      "peer-support group cited": true,
+      "no banned vocabulary": true,
+      "no answer label quoted": true,
+      "workshop titles never translated": true
+    }
+  },
+  "mild-es": {
+    "tier": "mild",
+    "sections": 10,
+    "checks": {
+      "every section written": true,
+      "professional-help sequence when triggered": true,
+      "private-search line when triggered": true,
+      "guiding principles rendered verbatim": true,
+      "standardized closing correct for tier": true,
+      "urgent sections correct for input": true,
+      "peer-support group cited": true,
+      "no banned vocabulary": true,
+      "no answer label quoted": true,
+      "workshop titles never translated": true
+    }
+  },
+  "moderate-en": {
+    "tier": "moderate",
+    "sections": 11,
+    "checks": {
+      "every section written": true,
+      "professional-help sequence when triggered": true,
+      "private-search line when triggered": true,
+      "guiding principles rendered verbatim": true,
+      "standardized closing correct for tier": true,
+      "urgent sections correct for input": true,
+      "peer-support group cited": true,
+      "no banned vocabulary": false,
+      "no answer label quoted": true,
+      "workshop titles never translated": true
+    }
+  },
+  "moderate-es": {
+    "tier": "moderate",
+    "sections": 11,
+    "checks": {
+      "every section written": true,
+      "professional-help sequence when triggered": true,
+      "private-search line when triggered": true,
+      "guiding principles rendered verbatim": true,
+      "standardized closing correct for tier": true,
+      "urgent sections correct for input": true,
+      "peer-support group cited": true,
+      "no banned vocabulary": true,
+      "no answer label quoted": true,
+      "workshop titles never translated": true
+    }
+  },
+  "serious-en": {
+    "tier": "serious",
+    "sections": 11,
+    "checks": {
+      "every section written": true,
+      "professional-help sequence when triggered": true,
+      "private-search line when triggered": true,
+      "guiding principles rendered verbatim": true,
+      "standardized closing correct for tier": true,
+      "urgent sections correct for input": true,
+      "peer-support group cited": true,
+      "no banned vocabulary": true,
+      "no answer label quoted": true,
+      "workshop titles never translated": true
+    }
+  },
+  "serious-es": {
+    "tier": "serious",
+    "sections": 11,
+    "checks": {
+      "every section written": true,
+      "professional-help sequence when triggered": true,
+      "private-search line when triggered": true,
+      "guiding principles rendered verbatim": true,
+      "standardized closing correct for tier": true,
+      "urgent sections correct for input": true,
+      "peer-support group cited": true,
+      "no banned vocabulary": true,
+      "no answer label quoted": true,
+      "workshop titles never translated": true
+    }
+  },
+  "critical-en": {
+    "tier": "critical",
+    "sections": 13,
+    "checks": {
+      "every section written": true,
+      "professional-help sequence when triggered": true,
+      "private-search line when triggered": true,
+      "guiding principles rendered verbatim": true,
+      "standardized closing correct for tier": true,
+      "urgent sections correct for input": true,
+      "peer-support group cited": true,
+      "no banned vocabulary": true,
+      "no answer label quoted": true,
+      "workshop titles never translated": true
+    }
+  },
+  "critical-es": {
+    "tier": "critical",
+    "sections": 13,
+    "checks": {
+      "every section written": true,
+      "professional-help sequence when triggered": true,
+      "private-search line when triggered": true,
+      "guiding principles rendered verbatim": true,
+      "standardized closing correct for tier": true,
+      "urgent sections correct for input": true,
+      "peer-support group cited": true,
+      "no banned vocabulary": true,
+      "no answer label quoted": true,
+      "workshop titles never translated": true
+    }
+  }
+}

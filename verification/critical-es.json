@@ -1,0 +1,269 @@
+{
+  "tier": "critical",
+  "checks": {
+    "every section written": true,
+    "professional-help sequence when triggered": true,
+    "private-search line when triggered": true,
+    "guiding principles rendered verbatim": true,
+    "standardized closing correct for tier": true,
+    "urgent sections correct for input": true,
+    "peer-support group cited": true,
+    "no banned vocabulary": true,
+    "no answer label quoted": true,
+    "workshop titles never translated": true
+  },
+  "sections": [
+    {
+      "key": "urgentConcern",
+      "order": 1,
+      "type": "prose",
+      "title": "Lo que nos dijiste, primero",
+      "body": "Anoche encontraste una sustancia desconocida en la mochila de tu hijo y se niega a decir qué es. Eso te deja con una mezcla de miedo, rabia, urgencia y mucha duda sobre qué hacer hoy mismo. Lo primero: si sospechas que ya la consumió y notas somnolencia extrema, dificultad para respirar, desorientación fuerte, vómitos repetidos, convulsiones o que no responde normal, no esperes: llama a emergencias o llévalo a urgencias. Si ahora mismo está estable, guarda la sustancia en un lugar seguro (una bolsa cerrada, fuera de su alcance) y hazle fotos claras. No intentes probarla tú ni tirarla todavía; es una pieza de información. Esta semana el objetivo no es arrancarle una confesión, sino juntar datos, alinear a los adultos y poner límites firmes y claros alrededor de esa sustancia y del consumo en general."
+    },
+    {
+      "key": "headlineSummary",
+      "order": 2,
+      "type": "prose",
+      "title": "Dónde estás ahora mismo",
+      "body": "Estás viendo señales repetidas de que tu hijo probablemente está consumiendo y no solo “probando”: sospechas fuerte consumo varias veces al mes, pasa muchos fines de semana en entornos donde hay sustancias y la mayoría de sus amigos te preocupan. Cuando intentas hablar, se cierra, miente o esquiva, y eso ya se volvió casi rutina. Las discusiones sobre reglas y comportamiento son frecuentes, las consecuencias te salen a veces sí, a veces no, y tu hijo rara vez asume responsabilidad. Al mismo tiempo ves cambios claros de ánimo e isolamento, y casi no habla de su estrés o de cómo se siente. Te preocupa seriamente su seguridad y el futuro si esto sigue, pero dudas casi todo el tiempo si reaccionas de más o de menos. Estás agotado muchas semanas, te sientes con poco apoyo de la escuela y aún no das el paso de buscar ayuda profesional porque no sabes bien cuál es el siguiente movimiento."
+    },
+    {
+      "key": "topImmediatePriorities",
+      "order": 3,
+      "type": "list",
+      "title": "Tus tres primeras prioridades",
+      "items": [
+        "1) Regularte tú antes de actuar. Antes de cualquier conversación o cara a cara sobre la sustancia que encontraste, date espacio para bajar la intensidad: respira, escribe lo que quieres decir, sal de la habitación si notas que vas a explotar. No mandes mensajes largos ni fijes nuevas reglas en medio del enojo o del miedo. Tu hijo necesita ver a un adulto firme y claro, no a alguien desbordado, especialmente ahora que el secreto y las discusiones son tan frecuentes.",
+        "2) Alinear a los adultos. Antes de hablar con tu hijo, si hay co-padre, co-tutor u otro padre o tutor del lado familiar, siéntense hoy o mañana a definir: qué reglas específicos van a poner alrededor de sustancias, celular y salidas; qué recompensas y consecuencias claras se aplicarán si se respeta o se rompe cada regla; qué van a decir todos con las mismas palabras. No discutan estos desacuerdos frente a tu hijo. Salgan de esa conversación con un límite firme acordado para esta misma semana.",
+        "3) No aislarte: buscar apoyo para ti. Esta situación ya te tiene agotado la mayoría de las semanas, dudando de casi todo. Acércate al Monitoring and Intervention discussion group para hablar de lo que encontraste en la mochila, escuchar qué han hecho otros padres en situaciones parecidas y no quedarte solo decidiendo límites y próximos pasos. Ese espacio es también donde puedes ir ajustando lo que funcione y lo que no, conforme avances estos días."
+      ]
+    },
+    {
+      "key": "keyPriorities",
+      "order": 4,
+      "type": "recommendationList",
+      "title": "En qué trabajar",
+      "recommendations": [
+        {
+          "recommendationId": "parent-emotional-regulation",
+          "title": "Regulación emocional del padre o la madre",
+          "headline": "Regularte tú antes de entrar al cuarto",
+          "body": "Con la sustancia desconocida recién encontrada y las discusiones frecuentes, es muy fácil entrar a hablar desde el miedo o la rabia y que todo se vaya a gritos o evasivas. Tu primera tarea es notar cuándo se te acelera el cuerpo: respiración corta, corazón rápido, pensamientos de “no aguanto más”. En ese momento, pausa: respira profundo varias veces, camina unos minutos o escribe en el celular lo que quisieras decir antes de decirlo. Si ya estás cara a cara y sientes que vas a perder el control, es válido decir: “Voy a hacer una pausa y seguimos hablando después” y salir del cuarto. Revisa lo que aprendiste en el Monitoring and Intervention discussion group para tener anclajes concretos cuando la ansiedad suba. Si tu hijo sigue esquivando o subiendo el tono esta semana, el próximo paso es aplazar la conversación del momento y retomar solo cuando tú estés calmado y con tus puntos por escrito."
+        },
+        {
+          "recommendationId": "active-use-intervention",
+          "title": "Actuar sobre lo que estás viendo",
+          "headline": "Pasar de sospechar a intervenir con estructura",
+          "body": "Tu sospecha de consumo no es vaga: se suma lo que encontraste en la mochila, los fines de semana en entornos con sustancias y los amigos que te preocupan. Esta semana necesitas pasar de “creo que está usando” a acciones concretas: un límite claro respecto a consumo (por ejemplo, no se permite usar sustancias ni tenerlas en casa ni en sus cosas) y qué pasa si se rompe. Define junto con el otro adulto qué recompensas habrá por cumplir (más libertad, acceso a ciertas actividades) y qué consecuencias por no cumplir (restricción de salidas, de dinero o de celular), de forma específica y alcanzable. Usa el Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" para ordenar estos primeros pasos y un siguiente escalón si hay más consumo. Si notas nuevas señales de consumo esta semana, el próximo paso es aplicar la consecuencia acordada y avanzar al plan de monitoreo más estricto que definas ahí."
+        },
+        {
+          "recommendationId": "co-parent-alignment",
+          "title": "Alinear a los adultos",
+          "headline": "Poner a los adultos del mismo lado",
+          "body": "Reportaste que a menudo estás en desacuerdo con el otro adulto sobre cómo responder. Esa desalineación le enseña a tu hijo que puede elegir a quién creer, y las reglas pierden peso. Esta semana, antes de hablar con tu hijo, reserva un rato a solas con el co-padre o co-tutor para tres cosas: 1) compartir lo que viste (sustancia en la mochila, cambios de ánimo, amigos), 2) acordar juntas/os qué reglas van a sostener sí o sí, y 3) escribir recompensas y consecuencias que ambos puedan aplicar sin ceder en el momento. Pónganse de acuerdo también en no contradecirse delante de tu hijo. El Essential Workshop \"Building a Support Network\" y el Monitoring and Intervention discussion group pueden ayudarte a pensar quién más de la familia puede apoyar este mismo mensaje. Si esta semana siguen discutiendo frente a tu hijo sobre las reglas, el próximo paso es pausar cualquier conversación con él hasta que ustedes dos tengan un acuerdo escrito."
+        },
+        {
+          "recommendationId": "drug-testing-serious",
+          "title": "Saber a qué te enfrentas",
+          "headline": "Usar pruebas de drogas para saber qué está pasando",
+          "body": "Con una sustancia desconocida ya encontrada y el consumo fuertemente sospechado, necesitas datos, no solo sospechas. Plantear a tu hijo que, como parte del plan de seguridad, vas a darle una prueba de drogas es una manera concreta de saber qué se está consumiendo. No la presentes como castigo, sino como condición para ciertas recompensas (por ejemplo, recuperar parte de las salidas o del uso del celular). Prepárate antes: decide qué harás con un resultado positivo o con una negativa a hacerse la prueba. El Auxiliary Workshop \"Drug Testing\" te da pasos claros sobre qué tipo de prueba elegir, cómo explicarla y cómo integrar los resultados en tu plan. Si esta semana encuentras más señales de consumo o tu hijo se niega rotundamente a cualquier prueba, el próximo paso es mantener o aumentar las restricciones acordadas y considerar sumar ayuda profesional que conozca estos casos."
+        },
+        {
+          "recommendationId": "communication-breakdown",
+          "title": "Cuando cada conversación se vuelve una pelea",
+          "headline": "Bajar las peleas para que se pueda hablar",
+          "body": "Contaste que casi cualquier intento de hablar de reglas o consumo termina en discusiones frecuentes, y que además tu hijo casi no comparte cómo se siente. Antes de meter temas grandes, el objetivo es que la charla no explote. Eso significa elegir mejor el momento (no justo al llegar o cuando está saliendo) y el tono: empezar describiendo lo que viste, no atacando su carácter. Frases como “lo que me preocupa es…” en vez de “siempre haces…” bajan la guardia. También ayuda entrar con una sola meta por conversación, no con una lista interminable. El Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" te da ejemplos concretos de esto. If esta semana cada intento de conversación sigue acabando a gritos o con puertas cerradas, el próximo paso es acortar aún más las charlas a dos o tres frases clave y retomarlas solo cuando ambos estén más calmados."
+        },
+        {
+          "recommendationId": "consistent-consequences",
+          "title": "Hacer que las reglas signifiquen algo",
+          "headline": "Que las reglas se cumplan siempre, no solo a veces",
+          "body": "Has descrito consecuencias que se aplican de forma inconsistente y un hijo que rara vez asume responsabilidad. Eso le enseña que, con el tiempo suficiente, las reglas se doblan. Esta semana, trabaja con el otro adulto en un pequeño “contrato” de reglas: máximo 3–4 puntos claros (por ejemplo, no tener sustancias, horarios de llegada, uso de celular). Para cada uno, definan una recompensa específica por cumplir y una consecuencia concreta por romper la regla, que estén dispuestos a sostener sin excepciones. Explica este plan a tu hijo con calma, por escrito si hace falta. El Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\" y el Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\" te dan modelos y lenguaje para hacerlo sin castigos humillantes. Si esta semana rompe una de esas reglas, el próximo paso es aplicar exactamente la consecuencia acordada, aunque se enoje o te presione."
+        },
+        {
+          "recommendationId": "secrecy-and-hidden-use",
+          "title": "Cuando no obtienes respuestas claras",
+          "headline": "Manejar el secretismo sin hacer un show",
+          "body": "Has visto muchas evasivas y mentiras cuando preguntas, y ya apareció una sustancia en la mochila. Eso te dice que la información no va a venir solo por conversación. Parte del trabajo ahora es reunir datos de forma estratégica. Si decides revisar cuarto, mochila o celular, hazlo como herramienta de seguridad, no como escena dramática. Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente. Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante. Después, integra lo que encuentres a tu plan de límites y, cuando lo hables con él, céntrate en los hechos (“encontré esto y esto”) más que en acusaciones. El Auxiliary Workshop \"How and When to Search a Room\" profundiza en cómo hacerlo sin destruir toda confianza. Si esta semana encuentras nuevas evidencias claras de consumo o sustancias, el próximo paso es ajustar al alza las consecuencias y la supervisión, tal como ya acordaste con el otro adulto."
+        },
+        {
+          "recommendationId": "parent-support-and-exhaustion",
+          "title": "No puedes con esto estando vacío",
+          "headline": "Cuidarte para poder sostener el plan",
+          "body": "Has dicho que te sientes agotado, con miedo o abrumado la mayoría de las semanas. Desde ese lugar es muy difícil sostener conversaciones calmadas, límites consistentes y decisiones difíciles como pruebas de drogas o cambios de libertad. Esta semana, parte del plan es también para ti: definir al menos un espacio donde puedas soltar la presión y pensar en voz alta, sin que sea tu hijo quien reciba todo. Acércate al Monitoring and Intervention discussion group con la idea de ir regularmente, no solo una vez. Comparte lo de la sustancia en la mochila, las dudas sobre estar reaccionando de más o de menos y escucha qué han hecho otros. Además, pon algo pequeño de autocuidado diario (caminar, escribir, hablar con alguien de confianza de la familia) aunque sea 10 minutos. Si esta semana notas que tu agotamiento sube al punto de no poder controlar tu reacción, el próximo paso es pausar nuevas conversaciones con tu hijo hasta que bajes un poco y reactives tu apoyo."
+        },
+        {
+          "recommendationId": "mood-and-mental-health",
+          "title": "Lo que hay debajo de la conducta",
+          "headline": "Atender los cambios de ánimo, no solo las sustancias",
+          "body": "Comentaste cambios muy marcados en su estado de ánimo, algo de aislamiento y que tu hijo casi nunca habla de su estrés o dolor emocional. Eso no es ruido de fondo: muchas veces es parte de por qué empieza o se mantiene el consumo. Además de las reglas, conviene empezar a abrir pequeños espacios donde el mensaje sea “me importa cómo te sientes”, aunque él no hable mucho al principio. Puede ser ofrecer una actividad corta juntos donde no se hable del problema, y luego lanzar una pregunta concreta y sencilla sobre su día o algo que lo presione. El Auxiliary Workshop \"Managing Stress and Pressure – Helping Your Teen Develop Healthy Coping Skills\" te dará ideas para ofrecerle salidas distintas a las sustancias. Si esta semana ves que su ánimo empeora mucho (cierres totales, rabia descontrolada, comentarios de no querer vivir), el próximo paso es buscar ayuda profesional con foco en salud mental adolescente. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program."
+        },
+        {
+          "recommendationId": "peer-influence",
+          "title": "Las personas alrededor de tu hijo",
+          "headline": "Trabajar la influencia de sus amigos sin guerra abierta",
+          "body": "La mayoría de los amigos de tu hijo te preocupan y pasa muchos fines de semana en ambientes donde probablemente hay sustancias. Prohibir de golpe todas las amistades suele empujar más al secreto. Mejor, combina algo de estructura con conversación: más supervisión de dónde está, con quién y qué planes hay, y reglas claras (por ejemplo, solo se queda en casas donde conoces a los adultos). En las charlas, habla de la influencia de grupo en general, no solo atacando a “tus amigos”. El Auxiliary Workshop \"Understanding and Navigating Peer Pressure\" ofrece lenguaje para que tu hijo pueda reconocer la presión sin sentir que lo estás insultando. Si esta semana notas que sigue saliendo con el mismo grupo en situaciones de riesgo, el próximo paso es reducir o condicionar esas salidas a ciertas garantías (contacto con adultos del lugar, horarios más cortos, o incluso suspenderlas temporalmente según lo que acordaste)."
+        },
+        {
+          "recommendationId": "school-engagement",
+          "title": "Involucrar a la escuela",
+          "headline": "Traer a la escuela a tu lado",
+          "body": "Dijiste que sientes apoyo limitado del personal escolar. Sin embargo, ellos ven a tu hijo muchas horas y pueden notar cambios que en casa se escapan: ausencias, bajas de rendimiento, conflictos. En lugar de ir solo a quejarte, acércate a un tutor, orientador o jefe de estudios con la idea de alianza: comparte que te preocupa el posible consumo y los cambios de ánimo, y pregunta qué ven ellos. El Auxiliary Workshop \"Partnering with Schools for Your Child's Success\" y el Essential Workshop \"Building a Support Network\" te dan ideas concretas para esa conversación. Pueden acordar pequeñas cosas: avisos si falta a clase, revisión de su rendimiento, citas periódicas cortas. Si esta semana la escuela no responde o minimiza tus preocupaciones, el próximo paso es pedir una reunión más formal con alguien de mayor responsabilidad e incluir este tema en tu búsqueda de red más amplia."
+        },
+        {
+          "recommendationId": "phone-and-social-media",
+          "title": "El celular y lo que hay en él",
+          "headline": "Poner orden en el celular y lo que entra por ahí",
+          "body": "Comentaste que a menudo no estás seguro de dónde está o qué hace tu hijo, y que sus amistades te preocupan. El celular y las redes pueden ser la vía por donde se organiza el consumo, se compran sustancias y se normaliza todo. En vez de quitar el celular solo como castigo, explícita que, por seguridad, habrá supervisión: horarios de uso, zonas de la casa donde se guarda por la noche, y posibilidad de revisar ciertos contenidos cuando haya señales de riesgo. Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente. Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante. El Auxiliary Workshop \"Understanding the Impact of Social Media on Substance Use and Mental Health\" te ayuda a entender qué buscar y cómo explicárselo a tu hijo. Si esta semana detectas contactos o contenidos claramente ligados a sustancias, el próximo paso es ajustar más los permisos de uso y vincular esa supervisión a recompensas y consecuencias claras."
+        }
+      ]
+    },
+    {
+      "key": "whatToAvoid",
+      "order": 5,
+      "type": "list",
+      "title": "Qué evitar",
+      "items": [
+        "No descargues tu miedo o enojo en tu hijo en el mismo momento en que descubres algo (como la sustancia en la mochila). Si entras directo a acusar o gritar, él se cerrará más y solo aumentarás las mentiras y el secretismo.",
+        "No cambies las reglas cada día según cómo te sientas. Decir hoy que no puede salir más y mañana dejarlo ir porque estás cansado le enseña que insistiendo lo suficiente las reglas se doblan.",
+        "No discutas ni negocies las reglas ni las consecuencias frente a otros familiares o amigos, ni te pelees con el co-padre delante de tu hijo. Eso solo le muestra grietas que luego él aprenderá a explotar.",
+        "No revises el cuarto, la mochila o el celular de tu hijo de manera confrontativa, gritando o buscando que él mire mientras lo haces para \"darle una lección\". Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente. Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante.",
+        "No confíes solo en que “ya se le pasará” o en que es una etapa y basta con observar. Con lo que ya viste (sustancia encontrada, cambios de ánimo, malos ambientes), dejar pasar más semanas sin límites claros y sin un plan aumenta el riesgo."
+      ]
+    },
+    {
+      "key": "first72Hours",
+      "order": 6,
+      "type": "prose",
+      "title": "Tus primeras 72 horas",
+      "body": "Día 1: Empieza por ti. Date unas horas para bajar el impacto de haber encontrado esa sustancia. Respira, escribe lo que viste, qué te preocupa y qué no quieres volver a decir en un arranque (“eres un drogadicto”, “arruinaste todo”, etc.). Si hay co-padre o co-tutor, comparte el hecho básico (que encontraste una sustancia desconocida) y acuerden que hoy no hablarán con tu hijo hasta tener un plan. Descansa algo; el agotamiento que has sentido la mayoría de las semanas te hace más impulsivo.\n\nDía 2: Reunir información y apoyo. Guarda la sustancia en un lugar seguro y haz fotos. Si decides hacer una revisión más amplia, hazla con calma. Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente. Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante. Revisa el Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" para tener claro qué límite quieres poner y cuál será la consecuencia y la recompensa ligadas. Ese mismo día, acércate al Monitoring and Intervention discussion group y comparte lo que encontraste para escuchar experiencias concretas.\n\nDía 3: Conversación inicial. Elige un momento en que ambos estén relativamente tranquilos. Habla de lo que viste sin insultos ni adivinanzas: “Encontré esta sustancia en tu mochila. Me preocupa tu seguridad. A partir de hoy, en esta casa hay estas reglas…”. Explica las recompensas por cumplir y las consecuencias si no. No discutas horas ni entres a pelear sobre si “todos lo hacen”. Di lo esencial y cierra: “No tenemos que resolver todo hoy, pero estas reglas empiezan ya”."
+    },
+    {
+      "key": "days4to7",
+      "order": 7,
+      "type": "prose",
+      "title": "Días 4 a 7",
+      "body": "Después de esa primera conversación, asume que puede negar, minimizar o ponerse a la defensiva. Tu tarea entre los días 4 y 7 es sostener lo que ya dijiste, no ganar una discusión. Aplica las recompensas y las consecuencias que acordaste con el otro adulto exactamente como las explicaste, incluso si tu hijo se enoja o te culpa. Mantén las salidas, el dinero y el uso del celular bajo la supervisión que definiste; si rompe una regla, implementa la consecuencia sin sermones largos.\n\nEsta es también la ventana para empezar a saber con más claridad qué está pasando. Considera si en tu caso encaja darle una prueba de drogas como parte del monitoreo, apoyándote en el Auxiliary Workshop \"Drug Testing\" para entender cuándo y cómo hacerlo como recolección de hechos y no como castigo. Si los cambios de ánimo, el aislamiento y el secretismo continúan o empeoran, vale la pena buscar ayuda profesional (como un terapeuta o un programa de tratamiento) que tenga experiencia en adolescentes y consumo. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program. Si esta semana encuentras nuevas evidencias de consumo o de sustancias en sus cosas, el próximo paso es aplicar la consecuencia más alta que acordaste y aumentar el nivel de supervisión (incluyendo pruebas y límites de salidas) sin entrar en insultos ni amenazas vacías."
+    },
+    {
+      "key": "consideringInpatient",
+      "order": 8,
+      "type": "prose",
+      "title": "Si estás considerando tratamiento interno o residencial",
+      "body": "Con lo que estás viviendo, es normal que te cruces por la cabeza la idea de un centro interno o un programa intensivo. Los programas residenciales significan que tu hijo vive temporalmente fuera de casa, con una estructura diaria muy marcada, supervisión 24/7 y terapia frecuente. Los programas intensivos ambulatorios suelen implicar varias horas de tratamiento al día, varios días a la semana, pero tu hijo duerme en casa. En ambos casos, lo clave no es solo la gravedad del consumo, sino cuánto riesgo hay (autolesiones, violencia, consumo diario, incapacidad total de funcionar en escuela y casa) y cuánto pueden contener ustedes en casa.\n\nEsta decisión conviene tomarla con un clínico que conozca el mundo adolescente y el consumo, no solo desde este plan ni desde el miedo del momento. Si decides explorar ayuda profesional, como un proveedor de tratamiento o un centro de tratamiento, pide una valoración completa: historial de consumo, salud mental, entorno escolar y familiar. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program. Tu próximo paso inmediato puede ser agendar una primera consulta de evaluación, aun si luego decides no ir a algo interno."
+    },
+    {
+      "key": "recommendedWorkshops",
+      "order": 9,
+      "type": "workshopList",
+      "title": "Los workshops para tu situación",
+      "workshops": [
+        {
+          "workshopId": "aux-intervening-when-substance-use-is-present",
+          "title": "Intervening When Substance Use is Present: First Steps and Next Steps",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Sospechas fuertemente que tu hijo consume con cierta frecuencia y acabas de encontrar una sustancia desconocida en su mochila. El Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" te ayudará a convertir esa sospecha en pasos claros, límites específicos y siguientes movimientos si el consumo continúa."
+        },
+        {
+          "workshopId": "ess-building-a-support-network",
+          "title": "Building a Support Network",
+          "category": "Essential Workshop",
+          "url": null,
+          "whyThisFamily": "Te sientes con apoyo limitado de la escuela y hay desacuerdos frecuentes entre los adultos. El Essential Workshop \"Building a Support Network\" te guía para construir una red alrededor de tu hijo (familia, escuela, posibles profesionales) que sostenga las mismas reglas y preocupaciones."
+        },
+        {
+          "workshopId": "aux-drug-testing",
+          "title": "Drug Testing",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Con el consumo fuertemente sospechado y una sustancia desconocida ya encontrada, necesitas saber qué está pasando en realidad, no solo imaginarlo. El Auxiliary Workshop \"Drug Testing\" te explica cuándo tiene sentido darle una prueba de drogas, cómo presentarla y cómo usar los resultados dentro de tu plan."
+        },
+        {
+          "workshopId": "ess-effective-communication-building-trust-and-engagement",
+          "title": "Effective Communication: Building Trust and Engagement with Your Teen",
+          "category": "Essential Workshop",
+          "url": null,
+          "whyThisFamily": "Las conversaciones sobre reglas y consumo terminan en discusiones frecuentes, y tu hijo rara vez comparte cómo se siente. El Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" te da frases concretas y tiempos adecuados para hablar sin escalar."
+        },
+        {
+          "workshopId": "aux-behavioral-contracts-a-tool-for-positive",
+          "title": "Behavioral Contracts – A Tool for Positive Change",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Has tenido consecuencias inconsistentes y tu hijo casi no asume responsabilidad. El Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\" te ayuda a armar acuerdos escritos con expectativas claras, recompensas y consecuencias que todos entiendan."
+        },
+        {
+          "workshopId": "aux-setting-boundaries-with-respect-discipline-without",
+          "title": "Setting Boundaries with Respect: Discipline Without Punishment",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Te sientes inseguro para equilibrar firmeza y apoyo, y las discusiones son frecuentes. El Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\" te muestra cómo sostener límites claros sin convertir todo en castigo ni en guerra diaria."
+        },
+        {
+          "workshopId": "aux-how-and-when-to-search-a",
+          "title": "How and When to Search a Room",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Ya encontraste una sustancia desconocida en su mochila y tu hijo es muy secretista. El Auxiliary Workshop \"How and When to Search a Room\" te orienta sobre cómo hacer una revisión respetuosa y estratégica del cuarto o pertenencias, enfocada en la seguridad y no en la humillación."
+        },
+        {
+          "workshopId": "aux-managing-stress-and-pressure-helping-your",
+          "title": "Managing Stress and Pressure – Helping Your Teen Develop Healthy Coping Skills",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Has visto cambios fuertes en su ánimo y tu hijo casi no habla de su estrés o dolor emocional. El Auxiliary Workshop \"Managing Stress and Pressure – Helping Your Teen Develop Healthy Coping Skills\" te ayuda a ofrecerle alternativas concretas al consumo para manejar lo que siente."
+        },
+        {
+          "workshopId": "aux-understanding-and-navigating-peer-pressure",
+          "title": "Understanding and Navigating Peer Pressure",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "La mayoría de los amigos de tu hijo te preocupan y pasa muchos fines de semana en ambientes con sustancias. El Auxiliary Workshop \"Understanding and Navigating Peer Pressure\" te da lenguaje y estrategias para hablar sobre la influencia de esos pares sin que la charla se vuelva una pelea por sus amistades."
+        },
+        {
+          "workshopId": "aux-partnering-with-schools-for-your-childs",
+          "title": "Partnering with Schools for Your Child's Success",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Sientes apoyo limitado del personal escolar, pero ellos ven a tu hijo muchas horas al día. El Auxiliary Workshop \"Partnering with Schools for Your Child's Success\" te muestra cómo acercarte a la escuela como aliado, para sumar ojos y apoyo a tu plan en casa."
+        },
+        {
+          "workshopId": "aux-understanding-the-impact-of-social-media",
+          "title": "Understanding the Impact of Social Media on Substance Use and Mental Health",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "A menudo no estás seguro de dónde está o qué hace tu hijo, y sus amistades te inquietan. El Auxiliary Workshop \"Understanding the Impact of Social Media on Substance Use and Mental Health\" te ayuda a entender cómo el celular y redes pueden estar alimentando el consumo y qué tipo de supervisión explicar y sostener."
+        }
+      ]
+    },
+    {
+      "key": "universalGuidingPrinciple",
+      "order": 10,
+      "type": "static",
+      "title": "Ajustar lo que haces a lo que estás viendo",
+      "body": "Un principio recorre todo este plan: la respuesta debe ajustarse a lo que realmente estás viendo, y no más. Actuar con más fuerza de la que la situación pide cuesta una confianza que vas a necesitar después. Actuar con menos fuerza de la que pide deja a tu hijo cargando algo solo. Ninguno de los dos errores es más seguro que el otro, y por eso este plan se construye desde lo que reportaste y no desde una plantilla — y por eso vale la pena volver a evaluarlo a medida que las cosas cambien."
+    },
+    {
+      "key": "parentSelfCare",
+      "order": 11,
+      "type": "static",
+      "title": "Cuidarte es parte del plan",
+      "body": "Esto no es un comentario al margen. Lo que sea que lleves a una habitación, tu hijo lo lee antes de escuchar una sola palabra — así que tu propia estabilidad no está separada de la recuperación de tu hijo, es parte del mecanismo. Duerme, come, y mantén al menos a una persona en tu vida que sepa lo que estás cargando. El Monitoring and Intervention discussion group existe exactamente para esto: padres que están en medio de lo mismo, que no van a necesitar que les expliques la situación desde el principio."
+    },
+    {
+      "key": "encouragement",
+      "order": 12,
+      "type": "prose",
+      "title": "Hacia dónde puede ir esto",
+      "body": "Lo que ya hiciste —reconocer que algo anda mal, tomar en serio la sustancia que encontraste en la mochila y pedir un plan en lugar de mirar hacia otro lado— no es menor. Muchos padres tardan años en llegar a este punto. Ahora el trabajo es convertir esa preocupación en decisiones concretas, una por vez, sin dejar que el miedo te mande.\n\nTu hijo no es tu enemigo aquí; el problema es la sustancia y todo lo que la rodea: amigos, lugares, redes, secretos. Tu plan tiene que ser tú y los otros adultos de su vida de un lado, y el consumo del otro. El Monitoring and Intervention discussion group no es solo un “grupo de apoyo”; es un lugar donde otros padres que han pasado por mochilas con sustancias, mentiras y discusiones fuertes comparten lo que funcionó y lo que no. Cada límite claro que pongas, cada conversación en la que mantengas la calma, es un paso para mover a tu hijo un poco más lejos del consumo y un poco más cerca de ti."
+    },
+    {
+      "key": "standardizedClosing",
+      "order": 13,
+      "type": "static",
+      "title": "Proteger el progreso",
+      "body": "La recuperación es un camino, no un solo acontecimiento, y proteger el progreso que tu hijo ya ha logrado es una de las responsabilidades más importantes que tienes como padre. Aunque muchos adolescentes llegan a alcanzar una recuperación duradera, pueden ocurrir recaídas. Una recaída no borra el progreso alcanzado, y no tiene por qué convertirse en un regreso al pasado.\n\nLa preparación es una de tus mayores fortalezas. Te animamos a completar el Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks\". Te ayudará a reconocer las señales de alerta tempranas, a responder con calma y eficacia si surgen dificultades, y a fortalecer el plan de tu familia para proteger la recuperación de tu hijo. También te animamos a participar en el Protecting Recovery Discussion Group, donde los padres comparten experiencias, aliento y conocimientos prácticos mientras se apoyan mutuamente a lo largo del camino continuo de la recuperación.\n\nRecuerda que el propósito del monitoreo, la supervisión, las conversaciones y los límites apropiados no es simplemente descubrir qué pasó o cuándo pasó, sino entender por qué. Identificar y abordar las razones de fondo del consumo de sustancias le da a tu hijo la mayor oportunidad de lograr una recuperación a largo plazo y un futuro sano y significativo."
+    }
+  ]
+}

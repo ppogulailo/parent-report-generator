@@ -543,32 +543,35 @@ test('the trusted-adult recommendation is caught', () => {
   expect(violations.map((v) => v.ruleId)).toContain('trusted-adult');
 });
 
-test('soft fallbacks are caught at Serious but permitted at Mild', () => {
-  // The methodology gates this rule by severity: "see how it goes" is a real
-  // option for a family with no use signal and an abdication for one with three.
-  const text = { days4to7: 'For now, wait and see how it goes.' };
+test('soft fallbacks are gated by severity, in three steps', () => {
+  // The methodology draws two lines, not one. MILD may legitimately say "see how
+  // it goes" to a family with no use signal. MODERATE bans exactly two
+  // phrasings, because every priority area there must end in a commitment.
+  // SERIOUS bans the whole list. One rule could only ever have got one right,
+  // and a real MODERATE plan was flagged for a SERIOUS-only phrase before this
+  // was split.
+  const ruleIds = (text: Record<string, unknown>, tier: string): string[] =>
+    checkVoice(text, content.voiceRulesFor(tier), content.workshops, 'en').map(
+      (v) => v.ruleId,
+    );
 
-  const mild = selectionService.select(submission(1));
-  expect(mild.tierId).toBe('mild');
-  expect(
-    checkVoice(
-      text,
-      content.voiceRulesFor(mild.tierId),
-      content.workshops,
-      'en',
-    ).map((v) => v.ruleId),
-  ).not.toContain('soft-fallbacks');
+  const moderateBanned = { days4to7: 'For now, see how it goes.' };
+  const seriousOnly = { days4to7: 'Come back to it later this month.' };
 
-  const serious = selectionService.select(submission(4));
-  expect(serious.tierId).toBe('serious');
-  expect(
-    checkVoice(
-      text,
-      content.voiceRulesFor(serious.tierId),
-      content.workshops,
-      'en',
-    ).map((v) => v.ruleId),
-  ).toContain('soft-fallbacks');
+  expect(ruleIds(moderateBanned, 'mild')).toEqual([]);
+  expect(ruleIds(seriousOnly, 'mild')).toEqual([]);
+
+  expect(ruleIds(moderateBanned, 'moderate')).toContain(
+    'soft-fallbacks-moderate',
+  );
+  // Not on the MODERATE list, and that is deliberate rather than an oversight.
+  expect(ruleIds(seriousOnly, 'moderate')).toEqual([]);
+
+  expect(ruleIds(moderateBanned, 'serious')).toContain(
+    'soft-fallbacks-serious',
+  );
+  expect(ruleIds(seriousOnly, 'serious')).toContain('soft-fallbacks-serious');
+  expect(ruleIds(seriousOnly, 'critical')).toContain('soft-fallbacks-serious');
 });
 
 test('a warn-strictness rule does not block a report', () => {

@@ -1,0 +1,125 @@
+{
+  "tier": "moderate",
+  "checks": {
+    "every section written": true,
+    "professional-help sequence when triggered": true,
+    "private-search line when triggered": true,
+    "guiding principles rendered verbatim": true,
+    "standardized closing correct for tier": true,
+    "urgent sections correct for input": true,
+    "peer-support group cited": true,
+    "no banned vocabulary": true,
+    "no answer label quoted": true,
+    "workshop titles never translated": true
+  },
+  "sections": [
+    {
+      "key": "headlineSummary",
+      "order": 2,
+      "type": "prose",
+      "title": "Dónde estás ahora mismo",
+      "body": "Por lo que marcaste, hoy no estás en una crisis aguda, pero sí en una etapa de mucha vigilancia mental: pendiente de cambios, pensando en escenarios futuros y con dudas sobre qué es señal real y qué es solo miedo. No reportaste conductas extremas ni consumo claro, pero sí cierta inquietud sobre lo que ves y sobre no “dormirte” si las cosas empiezan a escalar. También se siente que estás cargando mucho en la cabeza: tratando de reaccionar bien, sin explotar, sin minimizar, y sin convertir cada sospecha en pelea. Este plan parte de ahí: tu hijo no está en el extremo más grave, pero tampoco estás tranquilo. Lo que toca ahora es ordenar esa preocupación en pasos concretos: regularte tú primero, entender mejor qué estás viendo, y preparar límites, recompensas y consecuencias que puedas sostener sin guerra diaria. Así, si algo cambia, lo ves rápido y actúas con calma, no desde el pánico."
+    },
+    {
+      "key": "topImmediatePriorities",
+      "order": 3,
+      "type": "list",
+      "title": "Tus tres primeras prioridades",
+      "items": [
+        "1) Regularte tú antes de cualquier reacción. Cuando notes que se te acelera la mente (ya sea por sospechas de consumo, respuestas retadoras o cambios de ánimo de tu hijo), tu primera tarea no es hablar ni corregir, sino bajar la intensidad: respira unos minutos fuera del cuarto, camina un poco, escribe lo que quisieras decir y guárdalo, o cambia de espacio antes de seguir la conversación. Si ves que la tensión sube, date permiso de decir: “Pausamos aquí, seguimos después” y salir del cuarto. Tu objetivo estos días no es ganar discusiones, es mostrar calma constante, aunque por dentro estés molesto o preocupado.",
+        "2) Alinear a los adultos de la casa. Habla con tu co-padre, co-tutor u otro padre o tutor del lado familiar sobre lo que te preocupa, de manera concreta: qué conductas has notado, qué límites quieren sostener igual, y qué recompensas y consecuencias claras están dispuestos a mantener juntos (por ejemplo: uso del celular, horarios, permisos, acompañado de recompensas cuando cumple y consecuencias cuando no). Acuerden también qué hacer si tu hijo niega, se pone a la defensiva o sube el tono: que la respuesta de los adultos sea la misma, sin contradicciones ni “cada quien por su lado”.",
+        "3) Cuidar tu propio apoyo. Acércate al Monitoring and Intervention discussion group para escuchar cómo otros padres están manejando sospechas tempranas, cambios de conducta o dudas parecidas a las tuyas. Usa ese espacio para bajar un poco la presión interna, preguntar por ejemplos concretos de recompensas y consecuencias que han funcionado, y escuchar cómo otros han respondido a la negación o al silencio sin romper la relación con su hijo. Esto no reemplaza tus decisiones, pero te evita sentir que estás inventando todo solo y te da ideas prácticas para aplicar esta misma semana."
+      ]
+    },
+    {
+      "key": "keyPriorities",
+      "order": 4,
+      "type": "recommendationList",
+      "title": "En qué trabajar",
+      "recommendations": [
+        {
+          "recommendationId": "parent-emotional-regulation",
+          "title": "Regulación emocional del padre o la madre",
+          "headline": "Regular tus reacciones antes de entrar al cuarto",
+          "body": "Tu hijo va a notar mucho más tu tono y tu cara que las palabras exactas que digas. Como no estás en una crisis extrema, el riesgo ahora es responder “medio caliente” a cosas pequeñas y que eso vaya rompiendo la conexión. Estos días, tu trabajo es entrenar una micro-pausa: cuando venga el segundo pensamiento de “¿y si esto ya es consumo?”, no actúes en ese instante. Respira, sal un momento, toma agua, escribe lo que quisieras decir y decide si de verdad necesitas decirlo hoy. Si en medio de una discusión sientes que te sube la rabia o el miedo, di: “Voy a parar aquí para no decir algo de lo que me arrepienta. Luego seguimos”. Eso protege la relación y te deja espacio para pensar tus límites con calma. Para apoyo constante, únete al Monitoring and Intervention discussion group. Si notas que, aun intentando estas pausas, sigues reaccionando a gritos o con comentarios hirientes la mayoría de los días esta semana, el próximo paso es agendar un espacio fijo semanal para ti en el Monitoring and Intervention discussion group y preparar una frase corta para retirarte antes de escalar."
+        },
+        {
+          "recommendationId": "preventative-foundation",
+          "title": "Saber qué estás viendo",
+          "headline": "Afinar el ojo: distinguir señales reales de ruido",
+          "body": "Como no has visto algo claramente grave, lo más valioso ahora es aprender a diferenciar cambios normales de la edad de señales tempranas de consumo. Esto baja la ansiedad y al mismo tiempo te hace más preciso: sabes qué observar en el sueño, el rendimiento escolar, el dinero, los amigos, el humor y las rutinas, sin convertir cada gesto en alarma. Dedica un rato esta semana a revisar qué conductas concretas te preocupan y cuáles solo te activan el miedo. Anota ejemplos reales: llegadas tarde, cambios en círculos de amigos, mentiras pequeñas, descuido personal, etc. Luego compáralos con lo que aprendas en el Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" para ajustar tu radar. Si esta semana notas un patrón repetido (por ejemplo, más de una vez llegar con ojos extrañamente rojos, cambios bruscos de amigos y encierros prolongados en su cuarto), el próximo paso es acordar con tu co-padre o co-tutor una revisión más estructurada de reglas, recompensas y consecuencias, basada en lo que viste en el Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\"."
+        }
+      ]
+    },
+    {
+      "key": "whatToAvoid",
+      "order": 5,
+      "type": "list",
+      "title": "Qué evitar",
+      "items": [
+        "No conviertas cada sospecha en interrogatorio. Si cada pequeña cosa que te activa termina en “¿estás consumiendo algo?”, tu hijo va a cerrar puertas y mentir más, aunque no haya nada grave. Elige bien cuándo preguntar y cuándo solo observar y anotar para ti.",
+        "No descargues tu ansiedad con comentarios sarcásticos o comparaciones (“a tu edad yo…”, “parece que no te importa nada”). Eso solo pone a tu hijo a la defensiva y hace más difícil que luego hable en serio de cualquier cosa, incluida una posible sustancia.",
+        "No revises el cuarto, la mochila o el celular de tu hijo de manera confrontativa, gritándole o usando la revisión como castigo. Realiza cualquier revisión del cuarto, la mochila o el celular de tu hijo en privado y sin que tu hijo esté presente. Deja el cuarto tal como lo encontraste y documenta cualquier cosa relevante.",
+        "No uses amenazas extremas (“si veo algo, te saco de la escuela”, “te voy a mandar a un centro”) que luego no vas a cumplir. Es mejor un límite más pequeño pero real, con recompensas claras cuando cumple y consecuencias claras cuando no, que una amenaza que se queda en palabras.",
+        "No dejes que el tema ocupe el 100% de tus pensamientos ni de las conversaciones en casa. Si todo gira alrededor del posible consumo, tu hijo puede sentir que su identidad es “sospechoso permanente” y tú te desgastas más rápido. Deja espacio también para momentos neutrales o agradables que no tengan que ver con reglas ni sustancias."
+      ]
+    },
+    {
+      "key": "first72Hours",
+      "order": 6,
+      "type": "prose",
+      "title": "Tus primeras 72 horas",
+      "body": "Día 1: Tu tarea principal es bajar la intensidad interna. Hoy no es día de conversación larga con tu hijo, es día de ordenarte tú. Identifica qué cosas específicas te preocupan (por ejemplo, cambios de humor, mentiras pequeñas, amistades nuevas que no conoces) y escríbelas. Cada vez que te venga el impulso de ir directo a confrontar, date una pausa: respira profundo, camina unos minutos o cambia de cuarto. Si la tensión sube en una interacción, cierra con algo como: “Voy a dejar esta conversación aquí y seguimos luego”.\n\nDía 2: Reúne información y apoyo. Comparte con tu co-padre o co-tutor lo que anotaste el día anterior, y acuerden qué límites, recompensas y consecuencias pueden sostener juntos sin improvisar. Revisa con calma el Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" y toma nota de qué señales calzan con lo que ves y cuáles no. Acércate al Monitoring and Intervention discussion group para escuchar ejemplos concretos de otros padres que están en etapas similares.\n\nDía 3: Ahora sí, una conversación corta con tu hijo, no un juicio. Elige un momento relativamente tranquilo. Habla de lo que has notado en conductas, no en etiquetas (“he visto que últimamente…”) y vincúlalo a cómo quieres que estén las cosas en casa. Presenta las reglas claras que acordaste con el otro adulto, con sus recompensas y consecuencias. Si tu hijo niega, minimiza o se cierra, no discutas sobre “si es verdad o no”; mantente en: “Estas son las reglas de la casa y se van a aplicar igual”. Cierra la conversación en un punto manejable, aunque queden cosas pendientes."
+    },
+    {
+      "key": "days4to7",
+      "order": 7,
+      "type": "prose",
+      "title": "Días 4 a 7",
+      "body": "Entre los días 4 y 7, el foco es coherencia. Lo que hablaste en el Día 3 ahora tiene que verse en la vida diaria. Aplica las recompensas cuando tu hijo cumple (por ejemplo, más tiempo de pantalla, permisos, pequeños privilegios) y las consecuencias acordadas cuando no, sin discursos largos ni reclamos extras. Tu mensaje es: “Cumples, ganas; no cumples, se aplica lo que ya sabíamos”.\n\nAsume de entrada que puede haber negación, evasión o incluso algo de escalada (“no confían en mí”, “están exagerando”). Tu trabajo no es ganar ese argumento, es sostener el plan. Si tu hijo se pone a la defensiva, puedes decir: “No voy a discutir esto ahora. Las reglas siguen igual” y cortar ahí. Revisa de nuevo tus notas del Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" para ver si aparecen nuevos patrones preocupantes.\n\nEn estos días, mantén tu propia red: participa al menos una vez en el Monitoring and Intervention discussion group para revisar cómo te estás sintiendo, pulir tus límites y pedir ejemplos concretos si algo no te está funcionando. Si durante esta semana aparecen señales más claras de consumo (olor a sustancias, objetos sospechosos, cambios bruscos en el colegio o en la salud), el próximo paso es escalar tu plan de monitoreo y, si lo ves necesario, empezar a informarte sobre opciones de apoyo clínico o programas de tratamiento tempranos. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program."
+    },
+    {
+      "key": "recommendedWorkshops",
+      "order": 9,
+      "type": "workshopList",
+      "title": "Los workshops para tu situación",
+      "workshops": [
+        {
+          "workshopId": "aux-early-warning-signs-identifying-substance-use",
+          "title": "Early Warning Signs – Identifying Substance Use Before It Becomes a Problem",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Tú estás en ese punto incómodo donde nada es claramente grave, pero tampoco te quedas tranquilo. El Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" te ayuda a traducir esa inquietud en un ojo más fino: qué cambios sí sugieren consumo temprano y cuáles son solo parte de la adolescencia, para reaccionar con calma y a tiempo."
+        }
+      ]
+    },
+    {
+      "key": "universalGuidingPrinciple",
+      "order": 10,
+      "type": "static",
+      "title": "Ajustar lo que haces a lo que estás viendo",
+      "body": "Un principio recorre todo este plan: la respuesta debe ajustarse a lo que realmente estás viendo, y no más. Actuar con más fuerza de la que la situación pide cuesta una confianza que vas a necesitar después. Actuar con menos fuerza de la que pide deja a tu hijo cargando algo solo. Ninguno de los dos errores es más seguro que el otro, y por eso este plan se construye desde lo que reportaste y no desde una plantilla — y por eso vale la pena volver a evaluarlo a medida que las cosas cambien."
+    },
+    {
+      "key": "parentSelfCare",
+      "order": 11,
+      "type": "static",
+      "title": "Cuidarte es parte del plan",
+      "body": "Esto no es un comentario al margen. Lo que sea que lleves a una habitación, tu hijo lo lee antes de escuchar una sola palabra — así que tu propia estabilidad no está separada de la recuperación de tu hijo, es parte del mecanismo. Duerme, come, y mantén al menos a una persona en tu vida que sepa lo que estás cargando. El Monitoring and Intervention discussion group existe exactamente para esto: padres que están en medio de lo mismo, que no van a necesitar que les expliques la situación desde el principio."
+    },
+    {
+      "key": "encouragement",
+      "order": 12,
+      "type": "prose",
+      "title": "Hacia dónde puede ir esto",
+      "body": "Algo muy claro en lo que marcaste es que no estás mirando hacia otro lado. Estás dispuesto a pensar el tema, a organizarte y a aprender, incluso sin señales extremas. Eso ya cambia el rumbo: llegas antes, con la cabeza más fría. En este plan, el objetivo no es ponerte contra tu hijo, sino ponerlos a ambos del mismo lado contra cualquier sustancia que quiera meterse en su vida. Cuando trabajas tu propia calma, ajustas tus límites y usas recompensas y consecuencias claras, le das a tu hijo algo sólido a lo que agarrarse, incluso si ahora protesta o niega. No te toca inventar todo de cero: el Monitoring and Intervention discussion group está lleno de padres que ya pasaron por etapas parecidas, con ejemplos concretos de qué les funcionó y qué no. Paso a paso, con ajustes pequeños pero constantes, es muy posible que logres mantener la puerta abierta con tu hijo y, si algo se complica, detectarlo a tiempo para actuar con decisión y no desde el pánico."
+    },
+    {
+      "key": "standardizedClosing",
+      "order": 13,
+      "type": "static",
+      "title": "Proteger el progreso",
+      "body": "La recuperación es un camino, no un solo acontecimiento, y proteger el progreso que tu hijo ya ha logrado es una de las responsabilidades más importantes que tienes como padre. Aunque muchos adolescentes llegan a alcanzar una recuperación duradera, pueden ocurrir recaídas. Una recaída no borra el progreso alcanzado, y no tiene por qué convertirse en un regreso al pasado.\n\nLa preparación es una de tus mayores fortalezas. Te animamos a completar el Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks\". Te ayudará a reconocer las señales de alerta tempranas, a responder con calma y eficacia si surgen dificultades, y a fortalecer el plan de tu familia para proteger la recuperación de tu hijo. También te animamos a participar en el Protecting Recovery Discussion Group, donde los padres comparten experiencias, aliento y conocimientos prácticos mientras se apoyan mutuamente a lo largo del camino continuo de la recuperación.\n\nRecuerda que el propósito del monitoreo, la supervisión, las conversaciones y los límites apropiados no es simplemente descubrir qué pasó o cuándo pasó, sino entender por qué. Identificar y abordar las razones de fondo del consumo de sustancias le da a tu hijo la mayor oportunidad de lograr una recuperación a largo plazo y un futuro sano y significativo."
+    }
+  ]
+}

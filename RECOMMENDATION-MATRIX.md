@@ -322,7 +322,40 @@ Media, Peer Pressure and Managing Stress — four required citations, silently
 absent, with nothing anywhere reporting a problem. That is the failure the new
 architecture makes impossible.
 
-### 6.9 What the real model actually did
+### 6.9 A Mild family was receiving no workshop at all
+
+Found by generating every severity in both languages against the real model, and
+the most consequential thing those runs turned up.
+
+**Every routing rule keys on a question answered 3 or above.** A family answering
+1 or 2 across the board therefore matched no rule that carries a workshop, and
+received a plan with **no workshop in it** — under a heading reading "The
+workshops for your situation" with nothing beneath it. The current system gave
+such a family six workshops.
+
+That is a regression, and this milestone is not allowed to introduce one, so it
+is fixed two ways:
+
+1. **A preventative rule now fires at Mild and Moderate**, routing to
+   "Early Warning Signs — Identifying Substance Use Before It Becomes a Problem".
+   The workshop is the methodology's choice, not ours: the Day 2 review bullet
+   says "typically Early Warning Signs in MILD", and Mild key priorities are told
+   to lean on preventative Auxiliary Workshops. **Extending it to Moderate is our
+   reading** — the prompts make Auxiliary Workshops the primary resource there
+   without naming a default. It is supporting-only and lowest-impact, so it never
+   leads a plan.
+
+2. **A section with nothing in it is no longer rendered.** A heading with no
+   content is worse than an absent section, and the model cannot fix it, because
+   an empty list is the correct answer to "write about exactly these zero
+   workshops".
+
+One knock-on worth knowing: "Early Warning Signs" is severity-gated out of
+Serious and Critical (§4), so the same workshop now reaches a Mild plan and is
+blocked from a Serious one. That gate was dormant before this; it is load-bearing
+now.
+
+### 6.10 What the real model actually did
 
 The pipeline has been run against the live model, not just a mock. Two things
 came out of it, and both are worth you knowing:
@@ -345,7 +378,7 @@ That is the mechanism working in both directions on its first contact with a rea
 model: one of our rules was wrong and one of the model's outputs was, and both
 were visible within minutes rather than in a report someone reads next month.
 
-### 6.10 Inverted-answer annotations are incomplete
+### 6.11 Inverted-answer annotations are incomplete
 
 Eleven questions are annotated in the source as having answer scales that run
 opposite to the question ("more is better"). Two more — **Q7** (consistency of
@@ -506,13 +539,19 @@ We compare which resources a family is pointed at, not the sentences. Two runs o
 an AI never produce identical prose, so comparing text would fail every time and
 prove nothing. What must not change is the routing and the severity register.
 
-**And the new engine has been run against the real model**, not only a mock. A
-Serious plan generated end to end satisfied every rule: the professional-help
-sequence verbatim, the private-search line verbatim, the peer-support group cited,
-your standardized closing and both guiding principles rendered exactly as
-written, and no banned vocabulary. Two defects surfaced in that run and are fixed
-— one a false alarm in our own checker, one a real drift by the model, described
-in §6.10.
+**And the new engine has been run against the real model**, not only a mock —
+**all four severities, in both languages, eight plans.** Every one now satisfies
+every rule: the professional-help sequence verbatim where it is triggered, the
+private-search line verbatim, the peer-support group cited, your standardized
+closing and both guiding principles rendered exactly as written, no banned
+vocabulary, no questionnaire option quoted back at the parent, and no workshop
+title translated. `npm run verify:real-model` re-runs it and the outputs are
+committed under `verification/`.
+
+Those runs found five defects, all fixed: two in our own checkers, one in the
+methodology as transcribed (§6.9), one real drift by the model (§6.10), and one
+timeout that lost a plan outright. **None of them would have been visible from
+the mock**, which is the argument for having spent the money.
 
 Eight rather than six, incidentally: your scope statement asked for baselines
 across Mild, Moderate and Serious, but the urgent path is a fourth report shape

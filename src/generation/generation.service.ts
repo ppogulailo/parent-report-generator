@@ -92,9 +92,19 @@ export class GenerationService {
     language: Language,
     urgentText?: string | null,
   ): Promise<GeneratedReport> {
-    const sections = this.content.sectionsFor(selection.tierId, (section) =>
-      section.when ? evaluate(section.when, selection.scored) : true,
-    );
+    const sections = this.content
+      .sectionsFor(selection.tierId, (section) =>
+        section.when ? evaluate(section.when, selection.scored) : true,
+      )
+      // A workshop list with no workshops is a heading with nothing under it.
+      // It happens when no routing rule fired a workshop — which a real Mild
+      // plan does today — and the model cannot fix it, because an empty array is
+      // the correct answer to "write about exactly these zero workshops".
+      // Dropping it here means the model is never asked for it either.
+      .filter(
+        (section) =>
+          section.type !== 'workshopList' || selection.workshopIds.length > 0,
+      );
 
     const { schema } = buildReportSchema(sections, selection);
 

@@ -138,7 +138,7 @@
       }
     },
     {
-      "id": "soft-fallbacks",
+      "id": "soft-fallbacks-serious",
       "kind": "phrases",
       "reason": "At these severities the methodology requires a named next move. \"See how it goes\" is what a parent does instead of acting, and offering it as the recommendation is how a serious situation gets a week older.",
       "strictness": "retry",
@@ -162,6 +162,17 @@
           "vuelve cuando las cosas se calmen",
           "observa y vuelve a evaluar"
         ]
+      }
+    },
+    {
+      "id": "soft-fallbacks-moderate",
+      "kind": "phrases",
+      "reason": "At MODERATE the methodology names these two specifically: every priority area must end in a concrete commitment, so an ending of \"see how it goes\" with no named next move is the one thing it must not be. The wider list belongs to SERIOUS.",
+      "strictness": "retry",
+      "appliesAtTiers": ["moderate"],
+      "terms": {
+        "en": ["see how it goes", "monitor and reassess"],
+        "es": ["a ver cómo va", "observa y vuelve a evaluar"]
       }
     },
     {

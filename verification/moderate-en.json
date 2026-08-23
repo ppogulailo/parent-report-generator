@@ -1,0 +1,125 @@
+{
+  "tier": "moderate",
+  "checks": {
+    "every section written": true,
+    "professional-help sequence when triggered": true,
+    "private-search line when triggered": true,
+    "guiding principles rendered verbatim": true,
+    "standardized closing correct for tier": true,
+    "urgent sections correct for input": true,
+    "peer-support group cited": true,
+    "no banned vocabulary": false,
+    "no answer label quoted": true,
+    "workshop titles never translated": true
+  },
+  "sections": [
+    {
+      "key": "headlineSummary",
+      "order": 2,
+      "type": "prose",
+      "title": "Where you are right now",
+      "body": "From what you shared, you’re worried enough about substance use to be in this program, but you’re not seeing obvious, constant warning signs right now. You’re picking up on smaller shifts and you don’t want to miss something early. You’re also trying to balance this with everything else in your life, which means your patience and energy are not endless. You’re second‑guessing yourself at times: wondering if you’re overreacting, or if you’re letting things slide because you don’t want another fight. You want to step in early, but you also don’t want to push your teen away or turn every interaction into a lecture or investigation. This plan assumes nothing is on fire today, and that the most useful thing you can do this week is steady yourself, get the adults on the same page, learn what to watch for, and be very deliberate about how and when you raise this with your teen."
+    },
+    {
+      "key": "topImmediatePriorities",
+      "order": 3,
+      "type": "list",
+      "title": "Your first three priorities",
+      "items": [
+        "First, steady yourself before you respond to anything related to substances or your teen’s behavior. When something sets you off — a comment, a smell, a missed curfew — pause on purpose. Take a short walk, step into another room, or jot down what you actually want to say before you say it. If a conversation heats up, call a timeout instead of pushing through in anger. Tell your teen, “I need to cool down so we can talk about this properly,” and walk away. Your job in these first 72 hours is not to win an argument; it’s to show up calm enough that your teen can’t dismiss you as “just overreacting again.”",
+        "Second, get on the same page with a co-parent, co-guardian, or another parent or guardian on the family side before you go to your teen. Share your specific concerns, not just “I’m worried.” Agree on what you’ll both say about alcohol and other drugs, and what the shared rewards and consequences will be if rules are followed or broken. Decide now what happens if your teen lies, refuses to talk, or storms off, so you’re not improvising in anger. A short, clear written list that both adults agree to is better than a long, vague talk that no one remembers.",
+        "Third, build your own support so this doesn’t all live in your head. Reach out to the Monitoring and Intervention discussion group and introduce yourself, even if things feel “not that bad” right now. Ask other parents what early signs they noticed before things got more serious, and what rewards and consequences actually changed behavior instead of just creating more arguing. Use this group as a place to reality‑check your instincts, practice scripts for tough conversations, and get ideas for staying calm when you feel pushed to your limit."
+      ]
+    },
+    {
+      "key": "keyPriorities",
+      "order": 4,
+      "type": "recommendationList",
+      "title": "What to work on",
+      "recommendations": [
+        {
+          "recommendationId": "parent-emotional-regulation",
+          "title": "Parent Emotional Regulation",
+          "headline": "Steady yourself so your teen sees calm, not chaos",
+          "body": "Right now your biggest tool is how you carry yourself in front of your teen. You already have some worry in the background; if that spills out as snapping, lecturing, or sarcasm, your teen will focus on your tone instead of your message. Before you walk into any substance-related talk, check in with yourself: heart racing, jaw tight, replaying old arguments? If yes, pause. Take 10–15 minutes to walk, breathe slowly, or write down the 2–3 points you actually need to make. Go in with one clear goal, not a lifetime review. When your teen shuts down or argues, commit to ending the talk before it becomes a shouting match, and come back to it later. Use the Monitoring and Intervention discussion group to practice specific phrases that keep you steady. If your teen keeps dodging or conversations always turn explosive this week, the next step is to schedule a specific time to talk and tell your teen in advance what the topic will be and how long it will last."
+        },
+        {
+          "recommendationId": "preventative-foundation",
+          "title": "Know what you are looking at",
+          "headline": "Know what early substance use actually looks like",
+          "body": "You’re not seeing dramatic changes, which is good — this is the window where good information matters most. Instead of watching your teen constantly and guessing, learn the real early signs: small but steady shifts in sleep, grades, friend groups, money use, mood, and honesty. Notice patterns over weeks, not single bad days. Keep brief notes for yourself so you’re relying on facts, not just a general feeling that “something’s off.” This lets you spot a change in days instead of months. Watch for any unknown substance, paraphernalia, or sudden secrecy around bags or devices. If you ever need to check something, do it calmly and with intention, not as a threat. Conduct any search of your child's room, backpack, or phone privately and without your child present. Leave the room as you found it and document anything relevant. Review Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" this week. If you see a clear new pattern of lying, unexplained money issues, or ongoing smell of substances, the next step is to tighten specific rules (curfew, where your teen can hang out, supervision) and spell out matching rewards and consequences."
+        }
+      ]
+    },
+    {
+      "key": "whatToAvoid",
+      "order": 5,
+      "type": "list",
+      "title": "What to avoid",
+      "items": [
+        "Do not turn every small concern into an immediate confrontation. If you jump on every late text or mood swing with a substance lecture, your teen will tune you out and hide more. Collect a bit of information first, calm yourself, and then choose your moment instead of reacting in the heat of it.",
+        "Do not search your child's room, backpack, or phone confrontationally or as a way to \"catch\" your teen mid-argument. Conduct any search of your child's room, backpack, or phone privately and without your child present. Leave the room as you found it and document anything relevant. A calm, private check based on specific concerns is very different from tearing through their things during a fight.",
+        "Do not jump straight to heavy punishments without matching rewards or a clear path back. Pure punishment — grounding for weeks, taking everything away — usually just creates more secrecy. Tie consequences to specific behaviors (like missing curfew), and pair them with rewards for honesty, checking in, and following agreements.",
+        "Do not dismiss your own concerns because things are “not that bad.” Waiting for something dramatic before you act is how early patterns grow into bigger problems. At the same time, avoid dramatic language or worst-case stories when you talk to your teen; stick to what you’ve actually seen.",
+        "Do not make your teen the enemy. Talk about the risks of substances as something you and your teen are fighting together. Calling your teen a liar, a problem, or a disappointment will only drive the behavior underground and make real conversations harder."
+      ]
+    },
+    {
+      "key": "first72Hours",
+      "order": 6,
+      "type": "prose",
+      "title": "Your first 72 hours",
+      "body": "Day 1:\nStart with your own state. Notice where the worry shows up in your body — tight chest, racing thoughts, replaying past arguments. Take at least 20–30 minutes for yourself: walk, shower, or sit alone and write down your top three concerns in plain language. Then write what you actually want for your teen over the next year (safety, honesty, school, activities). This will keep you from drifting into general fear. If something comes up with your teen today, use simple, calm responses and delay any big talk. Say, “I want to talk about this, but not when we’re both irritated. We’ll come back to it.”\n\nDay 2:\nLine up the adults and your information. Talk with a co-parent, co-guardian, or another parent or guardian on the family side about what you’re seeing and what you want the rules and rewards and consequences to be. Get agreement on basics: substance rules, curfew, honesty, and what happens if those are broken or kept. Then, watch Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" before you talk with your teen. Take notes on 3–5 early signs that match or don’t match your teen. If you need to check any space or device because of a specific concern, do it once, calmly. Conduct any search of your child's room, backpack, or phone privately and without your child present. Leave the room as you found it and document anything relevant. In the evening, post once in the Monitoring and Intervention discussion group to share what you’re seeing and get quick feedback.\n\nDay 3:\nNow have a focused conversation with your teen. Choose a relatively calm time, not at bedtime or in the middle of another conflict. Keep it short — 10–20 minutes. Lead with what you’ve noticed (“I’ve seen you more withdrawn and coming home later”) and what you want (“I care about your safety and I want us to be straight with each other about substances”). Ask open questions and then stop talking. Expect some denial or eye-rolling; you’re listening for information, not trying to win. Share the basic rules and the rewards and consequences you and the other adult agreed on. End by making clear: you’re on your teen’s side against anything that could harm them, including substances, and this is the start of an ongoing conversation, not a one-time lecture."
+    },
+    {
+      "key": "days4to7",
+      "order": 7,
+      "type": "prose",
+      "title": "Days 4 to 7",
+      "body": "Over the next few days, your job is to back up what you said with steady, not dramatic, action.\n\nKeep your own regulation front and center. If your teen brings up the conversation sarcastically or brushes it off, remind yourself that pushback is normal. You can say, “I meant what I said about safety and honesty. I’m not dropping it, but I’m not going to yell about it either.” Then move on; you don’t need to re-argue the whole thing.\n\nStick to the rules, rewards, and consequences the adults agreed on. If your teen breaks a rule — comes home late, lies about where they were, or you notice the smell of substances — follow through on the consequence you already laid out, and also offer a clear way to earn things back with better choices. If your teen does what was asked, be just as consistent with the rewards (extra time with friends, small privileges, positive feedback).\n\nAssume some denial or deflection. If your teen says, “You don’t trust me” or “Everyone else’s parents are fine with this,” respond with one clear line: “My job is to keep you safe, not to match other parents.” Don’t debate whether other teens are using more or less.\n\nIf, during these days, you start to see a pattern of stronger warning signs — repeated lying, clear signs of intoxication, or finding an unknown substance more than once — use the Monitoring and Intervention discussion group to ask directly what other parents did at this point and how they involved outside support. If it feels like things are slipping faster than you can manage, consider professional help. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program. The firm step for this week: by Day 7, you will either have held one follow-up check-in conversation with your teen or, if warning signs escalated, taken at least one concrete action toward outside support (a call, email, or information-gathering step)."
+    },
+    {
+      "key": "recommendedWorkshops",
+      "order": 9,
+      "type": "workshopList",
+      "title": "The workshops for your situation",
+      "workshops": [
+        {
+          "workshopId": "aux-early-warning-signs-identifying-substance-use",
+          "title": "Early Warning Signs – Identifying Substance Use Before It Becomes a Problem",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "You’re in a spot where nothing looks extreme yet, but you’re worried you might miss early shifts. Auxiliary Workshop \"Early Warning Signs – Identifying Substance Use Before It Becomes a Problem\" will give you a clear picture of which small changes matter, so you’re reacting to real patterns instead of general anxiety."
+        }
+      ]
+    },
+    {
+      "key": "universalGuidingPrinciple",
+      "order": 10,
+      "type": "static",
+      "title": "Matching what you do to what you are seeing",
+      "body": "One principle runs underneath everything in this plan: the response should match what you are actually seeing, and no more. Acting harder than the situation calls for costs you trust you will need later. Acting more softly than it calls for leaves your child carrying something alone. Neither error is safer than the other, which is why this plan is built from what you reported rather than from a template — and why it is worth reassessing as things change."
+    },
+    {
+      "key": "parentSelfCare",
+      "order": 11,
+      "type": "static",
+      "title": "Looking after yourself is part of the plan",
+      "body": "This is not an aside. Whatever you bring into a room, your child reads it before they hear a word you say — so your own steadiness is not separate from your child's recovery, it is part of the mechanism. Sleep, eat, and keep at least one person in your life who knows what you are carrying. The Monitoring and Intervention discussion group exists for exactly this: parents who are in the middle of it, who will not need the situation explained from the beginning."
+    },
+    {
+      "key": "encouragement",
+      "order": 12,
+      "type": "prose",
+      "title": "Where this can go",
+      "body": "You’ve already done something many parents avoid until things are much worse: you answered hard questions honestly and agreed to look at this before it explodes. That matters. It means you’re paying attention, not just hoping this will sort itself out.\n\nRight now, the most powerful move you can make is to stay calm, learn what to watch for, and be consistent instead of swinging between ignoring and overreacting. That steadiness is what lets your teen see you as serious and fair, even if they pretend otherwise.\n\nRemember: your teen is not the opponent here; substances and risky situations are. Every rule you set and every conversation you start is about standing next to your teen, not across from them. Use the Monitoring and Intervention discussion group when you feel stuck or uncertain — the parents there are dealing with the same questions in real time and can share what actually helped in their homes. You do not have to improvise this alone."
+    },
+    {
+      "key": "standardizedClosing",
+      "order": 13,
+      "type": "static",
+      "title": "Protecting the progress",
+      "body": "Recovery is a journey—not a single event—and protecting the progress your child has already made is one of the most important responsibilities you have as a parent. While many adolescents go on to achieve lasting recovery, setbacks can occur. A setback does not erase the progress that has been made, and it does not have to become a return to the past.\n\nPreparation is one of your greatest strengths. We encourage you to complete the Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks.\" It will help you recognize early warning signs, respond calmly and effectively if challenges arise, and strengthen your family's plan to protect your child's recovery. We also encourage you to participate in the Protecting Recovery Discussion Group, where parents share experiences, encouragement, and practical insights while supporting one another through the ongoing journey of recovery.\n\nRemember, the purpose of monitoring, supervision, conversations, and appropriate boundaries is not simply to discover what happened or when it happened—but to understand why. Identifying and addressing the underlying reasons for substance use gives your child the greatest opportunity for long-term recovery and a healthy, meaningful future."
+    }
+  ]
+}

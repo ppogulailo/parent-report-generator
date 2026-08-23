@@ -136,25 +136,41 @@ test('a gated resource is recorded in the audit rather than vanishing', () => {
   );
 });
 
-test('"Early Warning Signs" is unroutable, which is stronger than being gated', () => {
-  // Worth stating explicitly, because it shows what the architecture change
-  // actually buys. The live prompt has to ban this workshop at SERIOUS, because
-  // the model is handed the whole directory and could reach for it. Here no
-  // recommendation routes to it at all, so no plan at any severity can cite it
-  // — the ban is satisfied by construction rather than by instruction.
-  //
-  // The tier gate on it is therefore a backstop for a future rule that routes
-  // there. If one is ever added, the gate is what keeps it out of SERIOUS.
-  const routed = new Set(
-    content.matrix.recommendations.flatMap((r) => r.workshopIds),
-  );
-  expect(routed.has('aux-early-warning-signs-identifying-substance-use')).toBe(
-    false,
-  );
-  expect(
-    content.forbiddenWorkshopIdsAtTier('serious'),
-    'the backstop must still be declared',
-  ).toContain('aux-early-warning-signs-identifying-substance-use');
+test('"Early Warning Signs" is routed at Mild and gated out of Serious', () => {
+  // This test used to assert the workshop was unroutable, which it was — and
+  // that turned out to be the bug: a Mild family matched no workshop-bearing
+  // rule and received a plan with no workshop in it. The preventative rule now
+  // routes it, which makes the tier gate load-bearing rather than a dormant
+  // backstop: the same workshop must reach a Mild plan and must not reach a
+  // Serious one, where the parent is past the awareness stage.
+  const EARLY = 'aux-early-warning-signs-identifying-substance-use';
+
+  const mild = selection.select(submission(1));
+  expect(mild.tierId).toBe('mild');
+  expect(mild.workshopIds).toContain(EARLY);
+
+  const moderate = selection.select(submission(2));
+  expect(moderate.tierId).toBe('moderate');
+  expect(moderate.workshopIds).toContain(EARLY);
+
+  const serious = selection.select(submission(4));
+  expect(serious.tierId).toBe('serious');
+  expect(serious.workshopIds).not.toContain(EARLY);
+
+  const critical = selection.select(submission(1), 'I found something.');
+  expect(critical.tierId).toBe('critical');
+  expect(critical.workshopIds).not.toContain(EARLY);
+});
+
+test('no plan, at any severity, comes out with zero workshops', () => {
+  // The failure that produced the rule above: a heading reading "The workshops
+  // for your situation" with nothing under it, in every Mild and Moderate plan.
+  for (const base of [1, 2, 3, 4]) {
+    const result = selection.select(submission(base));
+    expect(result.workshopIds.length, `all-${base}s`).toBeGreaterThan(0);
+  }
+  const urgent = selection.select(submission(1), 'something happened');
+  expect(urgent.workshopIds.length, 'critical').toBeGreaterThan(0);
 });
 
 test('the routing table fires on the questions it names', () => {

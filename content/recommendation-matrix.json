@@ -205,6 +205,26 @@
       "notes": "The live methodology makes this the first immediate priority in every report at every tier, with no exceptions, which is why it is alwaysInclude with an always-true rule and the highest impact — it leads. It is also defaultPrimary: it is the one recommendation guaranteed to be available to every family at every tier, so a submission matching no other primary-eligible rule still receives a real primary rather than a fallback that does not fit. It routes to the parent's own peer-support group and to no workshop, which is what guarantees that group appears in every report."
     },
     {
+      "id": "preventative-foundation",
+      "domainId": "immediate-safety-urgency",
+      "title": {
+        "en": "Know what you are looking at",
+        "es": "Saber qué estás viendo"
+      },
+      "intent": {
+        "en": "Nothing here is acute, and the most useful thing a parent can do at this stage is learn what the early signals actually look like — so that if the picture changes they recognise it in days rather than months, and so that their attention is informed rather than anxious.",
+        "es": "Nada de esto es agudo, y lo más útil que un padre puede hacer en esta etapa es aprender cómo se ven realmente las señales tempranas — para que si el panorama cambia lo reconozca en días y no en meses, y para que su atención esté informada en lugar de ansiosa."
+      },
+      "eligibleAs": ["supporting"],
+      "educationalImpact": 40,
+      "excludes": [],
+      "workshopIds": ["aux-early-warning-signs-identifying-substance-use"],
+      "discussionGroupIds": [],
+      "allowedTiers": ["mild", "moderate"],
+      "when": { "tier": ["mild", "moderate"] },
+      "notes": "RECOVERED FROM A GAP FOUND BY THE REAL-MODEL RUN. Every other routing rule keys on a question at 3 or above, so a family answering 1 or 2 across the board matched no workshop-bearing rule at all and received a plan with no workshop in it and an empty workshops heading. The current system gave such a family six. The methodology does name a MILD default — the DAY 2 review bullet says \"typically Early Warning Signs in MILD\" and MILD key priorities are told to lean on preventative Auxiliary Workshops — so the workshop is the methodology's, not ours. EXTENDING IT TO MODERATE IS OUR READING: the prompts make Auxiliary Workshops the primary resource at MODERATE without naming a default. Supporting-only and low impact, so it never leads a plan and sorts last. Tier-gated out of SERIOUS and CRITICAL, where the parent is past the awareness stage. Flagged in RECOMMENDATION-MATRIX.md 6.8."
+    },
+    {
       "id": "communication-breakdown",
       "domainId": "communication-conflict",
       "title": {

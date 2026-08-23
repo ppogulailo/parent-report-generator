@@ -1,0 +1,255 @@
+{
+  "tier": "serious",
+  "checks": {
+    "every section written": true,
+    "professional-help sequence when triggered": true,
+    "private-search line when triggered": true,
+    "guiding principles rendered verbatim": true,
+    "standardized closing correct for tier": true,
+    "urgent sections correct for input": true,
+    "peer-support group cited": true,
+    "no banned vocabulary": true,
+    "no answer label quoted": true,
+    "workshop titles never translated": true
+  },
+  "sections": [
+    {
+      "key": "headlineSummary",
+      "order": 2,
+      "type": "prose",
+      "title": "Where you are right now",
+      "body": "You are dealing with confirmed substance use, not just a hunch, and you suspect it’s happening at least weekly. Your teen spends most free time in places and with peers where substances are around, and you rarely know where they actually are. When you try to address behaviour or rules, it often blows up into yelling and slammed doors, so you’ve started dreading those talks and avoiding them. Your teen shuts down when you try to talk about stress or emotions, and never really takes responsibility, instead blaming others or denying. You’re losing sleep with active fear about safety, long‑term consequences, and feeling stuck with no clear plan. Rules exist on paper but are rarely enforced, and there is little structure day to day. You feel alone, with no connection to school or community support, and you have not connected with any therapist or treatment provider yet because it’s hard to even know where to begin. All of this is wearing you down to near-daily exhaustion."
+    },
+    {
+      "key": "topImmediatePriorities",
+      "order": 3,
+      "type": "list",
+      "title": "Your first three priorities",
+      "items": [
+        "1) Steady yourself before doing anything else. You’re running on empty and constantly questioning whether you’re overreacting or underreacting. For the next few days, your job is to slow your reactions down: short pauses before you speak, walking away when voices rise, writing down what you want to say before you say it. When your teen lies, denies, or explodes, your win is to stay calmer than the situation, not to win the argument. This is how you keep from adding more fuel to near-daily conflict.",
+        "2) Get the adults on the same page. Right now you and your co-parent or co-guardian are pulling in opposite directions, or not in contact at all. Before your teen hears about any new rule, reward, or consequence, the adults need at least a basic agreement: what the curfew is, how phone and social time are handled, what happens if substances show up again, and what positive privileges are earned when your teen is making safer choices. Even if the other adult won’t fully join you, they at least need to know the line you are holding.",
+        "3) Build your own support so you’re not doing this in isolation. Feeling alone and unsure where to start with outside help leaves you stuck and exhausted, and that seeps into every interaction with your teen. Reach out to the Monitoring and Intervention discussion group this week and introduce your situation plainly: confirmed use, constant secrecy, explosive conflicts, and no clear plan. Ask how others structured first steps and kept going when they were scared and worn out. The goal is practical ideas and emotional backup so the plan you set is something you can actually carry out, not just something that sounds good on paper."
+      ]
+    },
+    {
+      "key": "keyPriorities",
+      "order": 4,
+      "type": "recommendationList",
+      "title": "What to work on",
+      "recommendations": [
+        {
+          "recommendationId": "parent-emotional-regulation",
+          "title": "Parent Emotional Regulation",
+          "headline": "Steady yourself before you act",
+          "body": "You are living with near-daily fear, exhaustion, and constant second-guessing. If you walk into any conversation in that state, your teen will react to your stress more than your words. For the next week, your first move when something happens (missed curfew, suspected use, yelling) is to pause: take a brief walk, splash water on your face, or step into another room and write down what you want to say in one or two sentences. Decide ahead of time what tone you want to use, especially when your teen denies, blames, or slams doors. Your goal is steady, not perfect. Join the Monitoring and Intervention discussion group and ask specifically for strategies other parents used to keep their cool during constant conflict. If your teen continues weekly use and explosive reactions, the next step is to combine these regulation tools with the structure from \"Intervening When Substance Use is Present: First Steps and Next Steps\" so you can hold firmer lines without shouting."
+        },
+        {
+          "recommendationId": "active-use-intervention",
+          "title": "Act on what you are seeing",
+          "headline": "Act on the confirmed substance use",
+          "body": "You have seen direct evidence of use, and you suspect it’s happening at least weekly. This is the time to move from worrying to acting. That means setting one or two clear non-negotiable boundaries for this week (for example: no leaving the house in the evening without saying where, who with, and how to reach them; no substances in the home, period), and matching them with clear rewards (extra freedom, screen time, or access to activities) when your teen sticks to them. Expect pushback, denial, or deflection; your job is to calmly repeat the boundary and the consequence/reward you already decided, not to debate whether use is real. Watch the Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" to map out exactly how you will respond to the next incident. If you see any sign of use or paraphernalia again this week, the next step is to put that response plan into action the same day, not after another argument cycle."
+        },
+        {
+          "recommendationId": "co-parent-alignment",
+          "title": "Get the adults aligned",
+          "headline": "Get the adults pointed in the same direction",
+          "body": "You reported that the adults are either pulling in opposite directions or not in contact. That split makes rules feel optional to your teen and leaves you doubting yourself. Schedule a short, focused talk with your co-parent or co-guardian (phone, text, email if needed) that has a narrow goal: agree on 2–3 key rules, the rewards for following them, and the consequences for breaking them this week. Keep it about safety, not blame or past parenting choices. If there is no co-parent available, think about one other adult on your family side who can at least echo the same messages. The Essential Workshop \"Building a Support Network\" and the Monitoring and Intervention discussion group can help you think through who to bring in and how. If your teen continues spending most free time in risky environments despite the new rules, the next step is for the adults to tighten privileges together rather than undercut each other in front of your teen."
+        },
+        {
+          "recommendationId": "drug-testing-serious",
+          "title": "Know what you are dealing with",
+          "headline": "Use drug testing to get facts, not to punish",
+          "body": "With confirmed use and serious concern, guessing what substances are involved is too risky. A drug test you give is about information and safety, not catching or shaming. Decide and state clearly that testing is part of being under your roof right now, just like school attendance or curfew. Explain that the results will guide what support and limits you put in place, and that clean tests over time can earn more freedom. Do not threaten testing in the middle of an argument; introduce it calmly after you are regulated. The Auxiliary Workshop \"Drug Testing\" will walk you through types of tests, timing, and how to explain this to your teen. If your teen refuses a test this week, the next step is to treat refusal as concerning in itself and tighten privileges (for example, no unsupervised outings) until a test is completed, with clear rewards for cooperation."
+        },
+        {
+          "recommendationId": "communication-breakdown",
+          "title": "When every conversation turns into a fight",
+          "headline": "Shift conversations that always blow up",
+          "body": "Right now, talks about rules or feelings tend to end in yelling, slammed doors, or complete shutdown. That pattern makes it almost impossible to discuss substance use or safety. Your first shift is to pick times when the house is relatively calm and lead with short, specific statements instead of lectures: “I’m worried about how often you’re out and what you’re exposed to. I’m going to set some new boundaries to keep you safer.” Expect your teen to deny, roll eyes, or walk away. You don’t chase; you repeat your message once and then follow through on the boundary you already decided. Use questions that are easy to answer (“What time will you be back?”) instead of “Why” questions that invite arguments. The Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" will give you concrete scripts. If every attempt this week still ends in shouting, the next step is to shorten the talks even more and focus on actions (curfew, phone limits) instead of trying to win a long conversation."
+        },
+        {
+          "recommendationId": "consistent-consequences",
+          "title": "Make the rules mean something",
+          "headline": "Make rules, rewards, and consequences real again",
+          "body": "You said rules are rarely enforced and your teen never really owns their behaviour. That teaches that limits are optional and blame works. Choose a very small number of important rules for this week (for example: checking in on location, no substances in the home, coming home by a set time). For each, name out loud a concrete reward for following it (screen time, rides, social time) and a specific consequence for breaking it (earlier curfew, reduced phone access) and stick to them every time, without extra lectures. When your teen denies or blames others, you don’t argue about the story; you calmly point back to the agreed rule and the agreed outcome. The Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\" and Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\" will help you write these down clearly. If your teen breaks the same rule again this week, the next step is to formalize a written behavioral contract together and link bigger rewards and consequences to it."
+        },
+        {
+          "recommendationId": "secrecy-and-hidden-use",
+          "title": "When you are not getting straight answers",
+          "headline": "Gather information when you are not getting straight answers",
+          "body": "You’re seeing constant secrecy and refusal to engage, so you can’t rely on what your teen says about substances or where they are. Alongside conversation, you may need to quietly gather facts: noticing patterns of coming and going, checking containers where substances are often stored, and, when necessary, looking through spaces your teen uses if safety is a concern. Conduct any search of your child's room, backpack, or phone privately and without your child present. Leave the room as you found it and document anything relevant. Do not announce searches as threats or do them in front of your teen as a showdown; that turns fact-finding into a power struggle. The Auxiliary Workshop \"How and When to Search a Room\" offers step-by-step guidance. If you find substances or paraphernalia this week, the next step is to remove them, store photos as documentation, and move directly to the intervention plan from \"Intervening When Substance Use is Present: First Steps and Next Steps\" rather than ignoring it."
+        },
+        {
+          "recommendationId": "parent-support-and-exhaustion",
+          "title": "You cannot do this on empty",
+          "headline": "Protect your own energy so you can follow through",
+          "body": "You described running on empty almost every day, losing sleep over safety and long-term consequences, and feeling paralyzed by doubt. In that state, even simple follow-through on a rule can feel impossible. This week, commit to two things: one small act each day that is just for your own reset (a short walk, a regular bedtime, a call with someone who actually listens), and one connection to other parents in this program. Reach out to the Monitoring and Intervention discussion group and say directly that you’re exhausted, scared about weekly use, and unsure how hard to push. Ask for one concrete step others took when they felt similarly worn down. Sharing the load here is not a luxury; it’s what makes you able to keep your word with your teen. If, by the end of the week, you still feel completely stuck, the next step is to return to that group and ask specifically about how they found additional support in their communities."
+        },
+        {
+          "recommendationId": "mood-and-mental-health",
+          "title": "What is underneath the behaviour",
+          "headline": "Look underneath the substance use",
+          "body": "You’re seeing dramatic mood swings, withdrawal, and aggressive behaviour, and your teen shuts down whenever you touch stress or emotional pain. Substance use may be their way of coping, numbing, or fitting in. Alongside boundaries about use, start showing curiosity about what hurts: brief, low-pressure check-ins like, “You’ve seemed on edge and up and down lately. I care about how you’re actually feeling, even if you don’t want to talk yet.” Don’t push for deep sharing in one go; notice patterns (sleep, appetite, school changes) and keep a private log. The Auxiliary Workshop \"Managing Stress and Pressure – Helping Your Teen Develop Healthy Coping Skills\" will give you alternatives you can offer and model: sleep routines, physical activity, non-using friends, small breaks from pressure. If mood swings and shutdowns stay this intense this week, the next step is to use that workshop’s tools to suggest one concrete new coping strategy and tie a small reward to your teen trying it."
+        },
+        {
+          "recommendationId": "peer-influence",
+          "title": "The people around your child",
+          "headline": "Address the impact of peers without an all-out war",
+          "body": "You reported that your teen spends almost all free time with peers you deeply distrust. Those relationships likely provide both access to substances and pressure to keep using. Instead of opening with, “You can’t see them,” focus on how the group affects your teen: “When you’ve been with them, you come home edgy and more likely to break rules. That worries me.” Set boundaries around time, places, and supervision (for example, only certain houses, earlier curfews, or requiring check-ins) while also keeping space for safer connections. The Auxiliary Workshop \"Understanding and Navigating Peer Pressure\" can help you understand what your teen is up against and how to talk about influence without just attacking their friends. If your teen keeps spending most free time with these peers and refuses any limits this week, the next step is to tighten privileges tied to that group (rides, money, overnights) while clearly offering rewards for investing in other activities or friendships."
+        },
+        {
+          "recommendationId": "school-engagement",
+          "title": "Bring the school in",
+          "headline": "Bring school in as another set of eyes",
+          "body": "Right now you feel completely alone, with no contact from school or community professionals, while your teen is likely spending a big slice of the day there. Teachers, counselors, and coaches often see shifts in mood, attendance, peer groups, and performance that families miss. Reach out to one point of contact at school this week (counselor, grade-level leader, coach) and say plainly that you’re worried about substance use, mood swings, and peer influence, and that you want to work with them, not complain. Ask what they see and what supports the school can offer. The Auxiliary Workshop \"Partnering with Schools for Your Child's Success\" and Essential Workshop \"Building a Support Network\" will help you plan that outreach. If the school doesn’t respond or seems vague this week, the next step is to request a more formal meeting and keep a written record of your concerns and what they say they can do."
+        },
+        {
+          "recommendationId": "phone-and-social-media",
+          "title": "The phone and what is on it",
+          "headline": "Treat the phone as part of the substance picture",
+          "body": "You rarely know where your teen is, and they are often with peers you don’t trust. Their phone and social media are likely how plans are made, substances are sourced, and pressure is applied. Instead of waiting until you’re angry to grab the phone, set a clear expectation: as long as your teen is living under your roof, phone and social accounts are shared responsibilities. Define specific checks (for example, spot checks of messages and apps at agreed times) and link them to rewards (continued phone access, data, later curfew) when used responsibly. The Auxiliary Workshop \"Understanding the Impact of Social Media on Substance Use and Mental Health\" will help you see what to look for and how to talk about it. If your teen refuses any phone supervision this week, the next step is to scale back data or app access while calmly repeating that increased privacy is earned back through safer choices, not demanded in the middle of an argument."
+        }
+      ]
+    },
+    {
+      "key": "whatToAvoid",
+      "order": 5,
+      "type": "list",
+      "title": "What to avoid",
+      "items": [
+        "Do not wait for the “perfect moment” to bring up concerns while weekly use continues. Avoid telling yourself you’ll say something when your teen is in a better mood and then never returning to it. Pick a calm-enough window and use brief, clear statements, even if you feel nervous.",
+        "Do not search your child's room, backpack, or phone confrontationally or as a dramatic scene to prove a point. Conduct any search of your child's room, backpack, or phone privately and without your child present. Leave the room as you found it and document anything relevant. Announcing it in the middle of a fight will only deepen secrecy and power struggles.",
+        "Avoid swinging between no rules and extreme crackdowns after you’ve had enough. That rollercoaster teaches that if your teen just waits you out, limits will fade. Instead, choose a few key rules with matching rewards and consequences and apply them consistently, even when you’re tired or being blamed.",
+        "Do not get pulled into long debates about whether your teen is really using or whose fault it is. Once you’ve seen evidence, arguing the facts just distracts from safety. State what you know, the boundary, and the consequence/reward, and then step back from the argument instead of trying to win it.",
+        "Avoid isolating yourself out of shame or confusion. Pulling back from other adults, school, or the Monitoring and Intervention discussion group leaves you more exhausted and uncertain, which makes follow-through harder. Reaching out for concrete support is part of protecting your teen, not a sign you failed."
+      ]
+    },
+    {
+      "key": "first72Hours",
+      "order": 6,
+      "type": "prose",
+      "title": "Your first 72 hours",
+      "body": "Day 1: Focus first on your own regulation. Acknowledge that you are scared, exhausted, and unsure, and give yourself explicit permission to move more slowly and deliberately. When you notice yourself about to confront your teen, pause: step into another room, take 10 slow breaths, and write down the one or two key points you want to make instead of launching into a heated back-and-forth. In the evening, jot down the few non-negotiable safety rules you believe are essential right now (substances in the home, curfew, check-ins).\n\nDay 2: Turn to information and support. Watch the Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" from start to finish. Before you talk to your teen, you want that step-by-step structure in your mind. Also, review basic facts about the substances you suspect, and skim the Auxiliary Workshop \"Drug Testing\" so you understand how testing could work in your home. Reach out to the Monitoring and Intervention discussion group, briefly describe your situation, and ask for one thing they wish they had done in their first week of confirmed use. If possible, make contact with your co-parent or another parent or guardian on the family side and share the simple rules you wrote down.\n\nDay 3: Have the first focused conversation. Pick a time when your teen is relatively sober and not rushing out the door. Start with your concern and a clear boundary: “I’ve seen signs of substance use and I’m worried about your safety. Because of that, here’s what is changing this week…” Expect denial, minimization, or anger. Do not debate whether use is happening; calmly repeat the rules, the rewards for following them, and the consequences for breaking them. Briefly explain that you will be giving a drug test so you can make safer decisions, then stop talking and let the new structure speak for itself. Keep the conversation short; the follow-through over the next days will matter more than convincing your teen in this first talk."
+    },
+    {
+      "key": "days4to7",
+      "order": 7,
+      "type": "prose",
+      "title": "Days 4 to 7",
+      "body": "Over Days 4 to 7, the focus is on steady follow-through, not perfect agreement from your teen.\n\nEach day, start by checking in with yourself: quick regulation, even 5 minutes, before you interact about rules or substance concerns. Rewatch key parts of \"Intervening When Substance Use is Present: First Steps and Next Steps\" if you feel yourself slipping back into avoidance or exploding. Keep applying the same rewards and consequences you laid out, even when your teen denies everything, blames others, or reacts with yelling or door slamming. When that happens, you calmly end the conversation and let the pre-announced outcome stand: “We’re done talking about this for now; the rule and consequence are the same.”\n\nUse this window to implement phone and social media supervision, and, if you have decided to, to give a drug test. If your teen refuses or escalates, hold the line you set: reduced privileges until they cooperate, with a clear path to earn them back.\n\nThis is also the right severity to consider professional help, especially with the dramatic mood swings and weekly use you described. For guidance, consider posting questions in the Sustaining Recovery discussion group. In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program. Reach out to school using the plan from \"Partnering with Schools for Your Child's Success\" and \"Building a Support Network\" so you’re not the only adult watching for risks.\n\nBy the end of Day 7, if substance use or high-risk peers are still a pattern, your next step is to tighten the written behavioral contract and, with any clinician or school support you’ve contacted, map specific higher-level supports (more supervision, structured activities, or a treatment program if recommended)."
+    },
+    {
+      "key": "recommendedWorkshops",
+      "order": 9,
+      "type": "workshopList",
+      "title": "The workshops for your situation",
+      "workshops": [
+        {
+          "workshopId": "aux-intervening-when-substance-use-is-present",
+          "title": "Intervening When Substance Use is Present: First Steps and Next Steps",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "You have confirmed substance use and suspect it’s happening weekly, but you feel stuck with no clear plan. Auxiliary Workshop \"Intervening When Substance Use is Present: First Steps and Next Steps\" will give you a step-by-step structure for what to do each time you see signs of use, so you’re not reacting on fear or guesswork."
+        },
+        {
+          "workshopId": "ess-building-a-support-network",
+          "title": "Building a Support Network",
+          "category": "Essential Workshop",
+          "url": null,
+          "whyThisFamily": "You feel completely alone, without contact from school or community support, and the other adults in your teen’s life are not aligned. Essential Workshop \"Building a Support Network\" will help you identify who else can be on your teen’s side and how to bring school and other adults into a united plan."
+        },
+        {
+          "workshopId": "aux-drug-testing",
+          "title": "Drug Testing",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Because use is confirmed and serious, you need to know what your teen is actually using instead of guessing. Auxiliary Workshop \"Drug Testing\" will show you how to give tests in a calm, structured way and use the results to guide boundaries and support, rather than as a threat."
+        },
+        {
+          "workshopId": "ess-effective-communication-building-trust-and-engagement",
+          "title": "Effective Communication: Building Trust and Engagement with Your Teen",
+          "category": "Essential Workshop",
+          "url": null,
+          "whyThisFamily": "Conversations at home are breaking down into yelling, slammed doors, or complete shutdown, and you dread bringing up your concerns. Essential Workshop \"Effective Communication: Building Trust and Engagement with Your Teen\" will give you practical tools to get through to your teen without escalating the fight."
+        },
+        {
+          "workshopId": "aux-behavioral-contracts-a-tool-for-positive",
+          "title": "Behavioral Contracts – A Tool for Positive Change",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "You reported that rules are rarely enforced and your teen never takes responsibility, which makes change hard. Auxiliary Workshop \"Behavioral Contracts – A Tool for Positive Change\" will help you put expectations, rewards, and consequences into a clear written agreement you can actually stick to."
+        },
+        {
+          "workshopId": "aux-setting-boundaries-with-respect-discipline-without",
+          "title": "Setting Boundaries with Respect: Discipline Without Punishment",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "You don’t feel prepared to set firm boundaries and worry about making things worse when conflicts already turn explosive. Auxiliary Workshop \"Setting Boundaries with Respect: Discipline Without Punishment\" will show you how to enforce rules consistently while keeping the relationship from breaking further."
+        },
+        {
+          "workshopId": "aux-how-and-when-to-search-a",
+          "title": "How and When to Search a Room",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "With constant secrecy and avoidance, you can’t rely on what your teen tells you about substances. Auxiliary Workshop \"How and When to Search a Room\" will help you decide if and how to quietly look for concrete signs of use in a way that focuses on safety rather than creating a new confrontation."
+        },
+        {
+          "workshopId": "aux-managing-stress-and-pressure-helping-your",
+          "title": "Managing Stress and Pressure – Helping Your Teen Develop Healthy Coping Skills",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "You’re seeing dramatic mood swings and shutdown around stress or emotional pain, which often drive substance use. Auxiliary Workshop \"Managing Stress and Pressure – Helping Your Teen Develop Healthy Coping Skills\" will give you specific alternatives to offer and model so substances aren’t the only coping tool on the table."
+        },
+        {
+          "workshopId": "aux-understanding-and-navigating-peer-pressure",
+          "title": "Understanding and Navigating Peer Pressure",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "Your teen spends almost all free time with peers you distrust, and you’re worried they are a major source of pressure and access. Auxiliary Workshop \"Understanding and Navigating Peer Pressure\" will help you understand that influence and talk about it in a way that doesn’t just turn into a fight about friends."
+        },
+        {
+          "workshopId": "aux-partnering-with-schools-for-your-childs",
+          "title": "Partnering with Schools for Your Child's Success",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "You currently feel unsupported by school and have no information from that part of your teen’s life. Auxiliary Workshop \"Partnering with Schools for Your Child's Success\" will help you approach school staff as allies, gather their observations, and create shared expectations for your teen."
+        },
+        {
+          "workshopId": "aux-understanding-the-impact-of-social-media",
+          "title": "Understanding the Impact of Social Media on Substance Use and Mental Health",
+          "category": "Auxiliary Workshop",
+          "url": null,
+          "whyThisFamily": "You rarely know where your teen is, and they are deeply tied to peers you don’t trust, likely through their phone and social media. Auxiliary Workshop \"Understanding the Impact of Social Media on Substance Use and Mental Health\" will help you see how online activity might be feeding use and what supervision makes sense in your home."
+        }
+      ]
+    },
+    {
+      "key": "universalGuidingPrinciple",
+      "order": 10,
+      "type": "static",
+      "title": "Matching what you do to what you are seeing",
+      "body": "One principle runs underneath everything in this plan: the response should match what you are actually seeing, and no more. Acting harder than the situation calls for costs you trust you will need later. Acting more softly than it calls for leaves your child carrying something alone. Neither error is safer than the other, which is why this plan is built from what you reported rather than from a template — and why it is worth reassessing as things change."
+    },
+    {
+      "key": "parentSelfCare",
+      "order": 11,
+      "type": "static",
+      "title": "Looking after yourself is part of the plan",
+      "body": "This is not an aside. Whatever you bring into a room, your child reads it before they hear a word you say — so your own steadiness is not separate from your child's recovery, it is part of the mechanism. Sleep, eat, and keep at least one person in your life who knows what you are carrying. The Monitoring and Intervention discussion group exists for exactly this: parents who are in the middle of it, who will not need the situation explained from the beginning."
+    },
+    {
+      "key": "encouragement",
+      "order": 12,
+      "type": "prose",
+      "title": "Where this can go",
+      "body": "You have already done something many parents never manage: you faced your fear, named that use is happening weekly, and asked for a plan instead of staying frozen in doubt. That matters. The situation is serious, but it is not fixed in place. Every time you pause instead of shouting, hold a boundary you said you would, or reach out to another adult, you are shifting the ground under this pattern.\n\nRemember that you and your teen are on the same side against the substances and the risks around them, even when it looks like you’re in opposite corners. Your teen may slam doors, deny, or blame, but underneath that, they still need you to be the steady one who does not give up.\n\nThe Monitoring and Intervention discussion group is there for the moments when you feel like you’ve hit a wall. Use it. Other parents have sat exactly where you are sitting now and have found ways to move things even a little. You do not have to solve everything this week; you just have to take the next clear step and keep coming back to the plan."
+    },
+    {
+      "key": "standardizedClosing",
+      "order": 13,
+      "type": "static",
+      "title": "Protecting the progress",
+      "body": "Recovery is a journey—not a single event—and protecting the progress your child has already made is one of the most important responsibilities you have as a parent. While many adolescents go on to achieve lasting recovery, setbacks can occur. A setback does not erase the progress that has been made, and it does not have to become a return to the past.\n\nPreparation is one of your greatest strengths. We encourage you to complete the Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks.\" It will help you recognize early warning signs, respond calmly and effectively if challenges arise, and strengthen your family's plan to protect your child's recovery. We also encourage you to participate in the Protecting Recovery Discussion Group, where parents share experiences, encouragement, and practical insights while supporting one another through the ongoing journey of recovery.\n\nRemember, the purpose of monitoring, supervision, conversations, and appropriate boundaries is not simply to discover what happened or when it happened—but to understand why. Identifying and addressing the underlying reasons for substance use gives your child the greatest opportunity for long-term recovery and a healthy, meaningful future."
+    }
+  ]
+}

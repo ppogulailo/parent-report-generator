@@ -20,7 +20,8 @@
     "baseline:capture": "ts-node scripts/capture-baseline.ts",
     "baseline:compare": "ts-node scripts/compare-baseline.ts",
     "test:v1": "playwright test --config=playwright.v1.config.ts",
-    "test:v1:ui": "playwright test --config=playwright.v1ui.config.ts"
+    "test:v1:ui": "playwright test --config=playwright.v1ui.config.ts",
+    "verify:real-model": "ts-node scripts/verify-real-model.ts"
   },
   "dependencies": {
     "@nestjs/axios": "^4.0.1",
