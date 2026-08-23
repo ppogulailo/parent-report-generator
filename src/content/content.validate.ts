@@ -3,6 +3,12 @@ import type { Assessment } from './schemas/assessment.schema';
 import type { RecommendationMatrix } from './schemas/matrix.schema';
 import type { ReportSectionsConfig } from './schemas/sections.schema';
 import type { Workshops } from './schemas/workshops.schema';
+import {
+  LANGUAGES,
+  PROMPT_PLACEHOLDERS,
+  REQUIRED_USER_PLACEHOLDERS,
+  type PromptTemplates,
+} from './content.types';
 
 /**
  * Cross-file validation — the checks no single Zod schema can make, because they
@@ -467,5 +473,49 @@ function conditionProblems(
   };
 
   walk(condition);
+  return problems;
+}
+
+/**
+ * Checks the prompt templates against the placeholder contract.
+ *
+ * Both directions matter. An unknown placeholder ships the literal string
+ * `{{RESOURCES}}` to the model. A missing one is worse: the prompt still reads
+ * like a valid instruction, the model still returns a plausible plan, and
+ * nothing anywhere reports that the plan was written without this family's
+ * answers in front of it.
+ */
+export function validateTemplates(templates: PromptTemplates): string[] {
+  const problems: string[] = [];
+  const known = new Set<string>(PROMPT_PLACEHOLDERS);
+
+  for (const kind of ['system', 'user'] as const) {
+    for (const language of LANGUAGES) {
+      const text = templates[kind][language];
+      const where = `${kind}.${language}.md`;
+
+      const used = new Set(
+        [...text.matchAll(/\{\{\s*([A-Z0-9_]+)\s*\}\}/g)].map((m) => m[1]),
+      );
+      for (const placeholder of used) {
+        if (!known.has(placeholder)) {
+          problems.push(
+            `${where}: uses {{${placeholder}}}, which the prompt builder cannot fill — it would reach the model as literal text`,
+          );
+        }
+      }
+
+      if (kind === 'user') {
+        for (const placeholder of REQUIRED_USER_PLACEHOLDERS) {
+          if (!used.has(placeholder)) {
+            problems.push(
+              `${where}: is missing {{${placeholder}}} — the plan would be written without it and would still read fine, which is why this is fatal`,
+            );
+          }
+        }
+      }
+    }
+  }
+
   return problems;
 }

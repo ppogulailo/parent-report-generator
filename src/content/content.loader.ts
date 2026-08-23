@@ -5,8 +5,13 @@ import { assessmentSchema } from './schemas/assessment.schema';
 import { matrixSchema } from './schemas/matrix.schema';
 import { sectionsSchema } from './schemas/sections.schema';
 import { workshopsSchema } from './schemas/workshops.schema';
-import { validateContent } from './content.validate';
-import { ContentBundle, ContentValidationError } from './content.types';
+import { validateContent, validateTemplates } from './content.validate';
+import {
+  ContentBundle,
+  ContentValidationError,
+  LANGUAGES,
+  PromptTemplates,
+} from './content.types';
 
 /**
  * Reads and validates `content/`.
@@ -61,6 +66,31 @@ function readJson<T>(dir: string, file: string, schema: ZodType<T>): T {
   return result.data;
 }
 
+function readTemplates(dir: string): PromptTemplates {
+  const templates = { system: {}, user: {} } as PromptTemplates;
+  const problems: string[] = [];
+
+  for (const kind of ['system', 'user'] as const) {
+    for (const language of LANGUAGES) {
+      const file = `${kind}.${language}.md`;
+      const path = join(dir, 'report-templates', file);
+      try {
+        const text = readFileSync(path, 'utf8');
+        if (text.trim().length === 0) {
+          problems.push(`${file}: is empty`);
+          continue;
+        }
+        templates[kind][language] = text;
+      } catch {
+        problems.push(`${file}: cannot be read at ${path}`);
+      }
+    }
+  }
+
+  if (problems.length > 0) throw new ContentValidationError(problems);
+  return templates;
+}
+
 export function loadContent(dir: string): ContentBundle {
   const assessment = readJson(dir, 'assessment.json', assessmentSchema);
   const workshops = readJson(dir, 'workshops.json', workshopsSchema);
@@ -71,16 +101,19 @@ export function loadContent(dir: string): ContentBundle {
     sectionsSchema,
   );
 
+  const templates = readTemplates(dir);
+
   const { problems, warnings } = validateContent({
     assessment,
     workshops,
     matrix,
     sections,
   });
+  problems.push(...validateTemplates(templates));
 
   if (problems.length > 0) throw new ContentValidationError(problems);
 
-  return { assessment, workshops, matrix, sections, warnings };
+  return { assessment, workshops, matrix, sections, templates, warnings };
 }
 
 /** `CONTENT_DIR` exists so tests can point at a fixture bundle. Production never

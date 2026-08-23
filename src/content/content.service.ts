@@ -1,6 +1,6 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { loadContent, resolveContentDir } from './content.loader';
-import { ContentBundle, Language } from './content.types';
+import { ContentBundle, Language, PromptTemplates } from './content.types';
 import type { Assessment } from './schemas/assessment.schema';
 import type {
   Recommendation,
@@ -58,6 +58,10 @@ export class ContentService implements OnModuleInit {
 
   get sections(): ReportSectionsConfig {
     return this.bundle.sections;
+  }
+
+  get templates(): PromptTemplates {
+    return this.bundle.templates;
   }
 
   get warnings(): readonly string[] {
