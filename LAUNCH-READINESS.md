@@ -30,8 +30,29 @@ flipped deliberately. Nothing on this page needs new development.
 | Switch-over is a build arg, and reversible | `frontend/app/site.ts` → `V1_IS_DEFAULT` |
 | Site origin centralised so the hostname change is config, not code | `frontend/app/site.ts` |
 
-**Test state:** 59 unit tests. `npm run content:validate` clean. `npm run build`
-and the frontend build both clean.
+| The endpoint, the guard, the validator and the retry loop tested over real HTTP | `test/v1/api.v1.spec.ts` — 25 tests against a mock model |
+| A parent can complete the questionnaire and read a plan, in a browser | `test/v1/ui.v1ui.spec.ts` — 8 tests, self-contained stack |
+
+**Test state:** 92 tests — 59 unit, 25 API, 8 browser. `npm run content:validate`
+clean. `npm run build` and the frontend build both clean.
+
+```bash
+npm run test:unit     # pure engine; no server, no network
+npm run test:v1       # real HTTP, real content, mock model
+npm run test:v1:ui    # browser through the whole stack; starts everything itself
+```
+
+The API and browser suites both boot the app against a mock model that **reads
+the prompt and answers it** — section keys, recommendation ids and workshop ids
+all come back out of the text the prompt builder produced. A canned reply could
+not work, because the schema is built per request from the selection. The useful
+side effect is that if the prompt ever stops naming the selected ids, every one
+of those 33 tests fails.
+
+Failure modes are reachable on demand rather than waited for: the mock can invent
+a workshop, omit a priority area, write a section the platform owns, return prose
+instead of JSON, or violate a wording rule once and then comply. Those are the
+paths a real model takes intermittently and unreproducibly.
 
 ---
 

@@ -1,4 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { ContentService } from '../content/content.service';
 import type { Language } from '../content/content.types';
 import type { ReportSectionConfig } from '../content/schemas/sections.schema';
@@ -194,7 +198,12 @@ export class GenerationService {
       this.logger.error(
         `generation failed after ${this.maxAttempts} attempts: ${lastProblems.join(' | ')}`,
       );
-      throw new RetryableLlmError(0);
+      // A parent sees the standard try-again message. The reason is in the log
+      // above and must not travel any further: `lastProblems` quotes the model's
+      // own output back, which can contain the family's answers.
+      throw new ServiceUnavailableException(
+        'Report generation failed. Please try again.',
+      );
     }
 
     this.logger.error(

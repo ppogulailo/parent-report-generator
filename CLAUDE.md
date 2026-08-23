@@ -109,7 +109,9 @@ npm run start:dev                    # nodemon + ts-node, watches src/
 npm run build                        # nest build
 npm run lint                         # eslint --fix
 npm run test                         # playwright test (api.spec, language.spec, stability.spec)
-npm run test:unit                    # 48 unit tests, no server, no network
+npm run test:unit                    # 59 unit tests, no server, no network
+npm run test:v1                      # 25 API tests: real HTTP + content, mock model
+npm run test:v1:ui                   # 8 browser tests; starts mock + API + frontend itself
 npm run content:validate             # cross-file content validation
 npm run content:generate             # regenerate assessment.json + workshops.json from the approved sources
 npm run baseline:capture             # capture the eight baseline plans (needs API_SECRET_KEY)
@@ -117,6 +119,12 @@ npx playwright test <pattern>        # single file/grep, e.g. npx playwright tes
 npx playwright test --config=playwright.ui.config.ts   # UI suite under test/ui (needs frontend on :3100)
 ```
 
-`playwright.config.ts` boots the Nest app + a mock Anthropic server via `test/global-setup.ts` and forces `workers: 1` (the mock records the last request, so tests must run serially). The UI config is separate — it does NOT spawn the backend or the mock and only drives an already-running frontend.
+`playwright.config.ts` boots the Nest app + a mock server via `test/global-setup.ts` and forces `workers: 1` (the mock records the last request, so tests must run serially). It covers the **old** endpoint.
+
+The V1 suites are separate and self-contained. `playwright.v1.config.ts` and `playwright.v1ui.config.ts` share `test/v1/global-setup.ts`, which starts a mock model on 4599 and the API on 3401; the UI config additionally starts Next on 3402 via `webServer`. Both are `workers: 1` because the mock holds one mode at a time.
+
+**The V1 mock parses the prompt rather than returning a canned body** — the response schema is built per request from the selection, so a fixed reply would fail validation for reasons unrelated to the test. Set failure modes over HTTP: `POST http://localhost:4599/_mode/<mode>` (see `test/v1/mock-llm.ts`).
+
+`playwright.ui.config.ts` drives an already-running frontend and covers the old flow only.
 
 Frontend dev: `cd frontend && npm run dev` (port 3100). Deployment notes (Fly.io + Dockerfile) live in `DEPLOY.md` / `fly.toml`.
