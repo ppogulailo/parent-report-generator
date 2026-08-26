@@ -26,6 +26,28 @@ import { DOMAIN_MAP, TIE_BREAK_ORDER } from '../src/report/scoring/domain.map';
 const questionId = (index: number): string =>
   `q${String(index + 1).padStart(2, '0')}`;
 
+/**
+ * Approved amendments to the transcribed domain map.
+ *
+ * `DOMAIN_MAP` is the live old path's and stays untouched — that path still
+ * serves parents until the switchover, and this milestone must not move it. The
+ * V1 content diverges from it by exactly one approved decision: Dave approved
+ * adding Q4 — exposure to environments where substances may be present — to
+ * Immediate Safety & Urgency (via Matt, 2026-08-25, resolving
+ * RECOMMENDATION-MATRIX.md §6.1). Q4 is index 3. It joins the domain average
+ * only; the q01/q02/q10 child-safety subset in the matrix is unchanged.
+ */
+const APPROVED_DOMAIN_AMENDMENTS: Record<string, number[]> = {
+  'Immediate Safety & Urgency': [3],
+};
+
+const AMENDED_DOMAIN_MAP: Record<string, number[]> = Object.fromEntries(
+  Object.entries(DOMAIN_MAP).map(([label, indices]) => [
+    label,
+    [...indices, ...(APPROVED_DOMAIN_AMENDMENTS[label] ?? [])],
+  ]),
+);
+
 /** Domain label → id slug, e.g. "Immediate Safety & Urgency" →
  *  "immediate-safety-urgency". The label stays the response key; the id is what
  *  rules reference. */
@@ -117,7 +139,7 @@ function build() {
     };
   });
 
-  const domains = Object.entries(DOMAIN_MAP).map(([label, indices], order) => ({
+  const domains = Object.entries(AMENDED_DOMAIN_MAP).map(([label, indices], order) => ({
     id: domainId(label),
     order: order + 1,
     label: { en: label, es: DOMAIN_LABELS_ES[label] ?? label },
@@ -126,10 +148,18 @@ function build() {
     questionIds: [...indices].sort((a, b) => a - b).map(questionId),
   }));
 
-  const assigned = new Set(Object.values(DOMAIN_MAP).flat());
+  const assigned = new Set(Object.values(AMENDED_DOMAIN_MAP).flat());
   const unassigned = questions
     .filter((_, index) => !assigned.has(index))
     .map((q) => q.id);
+  if (unassigned.length > 0) {
+    // Q4 was the one domainless question, and Dave's 2026-08-25 approval
+    // assigned it. Every question now feeds a domain; a new orphan here is a
+    // mistake, not a decision.
+    throw new Error(
+      `${unassigned.join(', ')} belong(s) to no domain — every question is expected to feed one since the Q4 amendment`,
+    );
+  }
 
   return {
     _comment: [
@@ -138,25 +168,23 @@ function build() {
       'the source of truth. Do not hand-edit the questions or option labels',
       'without re-running the generator, or the two will diverge.',
       '',
-      'TWO PROPERTIES OF THE APPROVED SCORING ARE PRESERVED HERE DELIBERATELY,',
-      'and both look like mistakes until you know they are not:',
+      'TWO PROPERTIES OF THE APPROVED SCORING LOOK LIKE MISTAKES AND ARE NOT:',
       '',
       '  1. Domains OVERLAP. q18 and q22 each count toward two domains, so the',
-      '     domain question lists total 25 slots across 23 distinct questions.',
+      '     domain question lists total 26 slots across 24 distinct questions.',
       '     This is why questionIds live on the domain rather than a domainId',
-      '     living on the question.',
+      '     living on the question. Carried over from the live system unchanged.',
       '',
-      `  2. ${unassigned.join(', ') || 'no question'} belongs to NO domain. It is asked and stored, and a`,
-      '     matrix rule can read it directly, but it contributes to no domain',
-      '     average and therefore cannot move a family between severity tiers.',
-      '',
-      'Both are carried over from the live system unchanged. They are flagged in',
-      'RECOMMENDATION-MATRIX.md for the founder to confirm or correct — a change',
-      'to either one changes every score, so it is a methodology decision.',
+      '  2. q04 counts toward Immediate Safety & Urgency HERE and not in the',
+      '     old path. It belonged to no domain in the live system; Dave approved',
+      '     adding it (via Matt, 2026-08-25, resolving RECOMMENDATION-MATRIX.md',
+      '     §6.1). The amendment is applied by the generator so the old path’s',
+      '     DOMAIN_MAP stays exactly what it serves today. q04 joins the domain',
+      '     average only — the q01/q02/q10 child-safety subset is unchanged.',
     ],
     version: '1.0.0',
-    status: 'draft',
-    methodologyVersion: 'MI-V1.0-DRAFT',
+    status: 'approved',
+    methodologyVersion: 'MI-V1.0',
     title: {
       en: 'Monitoring & Intervention — Family Risk Assessment & Action Plan',
       es: 'Monitoreo e Intervención — Evaluación de Riesgo Familiar y Plan de Acción',
@@ -185,62 +213,15 @@ function build() {
         es: '¿Qué pasó, y cuándo?',
       },
     },
-    gates: [
-      {
-        id: 'treatment-status',
-        order: 1,
-        responseType: 'choice',
-        prompt: {
-          en: 'Where is your child with treatment or counselling right now?',
-          es: '¿En qué punto está tu hijo con el tratamiento o la consejería en este momento?',
-        },
-        help: {
-          // No leading "Optional." — the question already carries an Optional
-          // tag, and saying it twice reads as a warning rather than a note.
-          en: 'This does not affect your plan’s priorities. It only tells us whether to point you toward the Sustaining Recovery track.',
-          es: 'Esto no afecta las prioridades de tu plan. Solo nos dice si conviene orientarte hacia el camino de Sustaining Recovery.',
-        },
-        options: [
-          {
-            value: 'none',
-            label: {
-              en: 'No treatment or counselling',
-              es: 'Sin tratamiento ni consejería',
-            },
-          },
-          {
-            value: 'seeking',
-            label: {
-              en: 'Looking for help, not started yet',
-              es: 'Buscando ayuda, aún sin empezar',
-            },
-          },
-          {
-            value: 'in-treatment',
-            label: {
-              en: 'Currently in therapy, counselling or treatment',
-              es: 'Actualmente en terapia, consejería o tratamiento',
-            },
-          },
-          {
-            value: 'post-treatment-unstable',
-            label: {
-              en: 'Been through treatment — use has continued or returned',
-              es: 'Pasó por tratamiento — el consumo continuó o regresó',
-            },
-          },
-          {
-            value: 'post-treatment-stable',
-            label: {
-              en: 'Been through treatment — a meaningful period without use',
-              es: 'Pasó por tratamiento — un periodo significativo sin consumo',
-            },
-          },
-        ],
-        rationale:
-          'The 24 approved questions measure suspected or active use and the parent’s capacity to respond. None of them asks whether a child has reached abstinence or sustained stability, and low scores mean "early-stage, possibly nothing yet" rather than "recovered" — so the transition to the Sustaining Recovery Essential Workshop cannot be inferred from scores without routing early-stage families into a post-treatment workshop. This gate is not scored, belongs to no domain, and cannot affect severity. It only decides whether the transition section appears.',
-      },
-    ],
+    // No gate questions. The proposed 25th — treatment-status, which decided
+    // whether the Sustaining Recovery transition section appeared — was
+    // declined by ASAP on 2026-08-25: the assessment stays at 24 questions and
+    // the transition to the Sustaining Recovery Essential Workshop is handled
+    // inside the Circle program journey instead (RECOMMENDATION-MATRIX.md §7).
+    // The gate MECHANISM survives it — schema, validator, evaluator and the
+    // frontend all still render whatever appears here — so a future gate is a
+    // content edit, not a code change.
+    gates: [],
   };
 }
 

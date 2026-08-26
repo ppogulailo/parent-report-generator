@@ -80,11 +80,12 @@ export function validateContent(bundle: {
     .map((q) => q.id)
     .filter((id) => !scoredQuestions.has(id));
   if (orphans.length > 0) {
-    // A warning, not an error: this is the approved behaviour today (q04 sits in
-    // no domain). It is surfaced every boot so it stays a known decision rather
-    // than becoming folklore.
+    // A warning, not an error: a domainless question contributes to no domain
+    // average, which can be a decision rather than a mistake — q04 was exactly
+    // that until the founder assigned it on 2026-08-25. Surfaced every boot so
+    // any future orphan stays a known decision rather than becoming folklore.
     warnings.push(
-      `assessment: ${orphans.join(', ')} belong${orphans.length === 1 ? 's' : ''} to no domain, so ${orphans.length === 1 ? 'it contributes' : 'they contribute'} to no domain average. This matches the live system and is flagged for founder confirmation in RECOMMENDATION-MATRIX.md.`,
+      `assessment: ${orphans.join(', ')} belong${orphans.length === 1 ? 's' : ''} to no domain, so ${orphans.length === 1 ? 'it contributes' : 'they contribute'} to no domain average. Confirm this is a founder decision, not a dropped mapping.`,
     );
   }
 

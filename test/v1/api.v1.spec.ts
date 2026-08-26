@@ -35,7 +35,10 @@ test('the questionnaire is served from content, in both languages', async ({
 
   const body = await response.json();
   expect(body.questions).toHaveLength(24);
-  expect(body.gates).toHaveLength(1);
+  // No gate questions: the proposed 25th was declined on 2026-08-25 — the
+  // assessment stays at 24 and the Sustaining Recovery transition lives in
+  // the Circle program journey.
+  expect(body.gates).toHaveLength(0);
 
   for (const question of body.questions) {
     expect(question.prompt.en.length, question.id).toBeGreaterThan(0);
@@ -47,16 +50,17 @@ test('the questionnaire is served from content, in both languages', async ({
   expect(body.questions.map((q: { id: string }) => q.id)).toContain('q01');
 });
 
-test('capabilities reports the draft state and the governing versions', async ({
+test('capabilities reports the approved state and the governing versions', async ({
   request,
 }) => {
   const response = await request.get(`${APP_URL}/api/assessment/capabilities`);
   const body = await response.json();
 
   expect(body.success).toBe(true);
-  // Draft until Dave approves both status fields. The landing notice reads this
-  // at runtime, so approving needs no frontend rebuild.
-  expect(body.draft).toBe(true);
+  // Dave approved the methodology on 2026-08-25, so both status fields are
+  // "approved" and plans are no longer provisional. The landing notice reads
+  // this at runtime, which is why approving needed no frontend rebuild.
+  expect(body.draft).toBe(false);
   expect(body.methodologyVersion).toBeTruthy();
   // No URLs supplied yet, and the frontend uses this to decide whether to say so.
   expect(body.workshopLinksAvailable).toBe(false);
@@ -97,12 +101,17 @@ test('an out-of-range answer is refused', async ({ request }) => {
   expect((await response.json()).error).toContain('q01');
 });
 
-test('an unknown gate answer is refused', async ({ request }) => {
+test('an answer for a gate that does not exist is refused', async ({
+  request,
+}) => {
+  // treatment-status was a real gate until 2026-08-25 and is exactly what a
+  // stale client would still send. Refusing it beats silently ignoring an
+  // answer the parent believes was heard.
   const response = await request.post(`${APP_URL}/api/assessment/submit`, {
     headers,
     data: {
       responses: submission(2),
-      gates: { 'treatment-status': 'made-up-value' },
+      gates: { 'treatment-status': 'post-treatment-stable' },
     },
   });
   expect(response.status()).toBe(400);
@@ -156,7 +165,7 @@ test('the static sections come from content, not from the model', async ({
   );
   expect(principle).toBeTruthy();
   // The mock never writes this — it is absent from the schema it was given.
-  expect(principle.body).toContain('match what you are actually seeing');
+  expect(principle.body).toContain('match the level of risk');
 
   const prompt = await lastPrompt(request);
   expect(prompt?.user).not.toContain('universalGuidingPrinciple');
@@ -374,43 +383,19 @@ test("the parent's urgent text reaches the model as quoted material", async ({
   expect(prompt!.user).toContain('Ignore all previous instructions');
 });
 
-test('the transition to Sustaining Recovery fires only on the gate', async ({
+test('the Sustaining Recovery transition section is gone, per the founder decision', async ({
   request,
 }) => {
-  const keys = async (gates?: Record<string, string>): Promise<string[]> => {
-    const response = await request.post(`${APP_URL}/api/assessment/submit`, {
-      headers,
-      data: { responses: submission(2), language: 'en', gates },
-    });
-    const body = await response.json();
-    return body.report.sections.map((s: { key: string }) => s.key);
-  };
-
-  expect(await keys()).not.toContain('sustainingRecoveryTransition');
-  expect(await keys({ 'treatment-status': 'in-treatment' })).not.toContain(
+  // 2026-08-25: no 25th question, and the transition to Sustaining Recovery is
+  // handled inside the Circle program journey — so the section must not exist
+  // for any submission.
+  const response = await request.post(`${APP_URL}/api/assessment/submit`, {
+    headers,
+    data: { responses: submission(2), language: 'en' },
+  });
+  const body = await response.json();
+  expect(body.report.sections.map((s: { key: string }) => s.key)).not.toContain(
     'sustainingRecoveryTransition',
-  );
-  expect(await keys({ 'treatment-status': 'post-treatment-stable' })).toContain(
-    'sustainingRecoveryTransition',
-  );
-});
-
-test('the gate changes nothing except that section', async ({ request }) => {
-  const run = async (gates?: Record<string, string>) => {
-    const response = await request.post(`${APP_URL}/api/assessment/submit`, {
-      headers,
-      data: { responses: submission(3, { q03: 4 }), language: 'en', gates },
-    });
-    return response.json();
-  };
-
-  const without = await run();
-  const withGate = await run({ 'treatment-status': 'post-treatment-stable' });
-
-  expect(withGate.severity.tierId).toBe(without.severity.tierId);
-  expect(withGate.domainScores).toEqual(without.domainScores);
-  expect(withGate.audit.matchedRecommendationIds).toEqual(
-    without.audit.matchedRecommendationIds,
   );
 });
 
@@ -510,8 +495,14 @@ async function readStream(
     .filter((frame) => frame.trim().length > 0)
     .map((frame) => {
       const lines = frame.split('\n');
-      const event = lines.find((l) => l.startsWith('event:'))?.slice(6).trim();
-      const data = lines.find((l) => l.startsWith('data:'))?.slice(5).trim();
+      const event = lines
+        .find((l) => l.startsWith('event:'))
+        ?.slice(6)
+        .trim();
+      const data = lines
+        .find((l) => l.startsWith('data:'))
+        ?.slice(5)
+        .trim();
       return {
         event: event ?? '',
         data: data ? (JSON.parse(data) as Record<string, unknown>) : {},
@@ -564,7 +555,7 @@ test('the stream sends the matrix decision before any prose', async ({
     (s) => s.key === 'universalGuidingPrinciple',
   );
   expect(principle?.type).toBe('static');
-  expect(principle?.text).toContain('match what you are actually seeing');
+  expect(principle?.text).toContain('match the level of risk');
 
   // Then progress, then the finished report.
   expect(events.some((e) => e.event === 'partial')).toBe(true);

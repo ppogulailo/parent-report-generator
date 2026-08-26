@@ -3,7 +3,7 @@ import { ImageResponse } from 'next/og';
 // Branded 1200x630 share image, generated at build from the ASAP mark. One per
 // locale so link previews match the page language. Copy reuses the on-page
 // eyebrow + hero title (client-approved), so nothing new needs sign-off.
-export const alt = 'ASAP Community — Parent Risk Assessment & Action Plan';
+export const alt = 'ASAP Community — Family Risk Assessment & Action Plan';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -14,11 +14,11 @@ export function generateStaticParams() {
 
 const COPY: Record<string, { eyebrow: string; title: string }> = {
   en: {
-    eyebrow: 'Parent Risk Assessment & Action Plan',
+    eyebrow: 'Family Risk Assessment & Action Plan',
     title: 'A calm, clear plan when you need it most',
   },
   es: {
-    eyebrow: 'Evaluación de Riesgo y Plan de Acción para Padres',
+    eyebrow: 'Evaluación de Riesgo Familiar y Plan de Acción',
     title: 'Un plan claro cuando más lo necesitas',
   },
 };

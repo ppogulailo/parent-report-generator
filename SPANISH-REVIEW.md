@@ -4,7 +4,7 @@
 `scripts/spanish-review.ts` on request, so it cannot drift from what ships.
 Re-run it after any content edit.
 
-216 strings, of which 126 are the existing
+209 strings, of which 120 are the existing
 questionnaire wording carried over unchanged from the live system and need no
 review unless something was already wrong.
 
@@ -38,21 +38,21 @@ Read these first — they ship **verbatim** to a parent, with no model involved:
 
 **EN**
 
-One principle runs underneath everything in this plan: the response should match what you are actually seeing, and no more. Acting harder than the situation calls for costs you trust you will need later. Acting more softly than it calls for leaves your child carrying something alone. Neither error is safer than the other, which is why this plan is built from what you reported rather than from a template — and why it is worth reassessing as things change.
+The level of intervention should always match the level of risk. Too much intervention can be as counterproductive as too little. As concerns increase, your response should increase with them; as risk decreases, your response can adjust accordingly. The goal is not to use the strongest intervention available—it is to use the level of intervention that best matches what is actually happening with your child.
 
 **ES**
 
-Un principio recorre todo este plan: la respuesta debe ajustarse a lo que realmente estás viendo, y no más. Actuar con más fuerza de la que la situación pide cuesta una confianza que vas a necesitar después. Actuar con menos fuerza de la que pide deja a tu hijo cargando algo solo. Ninguno de los dos errores es más seguro que el otro, y por eso este plan se construye desde lo que reportaste y no desde una plantilla — y por eso vale la pena volver a evaluarlo a medida que las cosas cambien.
+El nivel de intervención siempre debe corresponder al nivel de riesgo. Demasiada intervención puede ser tan contraproducente como demasiado poca. A medida que las preocupaciones aumentan, tu respuesta debe aumentar con ellas; a medida que el riesgo disminuye, tu respuesta puede ajustarse en consecuencia. El objetivo no es usar la intervención más fuerte disponible — es usar el nivel de intervención que mejor corresponda a lo que realmente está pasando con tu hijo.
 
 ### section "parentSelfCare" — VERBATIM TEXT
 
 **EN**
 
-This is not an aside. Whatever you bring into a room, your child reads it before they hear a word you say — so your own steadiness is not separate from your child's recovery, it is part of the mechanism. Sleep, eat, and keep at least one person in your life who knows what you are carrying. The Monitoring and Intervention discussion group exists for exactly this: parents who are in the middle of it, who will not need the situation explained from the beginning.
+Taking care of yourself is not a luxury—it’s a necessity. Whether you need some quiet time, a good workout, or the support of counseling, make space for what helps you stay grounded. When you care for yourself, you will be better able to show up strong, present, and healthy for you and your family.
 
 **ES**
 
-Esto no es un comentario al margen. Lo que sea que lleves a una habitación, tu hijo lo lee antes de escuchar una sola palabra — así que tu propia estabilidad no está separada de la recuperación de tu hijo, es parte del mecanismo. Duerme, come, y mantén al menos a una persona en tu vida que sepa lo que estás cargando. El Monitoring and Intervention discussion group existe exactamente para esto: padres que están en medio de lo mismo, que no van a necesitar que les expliques la situación desde el principio.
+Cuidarte no es un lujo — es una necesidad. Ya sea que necesites un momento de tranquilidad, un buen ejercicio o el apoyo de la consejería, haz espacio para lo que te ayuda a mantenerte con los pies en la tierra. Cuando te cuidas, puedes estar fuerte, presente y saludable para ti y para tu familia.
 
 ### section "standardizedClosing" — VERBATIM TEXT
 
@@ -72,16 +72,6 @@ La preparación es una de tus mayores fortalezas. Te animamos a completar el Aux
 
 Recuerda que el propósito del monitoreo, la supervisión, las conversaciones y los límites apropiados no es simplemente descubrir qué pasó o cuándo pasó, sino entender por qué. Identificar y abordar las razones de fondo del consumo de sustancias le da a tu hijo la mayor oportunidad de lograr una recuperación a largo plazo y un futuro sano y significativo.
 
-### section "sustainingRecoveryTransition" — VERBATIM TEXT
-
-**EN**
-
-One more thing, because of what you told us about where your child is. You have said your child has been through treatment and has held a meaningful period without use. That is a different stage, and it has its own work — protecting what has been built rather than intervening in what is happening. The Sustaining Recovery Essential Workshop is written for exactly that stage, and the Sustaining Recovery Family Risk Assessment & Action Plan will give you a plan built around holding the line rather than establishing it. This plan still stands; that one is where to go next.
-
-**ES**
-
-Una cosa más, por lo que nos dijiste sobre dónde está tu hijo. Dijiste que tu hijo pasó por tratamiento y ha mantenido un periodo significativo sin consumo. Esa es una etapa distinta, y tiene su propio trabajo — proteger lo que se ha construido en lugar de intervenir en lo que está ocurriendo. El Sustaining Recovery Essential Workshop está escrito exactamente para esa etapa, y el Sustaining Recovery Family Risk Assessment & Action Plan te dará un plan construido alrededor de sostener la línea en lugar de establecerla. Este plan sigue siendo válido; ese es el siguiente lugar a donde ir.
-
 
 ## Everything else
 
@@ -97,6 +87,10 @@ Una cosa más, por lo que nos dijiste sobre dónde está tu hijo. Dijiste que tu
 | tier "moderate" — description | There are real signals here, though not acute ones. This plan is about acting steadily and early. | Hay señales reales aquí, aunque no agudas. Este plan es para actuar con firmeza y a tiempo. |
 | priority "parent-emotional-regulation" — title | Parent Emotional Regulation | Regulación emocional del padre o la madre |
 | priority "parent-emotional-regulation" — intent | Before any conversation with the child, the parent steadies themselves first. What the child sees is what the parent brings into the room, not the feeling they had before walking in. In MILD this is naming the second-guessing and pausing before responding; in MODERATE it adds the tactical layer — walk, write down what you want to say, leave the room if it heats up; in SERIOUS and CRITICAL it is explicit. The step is never skipped or downgraded by severity; only the tactics change. | Antes de cualquier conversación con el hijo, el padre se regula primero. Lo que el hijo ve es lo que el padre lleva al cuarto, no el sentimiento que tuvo antes de entrar. En LEVE esto es nombrar el segundo-cuestionamiento y pausar antes de responder; en MODERADO suma la capa táctica — caminar, escribir lo que quieres decir, salir del cuarto si la cosa se calienta; en GRAVE y CRÍTICO es explícito. El paso nunca se omite ni se rebaja según la severidad; solo cambian las tácticas. |
+| priority "preventative-foundation" — title | Know what you are looking at | Saber qué estás viendo |
+| priority "preventative-foundation" — intent | Nothing here is acute, and the most useful thing a parent can do at this stage is learn what the early signals actually look like — so that if the picture changes they recognise it in days rather than months, and so that their attention is informed rather than anxious. | Nada de esto es agudo, y lo más útil que un padre puede hacer en esta etapa es aprender cómo se ven realmente las señales tempranas — para que si el panorama cambia lo reconozca en días y no en meses, y para que su atención esté informada en lugar de ansiosa. |
+| priority "communication-breakdown" — title | When every conversation turns into a fight | Cuando cada conversación se vuelve una pelea |
+| priority "communication-breakdown" — intent | Conversations that end in shouting, or that the parent avoids starting, mean the plan cannot be delivered even if it is right. Rebuilding the ability to talk is not a soft step before the real work; it is what makes every later step possible. | Las conversaciones que terminan a gritos, o que el padre evita empezar, significan que el plan no se puede ejecutar aunque sea correcto. Reconstruir la capacidad de hablar no es un paso blando antes del trabajo real; es lo que hace posible todo lo que viene después. |
 | priority "co-parent-alignment" — title | Get the adults aligned | Alinear a los adultos |
 | priority "co-parent-alignment" — intent | The rules, rewards and consequences only hold if the adults are saying the same thing. Align with the co-parent or co-guardian before the conversation with the child, not during it. Never framed as finding a 'trusted adult' — that phrasing is not part of this methodology. | Las reglas, las recompensas y las consecuencias solo se sostienen si los adultos dicen lo mismo. Alinea con el co-padre o co-tutor antes de la conversación con el hijo, no durante. Nunca se plantea como buscar un 'adulto de confianza' — esa frase no es parte de esta metodología. |
 | priority "active-use-intervention" — title | Act on what you are seeing | Actuar sobre lo que estás viendo |
@@ -107,6 +101,8 @@ Una cosa más, por lo que nos dijiste sobre dónde está tu hijo. Dijiste que tu
 | priority "peer-influence" — intent | Peers the parent considers a negative influence are a route into use, and the answer is not simply forbidding friendships. The parent learns how influence and social contagion work so they can talk about it without the conversation becoming a fight about who is allowed in the house. | Los pares que el padre considera una mala influencia son una vía hacia el consumo, y la respuesta no es simplemente prohibir amistades. El padre aprende cómo funcionan la influencia y el contagio social para poder hablarlo sin que la conversación se vuelva una pelea sobre quién puede entrar a la casa. |
 | priority "phone-and-social-media" — title | The phone and what is on it | El celular y lo que hay en él |
 | priority "phone-and-social-media" — intent | Unmonitored phone and social-media access alongside negative peer influence is a supply line and a pressure source at once. Supervision that is explained holds; supervision that arrives as a punishment does not. | El acceso sin supervisión al celular y a las redes, junto con la influencia de pares negativos, es a la vez una vía de suministro y una fuente de presión. La supervisión que se explica se sostiene; la que llega como castigo no. |
+| priority "healthy-home-environment" — title | Put the structure back | Recuperar la estructura |
+| priority "healthy-home-environment" — intent | A day with little routine, or a home the parent is not confident discourages use, leaves rules and consequences nothing to attach to. Rebuilding predictable structure — sleep, school, meals, a home where substances are simply not available — is not cosmetic; it is the frame that makes every boundary in this plan enforceable. | Un día con poca rutina, o un hogar que el padre no está seguro de que desaliente el consumo, no deja nada a lo que las reglas y las consecuencias puedan sujetarse. Reconstruir una estructura predecible — sueño, escuela, comidas, un hogar donde las sustancias simplemente no estén disponibles — no es cosmético; es el marco que hace aplicable cada límite de este plan. |
 | priority "school-engagement" — title | Bring the school in | Involucrar a la escuela |
 | priority "school-engagement" — intent | School staff see hours of the child's day that the parent does not, and engaging them is one of the most important parts of building the network around the child. This is a partnership to build, not a complaint to make. | El personal escolar ve horas del día del hijo que el padre no ve, e involucrarlo es una de las partes más importantes de construir la red alrededor del hijo. Esto es una alianza que se construye, no una queja que se presenta. |
 | priority "mood-and-mental-health" — title | What is underneath the behaviour | Lo que hay debajo de la conducta |
@@ -117,10 +113,6 @@ Una cosa más, por lo que nos dijiste sobre dónde está tu hijo. Dijiste que tu
 | priority "parent-support-and-exhaustion" — intent | Exhaustion, fear and isolation do some of the talking in a conversation with a child, whether or not the parent intends it. Peer support is not a comfort measure here; it is what keeps the plan executable. | El agotamiento, el miedo y el aislamiento hablan por sí solos en una conversación con un hijo, lo quiera el padre o no. El apoyo entre pares no es un consuelo aquí; es lo que mantiene el plan ejecutable. |
 | priority "drug-testing-serious" — title | Know what you are dealing with | Saber a qué te enfrentas |
 | priority "drug-testing-serious" — intent | With use confirmed and the situation serious, the parent needs to know what is actually being used rather than guessing. A test the parent administers, framed as fact-finding, is a firm structured step for the back half of the first week — not a punishment and not a threat. | Con el consumo confirmado y la situación grave, el padre necesita saber qué se está consumiendo en realidad en lugar de adivinar. Una prueba que el padre administra, planteada como recolección de hechos, es un paso firme y estructurado para la segunda mitad de la primera semana — no un castigo ni una amenaza. |
-| priority "legal-exposure" — title | If the law is now involved | Si la ley ya está involucrada |
-| priority "legal-exposure" — intent | Legal exposure changes the sequence of everything else, and a parent guessing at consequences makes decisions they cannot undo. | La exposición legal cambia la secuencia de todo lo demás, y un padre que adivina las consecuencias toma decisiones que no puede deshacer. |
-| priority "lgbtq-specific-risk" — title | Risks that are specific to your child | Riesgos específicos de tu hijo |
-| priority "lgbtq-specific-risk" — intent | An LGBTQ+ adolescent carries substance-use risks that generic advice misses, and a parent who does not know that gives well-meant advice that does not fit their child. | Un adolescente LGBTQ+ carga riesgos de consumo que los consejos genéricos no ven, y un padre que no lo sabe da consejos bien intencionados que no encajan con su hijo. |
 | section "urgentConcern" — title | What you told us, first | Lo que nos dijiste, primero |
 | section "urgentConcern" — instruction | Open by addressing what the parent wrote in the urgent field, in their own terms, before anything else in the plan. Name the specific thing they reported. Do not restate their words as a quotation and do not soften them. If they described something that may have been ingested, the first action is the medical one. Never call an unidentified substance 'pills' — it may be a pressed pill, a powder, a vape, an edible, or something they cannot identify, and narrowing it narrows their vigilance. | Abre abordando lo que el padre escribió en el campo urgente, en sus propios términos, antes que cualquier otra cosa del plan. Nombra lo específico que reportó. No repitas sus palabras como una cita y no las suavices. Si describió algo que pudo haber sido consumido, la primera acción es la médica. Nunca llames 'pastillas' a una sustancia no identificada — puede ser una pastilla prensada, un polvo, un vape, un comestible, o algo que no puede identificar, y limitarlo limita su vigilancia. |
 | section "headlineSummary" — title | Where you are right now | Dónde estás ahora mismo |
@@ -139,12 +131,11 @@ Una cosa más, por lo que nos dijiste sobre dónde está tu hijo. Dijiste que tu
 | section "consideringInpatient" — instruction | What inpatient and intensive outpatient programmes actually involve, what makes a family ready to consider one, and what the immediate next step is. Recommend it as a decision to make with a professional, not one to make from this plan — and when you name that professional, the professional-help sequence follows in the same paragraph. | Qué implican realmente los programas internos y los intensivos ambulatorios, qué hace que una familia esté lista para considerar uno, y cuál es el próximo paso inmediato. Recomiéndalo como una decisión a tomar con un profesional, no una a tomar desde este plan — y cuando nombres a ese profesional, la secuencia de ayuda profesional sigue en el mismo párrafo. |
 | section "recommendedWorkshops" — title | The workshops for your situation | Los workshops para tu situación |
 | section "recommendedWorkshops" — instruction | One entry per workshop you have been given, in the order given, using the exact title supplied. For each, one or two sentences on why THIS family in particular should attend it — referring to what they reported, not to the workshop's general topic. Do not add a workshop, do not omit one, and do not rename one. | Una entrada por cada workshop que te fue dado, en el orden dado, usando el título exacto suministrado. Para cada uno, una o dos oraciones sobre por qué ESTA familia en particular debería asistir — refiriéndote a lo que reportó, no al tema general del workshop. No agregues un workshop, no omitas ninguno, y no renombres ninguno. |
-| section "universalGuidingPrinciple" — title | Matching what you do to what you are seeing | Ajustar lo que haces a lo que estás viendo |
-| section "parentSelfCare" — title | Looking after yourself is part of the plan | Cuidarte es parte del plan |
+| section "universalGuidingPrinciple" — title | Match the Intervention to the Risk | Ajustar la intervención al riesgo |
+| section "parentSelfCare" — title | Taking Care of Yourself | Cuidar de ti |
 | section "encouragement" — title | Where this can go | Hacia dónde puede ir esto |
 | section "encouragement" — instruction | Grounded encouragement tied to something this parent actually did or reported — never generic reassurance. Reinforce that the child is not the opponent; the substance is. Reinforce that the ASAP discussion groups are a real source of support and shared experience. Reinforce that they and their child are on the same side of this. | Aliento con los pies en la tierra, ligado a algo que este padre realmente hizo o reportó — nunca consuelo genérico. Refuerza que el hijo no es el oponente; la sustancia lo es. Refuerza que los ASAP discussion groups son una fuente real de apoyo y experiencia compartida. Refuerza que él y su hijo están del mismo lado de esto. |
 | section "standardizedClosing" — title | Protecting the progress | Proteger el progreso |
-| section "sustainingRecoveryTransition" — title | What comes next for your family | Lo que viene después para tu familia |
 | assessment — title | Monitoring & Intervention — Family Risk Assessment & Action Plan | Monitoreo e Intervención — Evaluación de Riesgo Familiar y Plan de Acción |
 | assessment — intro | Twenty-four questions about what you are seeing at home. There are no right answers, and nothing here is a diagnosis — the more honest the answers, the more useful the plan. | Veinticuatro preguntas sobre lo que estás viendo en casa. No hay respuestas correctas, y nada de esto es un diagnóstico — cuanto más honestas sean las respuestas, más útil será el plan. |
 | q01 — prompt | How certain are you that your child has used drugs, alcohol, or other substances? | ¿Qué tan seguro estás de que tu hijo ha consumido drogas, alcohol u otras sustancias? |
@@ -267,13 +258,6 @@ Una cosa más, por lo que nos dijiste sobre dónde está tu hijo. Dijiste que tu
 | q24 — option 2 | Mostly ready | Mayormente listo |
 | q24 — option 3 | Hesitant | Vacilante |
 | q24 — option 4 | Stuck — don't know what to do | Atascado — no sé qué hacer |
-| gate "treatment-status" — prompt | Where is your child with treatment or counselling right now? | ¿En qué punto está tu hijo con el tratamiento o la consejería en este momento? |
-| gate "treatment-status" — help | Optional. This does not affect your plan’s priorities — it only tells us whether to point you toward the Sustaining Recovery track. | Opcional. Esto no afecta las prioridades de tu plan — solo nos dice si conviene orientarte hacia el camino de Sustaining Recovery. |
-| gate "treatment-status" — option "none" | No treatment or counselling | Sin tratamiento ni consejería |
-| gate "treatment-status" — option "seeking" | Looking for help, not started yet | Buscando ayuda, aún sin empezar |
-| gate "treatment-status" — option "in-treatment" | Currently in therapy, counselling or treatment | Actualmente en terapia, consejería o tratamiento |
-| gate "treatment-status" — option "post-treatment-unstable" | Has been through treatment; use has continued or returned | Ya pasó por tratamiento; el consumo continuó o regresó |
-| gate "treatment-status" — option "post-treatment-stable" | Has been through treatment and has held a meaningful period without use | Ya pasó por tratamiento y ha mantenido un periodo significativo sin consumo |
 | urgent field — label | Is there anything urgent you want to tell us? | ¿Hay algo urgente que quieras contarnos? |
 | urgent field — help | Optional. If something has just happened — you found something, or your child may have taken something — tell us here and the plan will address it first. | Opcional. Si algo acaba de pasar — encontraste algo, o tu hijo pudo haber consumido algo — cuéntanoslo aquí y el plan lo abordará primero. |
 | urgent field — placeholder | What happened, and when? | ¿Qué pasó, y cuándo? |

@@ -120,7 +120,7 @@ export class ContentService implements OnModuleInit {
    * A section whose condition does not hold, or which does not apply at this
    * tier, is stripped here — before the model's schema and prompt are built, so
    * the model is never even offered it. That is what keeps the two urgent-only
-   * sections conditional and the Sustaining Recovery transition gated.
+   * sections conditional.
    */
   sectionsFor(
     tierId: string,

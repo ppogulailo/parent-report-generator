@@ -103,9 +103,9 @@ test('the questionnaire shows one concern domain at a time', async ({
 test('every question number stays unique across the whole walk', async ({
   page,
 }) => {
-  // The approved methodology overlaps — q18 and q22 each belong to two domains,
-  // q04 to none — so numbering has to stay unique across steps or a parent sees
-  // the same number twice and no 24th.
+  // The approved methodology overlaps — q18 and q22 each belong to two domains
+  // — so numbering has to stay unique across steps or a parent sees the same
+  // number twice and no 24th.
   await page.goto('/en/v1');
   await freshStart(page);
 
@@ -200,7 +200,7 @@ test('Back returns to the previous section with the answers intact', async ({
   await expect(cards.first().locator('.opt input').nth(2)).toBeChecked();
 });
 
-test('the last step holds the optional questions and the generate button', async ({
+test('the last step holds the urgent field and the generate button', async ({
   page,
 }) => {
   await page.goto('/en/v1');
@@ -208,7 +208,12 @@ test('the last step holds the optional questions and the generate button', async
   await answerAll(page, 1);
 
   await expect(page.locator('.qgroup-title')).toContainText('Before your plan');
-  await expect(page.locator('input[name="treatment-status"]')).toHaveCount(5);
+  // One optional question now, not two: the treatment-status gate was removed
+  // by founder decision on 2026-08-25, and the copy must say so.
+  await expect(page.locator('.qgroup-desc').first()).toContainText(
+    'One optional question',
+  );
+  await expect(page.locator('input[name="treatment-status"]')).toHaveCount(0);
   await expect(page.locator('.crisis-textarea')).toBeVisible();
   await expect(submitButton(page)).toBeEnabled();
   await expect(button(page, NEXT)).toHaveCount(0);
@@ -245,47 +250,17 @@ test("Next lands the new section's first question at the top of the screen", asy
   expect((bar?.y ?? 0) + (bar?.height ?? 0)).toBeLessThanOrEqual(130);
 });
 
-test('the optional treatment question reads as a question, not an aside', async ({
+test('no draft notice now the content is founder-approved', async ({
   page,
 }) => {
+  // The notice reads the capabilities endpoint at runtime, so Dave's approval
+  // (2026-08-25) removes it with no frontend rebuild. Wait for the form itself
+  // first so the absence is an answer rather than a page still loading.
   await page.goto('/en/v1');
-  await freshStart(page);
-  await answerAll(page, 1);
-
-  // A question card like the scored ones, not the grey note card it used to be.
-  const gate = page.locator('.qcard', {
-    has: page.locator('input[name="treatment-status"]'),
-  });
-  await expect(gate).toBeVisible();
-  await expect(gate.locator('.qtext')).toContainText(
-    'treatment or counselling',
-  );
-  await expect(gate.locator('.opt-optional')).toHaveText('Optional');
-
-  // It carries no number badge: it sits outside the scored twenty-four, and
-  // borrowing their numbering would imply it counts toward the plan.
-  await expect(gate.locator('.qbadge')).toHaveCount(0);
-
-  // "Optional" is said once, by the tag — not again at the start of the help.
-  await expect(gate.locator('.qgroup-desc')).not.toContainText('Optional.');
-
-  // Each option has something to aim at, and only the chosen one is filled.
-  const dots = gate.locator('.opt-radio');
-  await expect(dots).toHaveCount(5);
-  await expect(gate.locator('.opt-radio.checked')).toHaveCount(0);
-
-  await page.locator('input[name="treatment-status"]').nth(4).check();
-  await expect(gate.locator('.opt-radio.checked')).toHaveCount(1);
-  await expect(gate).toHaveClass(/answered/);
-});
-
-test('the draft notice is shown while the content is unapproved', async ({
-  page,
-}) => {
-  await page.goto('/en/v1');
+  await expect(page.locator('.scale-legend')).toBeVisible();
   await expect(
     page.locator('.safety-note', { hasText: 'under review' }),
-  ).toBeVisible();
+  ).toHaveCount(0);
 });
 
 test('answering a question marks its card, and the progress bar moves', async ({
@@ -424,7 +399,7 @@ test('a parent can complete the questionnaire and read a plan', async ({
 
   // The Universal Guiding Principle is platform copy and must appear verbatim.
   await expect(page.locator('.results')).toContainText(
-    'match what you are actually seeing',
+    'match the level of risk',
   );
 });
 
@@ -453,7 +428,7 @@ test('the results screen arrives before the plan is written', async ({
   await expect(page.locator('.workshop-title').first()).not.toBeEmpty();
   // Platform copy is the platform's, so it is whole from the first moment.
   await expect(page.locator('.results')).toContainText(
-    'match what you are actually seeing',
+    'match the level of risk',
   );
 
   // Still being written: the status says so, and Print is not offered yet.

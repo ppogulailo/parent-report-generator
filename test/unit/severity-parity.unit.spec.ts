@@ -18,6 +18,14 @@ import { DOMAIN_MAP } from '../../src/report/scoring/domain.map';
  * `content/recommendation-matrix.json`, this fails immediately and names the
  * exact submission that diverged.
  *
+ * ONE APPROVED DIVERGENCE EXISTS. Dave approved adding Q4 to Immediate Safety
+ * & Urgency (via Matt, 2026-08-25, RECOMMENDATION-MATRIX.md §6.1), and the old
+ * path's DOMAIN_MAP deliberately does not receive it — that path still serves
+ * parents until the switchover and must not move. The sweep applies the same
+ * amendment to the live arithmetic below, so what it proves is that the tier
+ * LOGIC is identical given identical domain scores: any divergence beyond the
+ * approved one still fails.
+ *
  * The live function returns MILD | MODERATE | SERIOUS. The matrix additionally
  * distinguishes CRITICAL, which the live system expresses as "SERIOUS, plus the
  * two urgent-only sections" — so `critical` maps to SERIOUS here. That mapping
@@ -67,11 +75,22 @@ function score(responses: number[], urgentText?: string): ScoredSubmission {
   };
 }
 
+/** The old path's map plus the one approved amendment: Q4 (index 3) joins
+ *  Immediate Safety & Urgency. See the header comment — amending the copy here
+ *  rather than DOMAIN_MAP itself is what keeps the old path untouched. */
+const AMENDED_DOMAIN_MAP: Record<string, number[]> = {
+  ...DOMAIN_MAP,
+  'Immediate Safety & Urgency': [
+    ...DOMAIN_MAP['Immediate Safety & Urgency'],
+    3,
+  ],
+};
+
 /** The live scorer's domain map keyed by label, which `computeSeverityTier`
  *  expects. Built from the same responses so both sides see identical input. */
 function liveDomainScores(responses: number[]): Record<string, number> {
   const scores: Record<string, number> = {};
-  for (const [label, indices] of Object.entries(DOMAIN_MAP)) {
+  for (const [label, indices] of Object.entries(AMENDED_DOMAIN_MAP)) {
     const values = indices.map((i) => {
       const value = responses[i];
       return value === undefined ? 2 : Math.min(4, Math.max(1, value));

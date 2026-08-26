@@ -1,9 +1,14 @@
 # The Recommendation Matrix — Monitoring & Intervention
 
-**For Dave's review and approval. Nothing else in Milestone 1 proceeds until this
-is approved.**
+**APPROVED.** Dave completed his review and Matt Kopeny communicated the
+decisions on 2026-08-25, with the final fixed-passage wording, the row-15
+confirmation and the naming decision following on 2026-08-26. Each decision is
+recorded inline as a **Resolved** note at the section it settles, and the
+content files carry `"status": "approved"`. Two items remain open for launch:
+the Circle URLs and the Spanish sign-off (§12).
 
-Prepared 2026-08-23 · methodology version `MI-V1.0-DRAFT` · matrix `1.0.0` (draft)
+Prepared 2026-08-23 · approved 2026-08-25 · methodology version `MI-V1.0` ·
+matrix `1.0.0` (approved)
 
 ---
 
@@ -93,17 +98,26 @@ scores is at or below **2.0**; and the child-safety average is below **2.0**.
 
 ### Moderate — everything else
 
+**Resolved (2026-08-25): §2 approved as transcribed, with one amendment.** Q4 —
+exposure to environments where substances may be present — now counts toward
+Immediate Safety & Urgency, per the decision on §6.1. It joins the domain
+average only: the q01/q02/q10 child-safety subset above is unchanged, so Q4
+moves severity solely through the domain-average pathways. The old path's
+scoring is deliberately untouched until the switchover.
+
 ---
 
 ## 3. The priority areas
 
-Fourteen rules. When a rule's condition is met, the family receives that priority
-area and the resources beside it. Multiple rules firing means multiple areas —
-nothing is dropped (see §6.6).
+Thirteen active rules. When a rule's condition is met, the family receives that
+priority area and the resources beside it. Multiple rules firing means multiple
+areas — nothing is dropped (see §6.6, confirmed).
 
 Row 14 was added after the baseline showed the current system citing it in every
-plan while our matrix routed it in none. Its condition is our reading, not the
-methodology's — see §6.8.
+plan while our matrix routed it in none; its condition was confirmed on
+2026-08-25 (§6.8). Rows 12 and 13 were removed from routing by the same
+decision (§6.3), and row 15 was added by it — its threshold was our reading,
+and Matt confirmed it on 2026-08-26.
 
 | # | Priority area | Fires when | Resources it requires |
 |---|---|---|---|
@@ -118,9 +132,10 @@ methodology's — see §6.8.
 | 9 | Make the rules mean something | Q7 ≥ 3 **or** Q19 ≥ 3 | Auxiliary "Behavioral Contracts…" + "Setting Boundaries with Respect…" |
 | 10 | You cannot do this on empty | Q17 ≥ 3 | Monitoring and Intervention discussion group |
 | 11 | Know what you are dealing with | Q1 ≥ 3 **and** Serious/Critical | Auxiliary "Drug Testing" |
-| 12 | If the law is now involved | **Disabled** — see §6.3 | Auxiliary "Legal Issues and Substance Use…" |
-| 13 | Risks specific to your child | **Disabled** — see §6.3 | Auxiliary "Supporting LGBTQ+ Teens…" |
-| 14 | When every conversation turns into a fight | Q5 ≥ 3, Q6 ≥ 3 **or** Q13 ≥ 3 — *our threshold* | Essential "Effective Communication…" |
+| 12 | If the law is now involved | **Removed from routing** — see §6.3 | Auxiliary "Legal Issues and Substance Use…" stays in ASAP Community, unrouted |
+| 13 | Risks specific to your child | **Removed from routing** — see §6.3 | Auxiliary "Supporting LGBTQ+ Teens…" stays in ASAP Community, unrouted |
+| 14 | When every conversation turns into a fight | Q5 ≥ 3, Q6 ≥ 3 **or** Q13 ≥ 3 — *confirmed 2026-08-25* | Essential "Effective Communication…" |
+| 15 | Put the structure back | Q20 ≥ 3 **or** Q21 ≥ 3 — *confirmed 2026-08-26* | Auxiliary "Creating a Healthy Home Environment…" |
 
 Rows 2 and 7 each name **two** resources, and the live methodology says citing
 only one is a violation. Under the new architecture both are guaranteed: they are
@@ -134,6 +149,15 @@ ever come out without a lead priority.
 
 Row 11 also requires a referral to an ASAP-endorsed therapist. That is not a
 workshop, so it is handled by the wording rule in §9 instead.
+
+Row 15 implements the 2026-08-25 decision to make Creating a Healthy Home
+Environment a formal recommendation "when the assessment identifies meaningful
+household-structure problems". The threshold is our reading of *meaningful*:
+little or no daily structure (Q20 ≥ 3), or a home environment the parent is not
+confident discourages use (Q21 ≥ 3) — the two questions that measure the
+household itself, rather than monitoring (Q14, which drives row 6) or the
+parent's planning and preparedness (Q18 and Q22, which the boundary rules
+read). **Confirmed by Matt on 2026-08-26.**
 
 **Ordering.** Where several areas fire, they are ordered by an importance weight
 we assigned — safety and active use highest, preventative topics lowest. The live
@@ -203,6 +227,11 @@ platform logs it at every startup so it stays a known decision.
 is where its topic sits — that is a one-line change, but it will shift some
 families' domain scores and a few across a tier boundary. Your call, not ours.
 
+**Resolved (2026-08-25): add it.** Q4 now counts toward Immediate Safety &
+Urgency. Every question now feeds a domain, the startup log entry is gone, and
+the parity sweep (§11) carries this as its one documented, approved divergence
+from the old path's arithmetic.
+
 ### 6.2 Two questions overlap two domains
 
 **Q18** (clarity of your plan for next steps) and **Q22** (preparedness to set firm
@@ -214,7 +243,7 @@ Preserved exactly. Flagging it only because it is unusual, and because it means
 those two questions carry more weight overall than the others. No action needed
 unless it was accidental.
 
-### 6.3 BLOCKING — two routing rows cannot fire
+### 6.3 RESOLVED — two routing rows cannot fire
 
 Rows 12 and 13 fire on a concern "named in inputs" — legal exposure, and
 LGBTQ+-specific risk. **There is no question in the approved 24 that asks about
@@ -237,6 +266,12 @@ gap is visible rather than forgotten. Three ways forward:
 3. **Fire them whenever there is urgent text**, and let the AI's prose decide
    whether the topic is relevant. Closest to today's behaviour; also the least
    predictable.
+
+**Resolved (2026-08-25): option 2.** Both workshops stay available within ASAP
+Community, both are removed from automatic FRAAP routing, and no questionnaire
+questions are added solely to trigger them. The rows are deleted from the
+matrix content (git history keeps them if this is ever revisited), and a test
+holds that no rule routes to either workshop.
 
 ### 6.4 The social-media row's second condition
 
@@ -269,6 +304,9 @@ nine priority areas, which is a long document. If you would prefer a shorter pla
 that leads with the most important areas, lowering the cap is a content edit — but
 it is a methodology change, so we will not make it without you asking.
 
+**Resolved (2026-08-25): keep it uncapped.** Preserved as described, with the
+test that fails if anything is ever silently dropped.
+
 ### 6.7 One prompt rule becomes unnecessary
 
 The rule banning "Early Warning Signs" from Serious plans exists because today
@@ -297,7 +335,7 @@ missed it entirely. It is now a routing rule.
 **The condition is ours, not yours.** The prompts say "communication has broken
 down" without naming a threshold, so it fires when conflict is intense (Q5 ≥ 3),
 when the parent lacks confidence to raise it (Q6 ≥ 3), or when the child cannot
-talk about stress (Q13 ≥ 3). **Please confirm or correct that.**
+talk about stress (Q13 ≥ 3). **Resolved (2026-08-25): confirmed as proposed.**
 
 **Five resources the old system cited that no rule requires.** These come from a
 second, softer list in the prompt — a "common matches" section suggesting
@@ -313,6 +351,12 @@ table; this is what the soft list produced:
 | The Power of Positive Reinforcement | 1 of 8 | Model discretion. |
 
 Each is a decision: make it a rule, or accept that it was the model choosing.
+
+**Resolved (2026-08-25), in part.** Creating a Healthy Home Environment is now
+a formal rule — row 15; its threshold was ours and Matt confirmed it on
+2026-08-26. The other four were not made rules and remain what they were: the
+model exercising discretion the new architecture no longer grants it, so they
+appear only where a rule routes them.
 
 **And the other direction, which is the point of this milestone.** The old system
 **omitted required workshops**. "Building a Support Network" is required by two
@@ -354,6 +398,10 @@ One knock-on worth knowing: "Early Warning Signs" is severity-gated out of
 Serious and Critical (§4), so the same workshop now reaches a Mild plan and is
 blocked from a Serious one. That gate was dormant before this; it is load-bearing
 now.
+
+**Resolved (2026-08-25): approved** — Early Warning Signs as a preventative
+recommendation at both Mild and Moderate, with the Serious/Critical exclusion
+kept.
 
 ### 6.10 What the real model actually did
 
@@ -428,6 +476,14 @@ of the Essential Workshop rather than in the questionnaire, say so and we will
 remove the question — the transition then lives in Circle and needs nothing from
 us.
 
+**Resolved (2026-08-25): remove the question.** The FRAAP stays at 24
+questions, and the transition to the Sustaining Recovery Essential Workshop is
+handled through the Circle program journey. The gate question and the section
+it controlled are removed from the content (git history keeps both); the gate
+mechanism itself remains in the platform, so reinstating it — or adding a
+different gate — would be a content edit. The final-wording request below is
+therefore withdrawn.
+
 **One-directional, deliberately.** This points forward into Sustaining Recovery.
 The reverse link was removed from Sustaining Recovery on your instruction in
 August, on the grounds that a parent arriving there had already followed the right
@@ -459,9 +515,11 @@ added — all five are here for you to accept or drop:
 3. **Parent self-care** — a fixed passage on the parent's own steadiness being
    part of the mechanism, not an aside.
 
-   Both 2 and 3 are carried over from Sustaining Recovery and adapted. **Both are
-   placeholder wording.** They render exactly as written, with no AI involvement,
-   so please replace them with the wording you want a parent to read.
+   Both 2 and 3 render exactly as written, with no AI involvement.
+   **Resolved (2026-08-26):** ASAP's final wording — "Match the Intervention to
+   the Risk" and "Taking Care of Yourself" — replaced the placeholders, English
+   verbatim. The Spanish is our translation and sits in `SPANISH-REVIEW.md`
+   with everything else awaiting native-speaker sign-off.
 
 4. **The standardized closing becomes exact.** Today the AI is asked to reproduce
    your three approved paragraphs "essentially verbatim", with permission to
@@ -470,7 +528,8 @@ added — all five are here for you to accept or drop:
    methodology — but it is a change, so we are flagging it.** If the AI's small
    adjustments were wanted, tell us and we will hand it back.
 
-5. **The transition section** from §7.
+5. **The transition section** from §7 — *removed by the 2026-08-25 decision;
+   the transition lives in the Circle program journey instead.*
 
 ---
 
@@ -562,25 +621,26 @@ regression would matter most. Included at no change in price.
 
 ## 12. What we need
 
-**To proceed past Milestone 1:**
+**Received 2026-08-25:** approval of §2, §3 and §4 (with the Q4 amendment of
+§6.1); the §6.3 decision (both rows removed from routing); the §7 decision (no
+25th question — the transition lives in Circle); Early Warning Signs at Mild
+and Moderate; the row-15 rule for Creating a Healthy Home Environment; and the
+confirmation that recommendations stay uncapped. All are implemented, and the
+content is marked `"status": "approved"`, so reports are no longer flagged as
+provisional.
 
-1. **Your approval of §2, §3 and §4** — the methodology as transcribed. If
-   anything is wrong, this is the moment it is cheap to fix.
-2. **An answer on §6.3** — the two routing rows that cannot currently fire.
-3. **A decision on §7** — the extra question, or move the transition to Circle.
+**Received 2026-08-26:** the final wording for both Universal Guiding
+Principles (installed verbatim, §8); confirmation of the row-15 threshold; and
+the naming decision — *Family* Risk Assessment & Action Plan (FRAAP) is the
+formal product name across both tracks, now applied to this product's pages.
 
-**Needed before launch, not before we start:**
+**Still needed before launch:**
 
-4. The Circle URLs for the workshops and discussion groups.
-5. Final wording for the Universal Guiding Principles (§8.2, §8.3) and the
-   transition (§7).
-6. Native-speaker sign-off on the Spanish strings.
-7. One DNS record for `monitoring.asapcommunity.org`.
+1. The Circle URLs for the workshops and discussion groups — Emmanuel is
+   assembling them; 0 of 28 supplied.
+2. Native-speaker sign-off on the Spanish strings — now including our
+   translations of the two Guiding Principles.
 
-**Worth a glance whenever:** §6.1, §6.2, §6.4, §6.5, §6.6, §6.8, and §5.
-
----
-
-*Once approved, mark `content/assessment.json` and
-`content/recommendation-matrix.json` as `"status": "approved"` and the platform
-stops flagging every report as provisional.*
+**Still worth a glance whenever:** §6.2 (the two-domain overlap), §6.4 (the
+social-media row's free-text half), and §5 (the ten remaining inferred domain
+mappings).

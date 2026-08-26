@@ -5,25 +5,23 @@
     "the source of truth. Do not hand-edit the questions or option labels",
     "without re-running the generator, or the two will diverge.",
     "",
-    "TWO PROPERTIES OF THE APPROVED SCORING ARE PRESERVED HERE DELIBERATELY,",
-    "and both look like mistakes until you know they are not:",
+    "TWO PROPERTIES OF THE APPROVED SCORING LOOK LIKE MISTAKES AND ARE NOT:",
     "",
     "  1. Domains OVERLAP. q18 and q22 each count toward two domains, so the",
-    "     domain question lists total 25 slots across 23 distinct questions.",
+    "     domain question lists total 26 slots across 24 distinct questions.",
     "     This is why questionIds live on the domain rather than a domainId",
-    "     living on the question.",
+    "     living on the question. Carried over from the live system unchanged.",
     "",
-    "  2. q04 belongs to NO domain. It is asked and stored, and a",
-    "     matrix rule can read it directly, but it contributes to no domain",
-    "     average and therefore cannot move a family between severity tiers.",
-    "",
-    "Both are carried over from the live system unchanged. They are flagged in",
-    "RECOMMENDATION-MATRIX.md for the founder to confirm or correct — a change",
-    "to either one changes every score, so it is a methodology decision."
+    "  2. q04 counts toward Immediate Safety & Urgency HERE and not in the",
+    "     old path. It belonged to no domain in the live system; Dave approved",
+    "     adding it (via Matt, 2026-08-25, resolving RECOMMENDATION-MATRIX.md",
+    "     §6.1). The amendment is applied by the generator so the old path’s",
+    "     DOMAIN_MAP stays exactly what it serves today. q04 joins the domain",
+    "     average only — the q01/q02/q10 child-safety subset is unchanged."
   ],
   "version": "1.0.0",
-  "status": "draft",
-  "methodologyVersion": "MI-V1.0-DRAFT",
+  "status": "approved",
+  "methodologyVersion": "MI-V1.0",
   "title": {
     "en": "Monitoring & Intervention — Family Risk Assessment & Action Plan",
     "es": "Monitoreo e Intervención — Evaluación de Riesgo Familiar y Plan de Acción"
@@ -52,6 +50,7 @@
       "questionIds": [
         "q01",
         "q02",
+        "q04",
         "q10",
         "q23",
         "q24"
@@ -1119,57 +1118,5 @@
       "es": "¿Qué pasó, y cuándo?"
     }
   },
-  "gates": [
-    {
-      "id": "treatment-status",
-      "order": 1,
-      "responseType": "choice",
-      "prompt": {
-        "en": "Where is your child with treatment or counselling right now?",
-        "es": "¿En qué punto está tu hijo con el tratamiento o la consejería en este momento?"
-      },
-      "help": {
-        "en": "This does not affect your plan’s priorities. It only tells us whether to point you toward the Sustaining Recovery track.",
-        "es": "Esto no afecta las prioridades de tu plan. Solo nos dice si conviene orientarte hacia el camino de Sustaining Recovery."
-      },
-      "options": [
-        {
-          "value": "none",
-          "label": {
-            "en": "No treatment or counselling",
-            "es": "Sin tratamiento ni consejería"
-          }
-        },
-        {
-          "value": "seeking",
-          "label": {
-            "en": "Looking for help, not started yet",
-            "es": "Buscando ayuda, aún sin empezar"
-          }
-        },
-        {
-          "value": "in-treatment",
-          "label": {
-            "en": "Currently in therapy, counselling or treatment",
-            "es": "Actualmente en terapia, consejería o tratamiento"
-          }
-        },
-        {
-          "value": "post-treatment-unstable",
-          "label": {
-            "en": "Been through treatment — use has continued or returned",
-            "es": "Pasó por tratamiento — el consumo continuó o regresó"
-          }
-        },
-        {
-          "value": "post-treatment-stable",
-          "label": {
-            "en": "Been through treatment — a meaningful period without use",
-            "es": "Pasó por tratamiento — un periodo significativo sin consumo"
-          }
-        }
-      ],
-      "rationale": "The 24 approved questions measure suspected or active use and the parent’s capacity to respond. None of them asks whether a child has reached abstinence or sustained stability, and low scores mean \"early-stage, possibly nothing yet\" rather than \"recovered\" — so the transition to the Sustaining Recovery Essential Workshop cannot be inferred from scores without routing early-stage families into a post-treatment workshop. This gate is not scored, belongs to no domain, and cannot affect severity. It only decides whether the transition section appears."
-    }
-  ]
+  "gates": []
 }

@@ -69,6 +69,11 @@ const ROUTED_DOMAINS: Record<string, string[]> = {
   'Protecting Recovery: Preventing Relapse and Responding to Setbacks': [
     'immediate-safety-urgency',
   ],
+  // No longer inferred: the founder-approved household-structure rule of
+  // 2026-08-25 (matrix "healthy-home-environment") states this mapping.
+  'Creating a Healthy Home Environment – The Power of Structure and Routine': [
+    'household-structure',
+  ],
 };
 
 /** Best-fit domains for the rest, by topic. Marked inferred. */
@@ -90,9 +95,6 @@ const INFERRED_DOMAINS: Record<string, string[]> = {
   ],
   'Building Self-Esteem: Helping Your Child Develop Healthy Self-Worth': [
     'communication-conflict',
-  ],
-  'Creating a Healthy Home Environment – The Power of Structure and Routine': [
-    'household-structure',
   ],
   'Handling Setbacks – Staying Resilient in the Face of Challenges': [
     'immediate-safety-urgency',

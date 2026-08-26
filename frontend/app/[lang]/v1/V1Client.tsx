@@ -105,7 +105,7 @@ const EXTRA = {
     stepIncomplete: 'Answer every question in this section to continue.',
     lastStepTitle: 'Before your plan',
     lastStepDesc:
-      'Two optional questions, then your plan. Neither one changes your priorities.',
+      'One optional question, then your plan. It does not change your priorities.',
     moreTitle: 'One more question',
     moreDesc: 'This one does not belong to any of the areas above.',
   },
@@ -127,7 +127,7 @@ const EXTRA = {
     stepIncomplete: 'Responde todas las preguntas de esta sección para seguir.',
     lastStepTitle: 'Antes de tu plan',
     lastStepDesc:
-      'Dos preguntas opcionales, y luego tu plan. Ninguna cambia tus prioridades.',
+      'Una pregunta opcional, y luego tu plan. No cambia tus prioridades.',
     moreTitle: 'Una pregunta más',
     moreDesc: 'Esta no pertenece a ninguna de las áreas anteriores.',
   },
@@ -329,9 +329,11 @@ export default function V1Client({
       })
       .filter((candidate) => candidate.items.length > 0);
 
-    // q04 belongs to no domain today. It is still asked, so it still needs a
-    // step — numbered after the grouped ones, because a badge repeating a number
-    // already used is worse than a gap in the sequence.
+    // A question no domain claims still needs a step — numbered after the
+    // grouped ones, because a badge repeating a number already used is worse
+    // than a gap in the sequence. Since the 2026-08-25 approval put q04 into
+    // Immediate Safety & Urgency there is no such question, but the content
+    // decides that, not this component.
     const orphans = questionnaire.questions
       .filter((q) => !seen.has(q.id))
       .sort((a, b) => a.order - b.order)
@@ -400,10 +402,17 @@ export default function V1Client({
     if (!found) return;
     setSaved({
       responses: found.responses,
-      gates: found.gates,
+      // Only gates the current questionnaire still asks. A gate can be removed
+      // by a content edit — treatment-status was, on 2026-08-25 — and quietly
+      // restoring a stale answer would make the submit fail validation.
+      gates: Object.fromEntries(
+        Object.entries(found.gates).filter(([id]) =>
+          questionnaire.gates.some((gate) => gate.id === id),
+        ),
+      ),
       answered: Object.keys(found.responses).length,
     });
-  }, [questionnaire.questions]);
+  }, [questionnaire.questions, questionnaire.gates]);
 
   // Save on every change. Cheap, and the alternative is picking a moment to
   // save, which is always the moment after the tab closed.

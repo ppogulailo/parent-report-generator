@@ -720,7 +720,7 @@ test('the stream announces the decision before the model is called', async () =>
   // Static copy needs no model, so it is there from the first event.
   expect(
     decided.outline.find((s) => s.key === 'universalGuidingPrinciple')?.text,
-  ).toContain('match what you are actually seeing');
+  ).toContain('match the level of risk');
 });
 
 test('the stream reports progress while the plan is being written', async () => {

@@ -28,16 +28,19 @@
     "     educationalImpact only decides ORDER. If ASAP later wants shorter plans,",
     "     lowering this number is a content edit.",
     "",
-    "  3. TWO ROUTING ROWS ARE DISABLED, NOT DELETED. The legal-exposure and",
-    "     LGBTQ+ rows fire on a concern \"named in inputs\" — free text the matrix",
-    "     cannot read, and there is no question for either. They are here with",
-    "     { \"always\": false } so the methodology stays complete and the gap is",
-    "     visible. See RECOMMENDATION-MATRIX.md §6."
+    "  3. THE LEGAL-EXPOSURE AND LGBTQ+ ROWS ARE GONE, BY DECISION. They fired",
+    "     on a concern \"named in inputs\" — free text the matrix cannot read,",
+    "     with no question to key off — and ASAP resolved §6.3 on 2026-08-25:",
+    "     both workshops stay available inside ASAP Community, neither is",
+    "     routed automatically by this assessment, and no questionnaire",
+    "     question is added solely to trigger them. The rows lived here as",
+    "     { \"always\": false } while the decision was open; git history has",
+    "     them if that decision is ever revisited."
   ],
   "version": "1.0.0",
-  "status": "draft",
+  "status": "approved",
   "assessmentVersion": "1.0.0",
-  "methodologyVersion": "MI-V1.0-DRAFT",
+  "methodologyVersion": "MI-V1.0",
   "maxSupporting": 12,
   "defaultPrimary": "parent-emotional-regulation",
   "primaryTieBreak": [
@@ -222,7 +225,7 @@
       "discussionGroupIds": [],
       "allowedTiers": ["mild", "moderate"],
       "when": { "tier": ["mild", "moderate"] },
-      "notes": "RECOVERED FROM A GAP FOUND BY THE REAL-MODEL RUN. Every other routing rule keys on a question at 3 or above, so a family answering 1 or 2 across the board matched no workshop-bearing rule at all and received a plan with no workshop in it and an empty workshops heading. The current system gave such a family six. The methodology does name a MILD default — the DAY 2 review bullet says \"typically Early Warning Signs in MILD\" and MILD key priorities are told to lean on preventative Auxiliary Workshops — so the workshop is the methodology's, not ours. EXTENDING IT TO MODERATE IS OUR READING: the prompts make Auxiliary Workshops the primary resource at MODERATE without naming a default. Supporting-only and low impact, so it never leads a plan and sorts last. Tier-gated out of SERIOUS and CRITICAL, where the parent is past the awareness stage. Flagged in RECOMMENDATION-MATRIX.md 6.8."
+      "notes": "RECOVERED FROM A GAP FOUND BY THE REAL-MODEL RUN. Every other routing rule keys on a question at 3 or above, so a family answering 1 or 2 across the board matched no workshop-bearing rule at all and received a plan with no workshop in it and an empty workshops heading. The current system gave such a family six. The methodology does name a MILD default — the DAY 2 review bullet says \"typically Early Warning Signs in MILD\" and MILD key priorities are told to lean on preventative Auxiliary Workshops. APPROVED by the founder via Matt on 2026-08-25, including the extension to MODERATE and the existing SERIOUS/CRITICAL tier gate. Supporting-only and low impact, so it never leads a plan and sorts last."
     },
     {
       "id": "communication-breakdown",
@@ -247,7 +250,7 @@
           { "question": "q13", "gte": 3 }
         ]
       },
-      "notes": "RECOVERED FROM A GAP FOUND BY THE BASELINE. This routing is stated as a hard rule in the live prompts — \"when communication has broken down... route to the Essential Workshop Effective Communication\" — but it never appears in the twelve-row routing table, so the first transcription missed it entirely. The captured baseline cited this workshop in 8 of 8 plans while the matrix routed it in none, which is how the omission surfaced. THE CONDITION IS OURS, NOT THE METHODOLOGY'S: the prompts say \"communication has broken down\" without naming a threshold, so this fires on conflict intensity, the parent's confidence to raise it, or the child being unable to talk about stress. Flagged for confirmation in RECOMMENDATION-MATRIX.md 6.9."
+      "notes": "RECOVERED FROM A GAP FOUND BY THE BASELINE. This routing is stated as a hard rule in the live prompts — \"when communication has broken down... route to the Essential Workshop Effective Communication\" — but it never appears in the twelve-row routing table, so the first transcription missed it entirely. The captured baseline cited this workshop in 8 of 8 plans while the matrix routed it in none, which is how the omission surfaced. The trigger — conflict intensity (q05 >= 3), the parent's confidence to raise it (q06 >= 3), or the child being unable to talk about stress (q13 >= 3) — was APPROVED by the founder via Matt on 2026-08-25."
     },
     {
       "id": "co-parent-alignment",
@@ -352,7 +355,31 @@
           { "question": "q12", "gte": 2 }
         ]
       },
-      "notes": "Routing table row 4, which reads 'Q14 >= 3 with Q12 >= 2, or social media concerns named'. The first half is transcribed exactly. The second half reads free text and cannot be evaluated — see the disabled rows below and §6 of the matrix document."
+      "notes": "Routing table row 4, which reads 'Q14 >= 3 with Q12 >= 2, or social media concerns named'. The first half is transcribed exactly. The second half reads free text and cannot be evaluated — see §6.4 of the matrix document, still open."
+    },
+    {
+      "id": "healthy-home-environment",
+      "domainId": "household-structure",
+      "title": {
+        "en": "Put the structure back",
+        "es": "Recuperar la estructura"
+      },
+      "intent": {
+        "en": "A day with little routine, or a home the parent is not confident discourages use, leaves rules and consequences nothing to attach to. Rebuilding predictable structure — sleep, school, meals, a home where substances are simply not available — is not cosmetic; it is the frame that makes every boundary in this plan enforceable.",
+        "es": "Un día con poca rutina, o un hogar que el padre no está seguro de que desaliente el consumo, no deja nada a lo que las reglas y las consecuencias puedan sujetarse. Reconstruir una estructura predecible — sueño, escuela, comidas, un hogar donde las sustancias simplemente no estén disponibles — no es cosmético; es el marco que hace aplicable cada límite de este plan."
+      },
+      "eligibleAs": ["primary", "supporting"],
+      "educationalImpact": 55,
+      "excludes": [],
+      "workshopIds": ["aux-creating-a-healthy-home-environment-the"],
+      "discussionGroupIds": [],
+      "when": {
+        "any": [
+          { "question": "q20", "gte": 3 },
+          { "question": "q21", "gte": 3 }
+        ]
+      },
+      "notes": "ADDED BY FOUNDER DECISION (via Matt, 2026-08-25): 'make this a formal recommendation when the assessment identifies meaningful household-structure problems.' The baseline had shown the old system citing this workshop in 3 of 8 plans with no hard rule behind it (RECOMMENDATION-MATRIX.md §6.8). The threshold — little or no daily structure (q20 >= 3) or a home environment the parent is not confident discourages use (q21 >= 3), the two questions that measure the household itself rather than monitoring (q14, which drives the social-media row) or the parent's planning and preparedness (q18, q22, which the boundary rules read) — was proposed by us and CONFIRMED by the founder via Matt on 2026-08-26."
     },
     {
       "id": "school-engagement",
@@ -471,44 +498,6 @@
         ]
       },
       "notes": "Routing table row 12: confirmed use AND SERIOUS requires the Drug Testing workshop plus a referral to an ASAP-endorsed therapist. The therapist half is not a workshop route — it fires the professional-help wording rule in workshops.json, which is checked against the finished prose. Supporting only: this is a structured next step within a plan, never the plan's headline."
-    },
-    {
-      "id": "legal-exposure",
-      "domainId": "immediate-safety-urgency",
-      "title": {
-        "en": "If the law is now involved",
-        "es": "Si la ley ya está involucrada"
-      },
-      "intent": {
-        "en": "Legal exposure changes the sequence of everything else, and a parent guessing at consequences makes decisions they cannot undo.",
-        "es": "La exposición legal cambia la secuencia de todo lo demás, y un padre que adivina las consecuencias toma decisiones que no puede deshacer."
-      },
-      "eligibleAs": ["supporting"],
-      "educationalImpact": 82,
-      "excludes": [],
-      "workshopIds": ["aux-legal-issues-and-substance-use-understanding"],
-      "discussionGroupIds": [],
-      "when": { "always": false },
-      "notes": "DISABLED, NOT DELETED. Routing table row 10 fires on legal exposure 'named in inputs' — free text the matrix cannot read, and no question in the approved 24 asks about it. Under the current prompt-only system this row fires only if the model happens to notice the topic in the urgent-concern field, which is not a routing rule so much as a hope. Kept here with { \"always\": false } so the methodology is complete and the gap is visible. ASAP has three options, in §6 of the matrix document: add a non-scored gate question, accept that it never fires, or have it fire whenever urgent text is present and let the prose decide relevance."
-    },
-    {
-      "id": "lgbtq-specific-risk",
-      "domainId": "communication-conflict",
-      "title": {
-        "en": "Risks that are specific to your child",
-        "es": "Riesgos específicos de tu hijo"
-      },
-      "intent": {
-        "en": "An LGBTQ+ adolescent carries substance-use risks that generic advice misses, and a parent who does not know that gives well-meant advice that does not fit their child.",
-        "es": "Un adolescente LGBTQ+ carga riesgos de consumo que los consejos genéricos no ven, y un padre que no lo sabe da consejos bien intencionados que no encajan con su hijo."
-      },
-      "eligibleAs": ["supporting"],
-      "educationalImpact": 68,
-      "excludes": [],
-      "workshopIds": ["aux-supporting-lgbtq-teens-addressing-unique-substance"],
-      "discussionGroupIds": [],
-      "when": { "always": false },
-      "notes": "DISABLED, NOT DELETED — same reason as legal-exposure. Routing table row 11 fires on LGBTQ+-specific risk 'named in inputs' and there is no question for it. This one needs more care than the legal row: asking a parent to disclose a child's identity in a questionnaire is a decision with its own weight, and it is ASAP's to make, not ours. See §6."
     }
   ]
 }

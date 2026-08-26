@@ -231,7 +231,7 @@
       "applicableDomains": [
         "household-structure"
       ],
-      "domainsInferred": true
+      "domainsInferred": false
     },
     {
       "id": "aux-supporting-lgbtq-teens-addressing-unique-substance",

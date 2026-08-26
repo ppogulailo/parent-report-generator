@@ -248,85 +248,78 @@ test('supporting recommendations are ordered by impact, deterministically', () =
   ).toEqual(impacts);
 });
 
-test('the disabled routing rows never fire', () => {
-  // legal-exposure and lgbtq-specific-risk fire on free text the matrix cannot
-  // read. They are { "always": false } until ASAP decides how they should work,
-  // and must not leak into a report in the meantime.
+test('the legal and LGBTQ+ workshops are not routed by any rule', () => {
+  // Founder decision, 2026-08-25, resolving RECOMMENDATION-MATRIX.md §6.3:
+  // both workshops stay available inside ASAP Community, and neither is routed
+  // automatically — the old rows fired on free text the matrix cannot read,
+  // and ASAP chose not to add questionnaire questions solely to trigger them.
+  const LEGAL = 'aux-legal-issues-and-substance-use-understanding';
+  const LGBTQ = 'aux-supporting-lgbtq-teens-addressing-unique-substance';
+
+  // Still in the library (available in ASAP Community)...
+  const library = content.workshops.workshops.map((w) => w.id);
+  expect(library).toContain(LEGAL);
+  expect(library).toContain(LGBTQ);
+
+  // ...and reachable from no rule, so no plan can cite them.
+  const routed = content.matrix.recommendations.flatMap((r) => r.workshopIds);
+  expect(routed).not.toContain(LEGAL);
+  expect(routed).not.toContain(LGBTQ);
+
   for (const base of [1, 2, 3, 4]) {
     const result = selection.select(submission(base), 'urgent text here');
-    expect(result.audit.matchedRecommendationIds).not.toContain(
-      'legal-exposure',
-    );
-    expect(result.audit.matchedRecommendationIds).not.toContain(
-      'lgbtq-specific-risk',
-    );
+    expect(result.workshopIds, `all-${base}s`).not.toContain(LEGAL);
+    expect(result.workshopIds, `all-${base}s`).not.toContain(LGBTQ);
   }
 });
 
-test('the Sustaining Recovery transition fires on the gate, never on scores', () => {
-  const applies = (result: ReturnType<typeof selection.select>): boolean =>
-    content
-      .sectionsFor(result.tierId, (section) =>
-        section.when ? evaluate(section.when, result.scored) : true,
-      )
-      .some((s) => s.key === 'sustainingRecoveryTransition');
+test('household-structure problems route to Creating a Healthy Home Environment', () => {
+  // Founder decision, 2026-08-25: a formal recommendation when the assessment
+  // identifies meaningful household-structure problems. The threshold — little
+  // or no daily structure (q20 >= 3) or a home the parent is not confident
+  // discourages use (q21 >= 3) — is ours, flagged in the matrix document.
+  const HOME = 'aux-creating-a-healthy-home-environment-the';
 
-  // No gate answer: never, at any severity. This is the failure mode the gate
-  // exists to prevent — a calm, early-stage family being pointed at a
-  // post-treatment workshop because their scores happened to be low.
-  for (const base of [1, 2, 3, 4]) {
-    expect(applies(selection.select(submission(base))), `all-${base}s`).toBe(
-      false,
-    );
-  }
-
-  // Every other gate answer: still never.
-  for (const value of [
-    'none',
-    'seeking',
-    'in-treatment',
-    'post-treatment-unstable',
-  ]) {
-    expect(
-      applies(
-        selection.select(submission(1), null, { 'treatment-status': value }),
-      ),
-      value,
-    ).toBe(false);
-  }
-
-  // Only the one answer that means what the transition is for.
   expect(
-    applies(
-      selection.select(submission(1), null, {
-        'treatment-status': 'post-treatment-stable',
-      }),
-    ),
-  ).toBe(true);
+    selection.select(submission(1, { q20: 3 })).workshopIds,
+    'little or no structure (q20)',
+  ).toContain(HOME);
+  expect(
+    selection.select(submission(1, { q21: 3 })).workshopIds,
+    'home environment concern (q21)',
+  ).toContain(HOME);
+
+  // A household with its structure intact is not sent there.
+  expect(selection.select(submission(1)).workshopIds).not.toContain(HOME);
 });
 
-test('the gate cannot change any score or any tier', () => {
-  const responses = submission(2, { q03: 3 });
-  const without = selection.select(responses);
-  for (const value of [
-    'none',
-    'seeking',
-    'in-treatment',
-    'post-treatment-unstable',
-    'post-treatment-stable',
-  ]) {
-    const withGate = selection.select(responses, null, {
-      'treatment-status': value,
-    });
-    expect(withGate.tierId, value).toBe(without.tierId);
-    expect(withGate.scored.domainScores, value).toEqual(
-      without.scored.domainScores,
-    );
-    expect(withGate.scored.overallAverage, value).toBe(
-      without.scored.overallAverage,
-    );
-    expect(withGate.workshopIds, value).toEqual(without.workshopIds);
-  }
+test('q04 counts toward Immediate Safety & Urgency', () => {
+  // Approved 2026-08-25, resolving RECOMMENDATION-MATRIX.md §6.1. q04 belonged
+  // to no domain in the live system; it now moves the safety domain average —
+  // while staying outside the q01/q02/q10 child-safety subset, which is the
+  // founder's 2026-05-19 direction and is untouched.
+  const calm = selection.select(submission(1));
+  const exposed = selection.select(submission(1, { q04: 3 }));
+
+  expect(
+    exposed.scored.domainScores['immediate-safety-urgency'],
+  ).toBeGreaterThan(calm.scored.domainScores['immediate-safety-urgency']);
+
+  // Exposure alone does not move the family out of MILD: one 3, and a domain
+  // average of (1+1+3+1+1+1)/6 = 1.33, clears every MILD condition.
+  expect(exposed.tierId).toBe('mild');
+});
+
+test('the assessment stays at 24 questions, with no gate and no transition section', () => {
+  // Founder decision, 2026-08-25: no 25th question. The transition to
+  // Sustaining Recovery is handled inside the Circle program journey, so the
+  // treatment-status gate and the section it controlled are gone. The gate
+  // MECHANISM remains — a future gate is a content edit, not a code change.
+  expect(content.assessment.questions).toHaveLength(24);
+  expect(content.assessment.gates).toEqual([]);
+  expect(content.sections.sections.map((s) => s.key)).not.toContain(
+    'sustainingRecoveryTransition',
+  );
 });
 
 test('the standardized closing is excluded from MILD and present elsewhere', () => {

@@ -83,13 +83,13 @@ function buildJsonLd(lang: SupportedLang) {
         '@type': 'WebSite',
         '@id': siteId,
         url: SITE_URL,
-        name: 'ASAP Community Parent Action Plan',
+        name: 'ASAP Community Family Risk Assessment & Action Plan',
         inLanguage: lang,
         publisher: { '@id': orgId },
       },
       {
         '@type': 'WebApplication',
-        name: 'Parent Risk Assessment & Action Plan',
+        name: 'Family Risk Assessment & Action Plan',
         url: `${SITE_URL}/${lang}`,
         applicationCategory: 'HealthApplication',
         operatingSystem: 'Web browser',
@@ -116,7 +116,7 @@ export async function generateMetadata({
     metadataBase: new URL(SITE_URL),
     title,
     description,
-    applicationName: 'ASAP Community Parent Action Plan',
+    applicationName: 'ASAP Community Family Risk Assessment & Action Plan',
     alternates: {
       // Self-referencing canonical per locale.
       canonical: `/${lang}`,

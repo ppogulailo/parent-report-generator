@@ -31,16 +31,20 @@
     "available that agreed wording stays agreed, and it is how the Universal",
     "Guiding Principles and the standardized closing ship.",
     "",
-    "FIVE SECTIONS ARE NEW IN VERSION 1.0. All five are flagged in",
-    "RECOMMENDATION-MATRIX.md §8 for the founder to accept or drop:",
+    "FOUR SECTIONS ARE NEW IN VERSION 1.0 (RECOMMENDATION-MATRIX.md §8):",
     "  · recommendedWorkshops        — makes workshop links possible at all, and",
     "                                  is where id validation bites",
-    "  · universalGuidingPrinciple   — carried over from Sustaining Recovery,",
-    "  · parentSelfCare                pending ASAP's final Monitoring &",
-    "                                  Intervention wording",
+    "  · universalGuidingPrinciple   — final ASAP wording, received via Matt",
+    "  · parentSelfCare                on 2026-08-26; English verbatim, Spanish",
+    "                                  ours pending native-speaker sign-off",
     "  · standardizedClosing         — the approved closing, previously prose the",
     "                                  model reproduced 'essentially verbatim'",
-    "  · sustainingRecoveryTransition — the new program transition",
+    "",
+    "A FIFTH — sustainingRecoveryTransition, gated on a non-scored treatment",
+    "question — was built and then removed by founder decision on 2026-08-25:",
+    "the assessment stays at 24 questions and the transition to Sustaining",
+    "Recovery is handled inside the Circle program journey. Git history has the",
+    "section and its gate if that decision is ever revisited.",
     "",
     "WORD BUDGETS ARE GUIDANCE, not validated, except that an empty string fails.",
     "They are PLACEHOLDER — ASAP should set the lengths they actually want a",
@@ -208,18 +212,19 @@
       "order": 10,
       "type": "static",
       "title": {
-        "en": "Matching what you do to what you are seeing",
-        "es": "Ajustar lo que haces a lo que estás viendo"
+        "en": "Match the Intervention to the Risk",
+        "es": "Ajustar la intervención al riesgo"
       },
       "_comment": [
-        "PLACEHOLDER WORDING, carried over from the Sustaining Recovery FRAAP and",
-        "adapted to this track's framing. Rendered verbatim, so ASAP should supply",
-        "the exact wording they want a parent to read. The model never sees this",
-        "text and cannot reword it."
+        "FINAL WORDING, supplied by ASAP via Matt on 2026-08-26 and rendered",
+        "verbatim — the English must not be edited without new sign-off. The",
+        "model never sees this text and cannot reword it. The Spanish is our",
+        "translation of that approved English, listed in SPANISH-REVIEW.md for",
+        "the native-speaker sign-off that is still pending."
       ],
       "text": {
-        "en": "One principle runs underneath everything in this plan: the response should match what you are actually seeing, and no more. Acting harder than the situation calls for costs you trust you will need later. Acting more softly than it calls for leaves your child carrying something alone. Neither error is safer than the other, which is why this plan is built from what you reported rather than from a template — and why it is worth reassessing as things change.",
-        "es": "Un principio recorre todo este plan: la respuesta debe ajustarse a lo que realmente estás viendo, y no más. Actuar con más fuerza de la que la situación pide cuesta una confianza que vas a necesitar después. Actuar con menos fuerza de la que pide deja a tu hijo cargando algo solo. Ninguno de los dos errores es más seguro que el otro, y por eso este plan se construye desde lo que reportaste y no desde una plantilla — y por eso vale la pena volver a evaluarlo a medida que las cosas cambien."
+        "en": "The level of intervention should always match the level of risk. Too much intervention can be as counterproductive as too little. As concerns increase, your response should increase with them; as risk decreases, your response can adjust accordingly. The goal is not to use the strongest intervention available—it is to use the level of intervention that best matches what is actually happening with your child.",
+        "es": "El nivel de intervención siempre debe corresponder al nivel de riesgo. Demasiada intervención puede ser tan contraproducente como demasiado poca. A medida que las preocupaciones aumentan, tu respuesta debe aumentar con ellas; a medida que el riesgo disminuye, tu respuesta puede ajustarse en consecuencia. El objetivo no es usar la intervención más fuerte disponible — es usar el nivel de intervención que mejor corresponda a lo que realmente está pasando con tu hijo."
       }
     },
     {
@@ -227,15 +232,15 @@
       "order": 11,
       "type": "static",
       "title": {
-        "en": "Looking after yourself is part of the plan",
-        "es": "Cuidarte es parte del plan"
+        "en": "Taking Care of Yourself",
+        "es": "Cuidar de ti"
       },
       "_comment": [
-        "PLACEHOLDER WORDING — same provenance and same caveat as the section above."
+        "FINAL WORDING — same provenance and same caveats as the section above."
       ],
       "text": {
-        "en": "This is not an aside. Whatever you bring into a room, your child reads it before they hear a word you say — so your own steadiness is not separate from your child's recovery, it is part of the mechanism. Sleep, eat, and keep at least one person in your life who knows what you are carrying. The Monitoring and Intervention discussion group exists for exactly this: parents who are in the middle of it, who will not need the situation explained from the beginning.",
-        "es": "Esto no es un comentario al margen. Lo que sea que lleves a una habitación, tu hijo lo lee antes de escuchar una sola palabra — así que tu propia estabilidad no está separada de la recuperación de tu hijo, es parte del mecanismo. Duerme, come, y mantén al menos a una persona en tu vida que sepa lo que estás cargando. El Monitoring and Intervention discussion group existe exactamente para esto: padres que están en medio de lo mismo, que no van a necesitar que les expliques la situación desde el principio."
+        "en": "Taking care of yourself is not a luxury—it’s a necessity. Whether you need some quiet time, a good workout, or the support of counseling, make space for what helps you stay grounded. When you care for yourself, you will be better able to show up strong, present, and healthy for you and your family.",
+        "es": "Cuidarte no es un lujo — es una necesidad. Ya sea que necesites un momento de tranquilidad, un buen ejercicio o el apoyo de la consejería, haz espacio para lo que te ayuda a mantenerte con los pies en la tierra. Cuando te cuidas, puedes estar fuerte, presente y saludable para ti y para tu familia."
       }
     },
     {
@@ -276,36 +281,6 @@
       "text": {
         "en": "Recovery is a journey—not a single event—and protecting the progress your child has already made is one of the most important responsibilities you have as a parent. While many adolescents go on to achieve lasting recovery, setbacks can occur. A setback does not erase the progress that has been made, and it does not have to become a return to the past.\n\nPreparation is one of your greatest strengths. We encourage you to complete the Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks.\" It will help you recognize early warning signs, respond calmly and effectively if challenges arise, and strengthen your family's plan to protect your child's recovery. We also encourage you to participate in the Protecting Recovery Discussion Group, where parents share experiences, encouragement, and practical insights while supporting one another through the ongoing journey of recovery.\n\nRemember, the purpose of monitoring, supervision, conversations, and appropriate boundaries is not simply to discover what happened or when it happened—but to understand why. Identifying and addressing the underlying reasons for substance use gives your child the greatest opportunity for long-term recovery and a healthy, meaningful future.",
         "es": "La recuperación es un camino, no un solo acontecimiento, y proteger el progreso que tu hijo ya ha logrado es una de las responsabilidades más importantes que tienes como padre. Aunque muchos adolescentes llegan a alcanzar una recuperación duradera, pueden ocurrir recaídas. Una recaída no borra el progreso alcanzado, y no tiene por qué convertirse en un regreso al pasado.\n\nLa preparación es una de tus mayores fortalezas. Te animamos a completar el Auxiliary Workshop \"Protecting Recovery: Preventing Relapse and Responding to Setbacks\". Te ayudará a reconocer las señales de alerta tempranas, a responder con calma y eficacia si surgen dificultades, y a fortalecer el plan de tu familia para proteger la recuperación de tu hijo. También te animamos a participar en el Protecting Recovery Discussion Group, donde los padres comparten experiencias, aliento y conocimientos prácticos mientras se apoyan mutuamente a lo largo del camino continuo de la recuperación.\n\nRecuerda que el propósito del monitoreo, la supervisión, las conversaciones y los límites apropiados no es simplemente descubrir qué pasó o cuándo pasó, sino entender por qué. Identificar y abordar las razones de fondo del consumo de sustancias le da a tu hijo la mayor oportunidad de lograr una recuperación a largo plazo y un futuro sano y significativo."
-      }
-    },
-    {
-      "key": "sustainingRecoveryTransition",
-      "order": 14,
-      "type": "static",
-      "title": {
-        "en": "What comes next for your family",
-        "es": "Lo que viene después para tu familia"
-      },
-      "_comment": [
-        "THE NEW PROGRAM TRANSITION. PLACEHOLDER WORDING — ASAP is supplying the",
-        "final text, and this ships verbatim, so it must be theirs.",
-        "",
-        "Gated on the non-scored treatment-status gate, NOT on severity. That is the",
-        "whole point: the 24 approved questions contain no signal for abstinence or",
-        "sustained stability, and a low score means 'early-stage, possibly nothing",
-        "yet' rather than 'recovered'. Firing this on low scores would route",
-        "families with no treatment history into a post-treatment workshop.",
-        "",
-        "ONE-DIRECTIONAL BY DESIGN. This points forward into Sustaining Recovery.",
-        "The reverse link, from Sustaining Recovery back to this assessment, was",
-        "removed on the founder's instruction in August 2026 — a parent arriving",
-        "there has already followed the right pathway and a second assessment only",
-        "creates doubt. Do not add a return link here on symmetry grounds."
-      ],
-      "when": { "gate": "treatment-status", "in": ["post-treatment-stable"] },
-      "text": {
-        "en": "One more thing, because of what you told us about where your child is. You have said your child has been through treatment and has held a meaningful period without use. That is a different stage, and it has its own work — protecting what has been built rather than intervening in what is happening. The Sustaining Recovery Essential Workshop is written for exactly that stage, and the Sustaining Recovery Family Risk Assessment & Action Plan will give you a plan built around holding the line rather than establishing it. This plan still stands; that one is where to go next.",
-        "es": "Una cosa más, por lo que nos dijiste sobre dónde está tu hijo. Dijiste que tu hijo pasó por tratamiento y ha mantenido un periodo significativo sin consumo. Esa es una etapa distinta, y tiene su propio trabajo — proteger lo que se ha construido en lugar de intervenir en lo que está ocurriendo. El Sustaining Recovery Essential Workshop está escrito exactamente para esa etapa, y el Sustaining Recovery Family Risk Assessment & Action Plan te dará un plan construido alrededor de sostener la línea en lugar de establecerla. Este plan sigue siendo válido; ese es el siguiente lugar a donde ir."
       }
     }
   ]

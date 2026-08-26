@@ -20,9 +20,10 @@ flipped deliberately. Nothing on this page needs new development.
 | Universal Guiding Principles ship as fixed content the model never sees | `content/report-templates/sections.json`, `type: "static"` |
 | Workshop links render, open safely, and survive printing | `frontend/app/[lang]/ReportView.tsx` |
 | Workshop URLs must be `https://` | `src/content/schemas/workshops.schema.ts` |
-| Transition to Sustaining Recovery, gated on a non-scored answer | `content/assessment.json` → `gates`, section `sustainingRecoveryTransition` |
+| Dave's decisions of 2026-08-25 implemented: matrix approved, Q4 into Immediate Safety & Urgency, legal/LGBTQ+ rows removed from routing, Creating a Healthy Home Environment made a rule, Early Warning Signs confirmed | `RECOMMENDATION-MATRIX.md` — decisions recorded inline; `content/` marked `approved` |
+| Transition to Sustaining Recovery **removed by that decision** — the FRAAP stays at 24 questions and the transition lives in the Circle program journey; the gate mechanism remains for future content | git history has the gate and section; `RECOMMENDATION-MATRIX.md` §7 |
 | English/Spanish held in one record per string, both required at boot | `src/content/schemas/rule.schema.ts` → `localizedStringSchema` |
-| Spanish strings listed for sign-off | `SPANISH-REVIEW.md` — 216 strings, generated from content |
+| Spanish strings listed for sign-off | `SPANISH-REVIEW.md` — 209 strings, generated from content |
 | Prompts moved out of code into content | `content/report-templates/` |
 | Banned vocabulary, empathy filler and softened referrals checked, not just prompted | `content/voice.json`, `src/generation/voice-rules.ts` |
 | Answer labels cannot be quoted back at the parent | `checkAnswerLabels` |
@@ -33,10 +34,10 @@ flipped deliberately. Nothing on this page needs new development.
 | Five defects found by those runs and fixed | `RECOMMENDATION-MATRIX.md` §6.8–§6.10 |
 | Site origin centralised so the hostname change is config, not code | `frontend/app/site.ts` |
 
-| The endpoint, the guard, the validator and the retry loop tested over real HTTP | `test/v1/api.v1.spec.ts` — 25 tests against a mock model |
-| A parent can complete the questionnaire and read a plan, in a browser | `test/v1/ui.v1ui.spec.ts` — 8 tests, self-contained stack |
+| The endpoint, the guard, the validator and the retry loop tested over real HTTP | `test/v1/api.v1.spec.ts` — 31 tests against a mock model |
+| A parent can complete the questionnaire and read a plan, in a browser | `test/v1/ui.v1ui.spec.ts` — 20 tests, self-contained stack |
 
-**Test state:** 96 tests — 63 unit, 25 API, 8 browser, plus 8 real-model plans. `npm run content:validate`
+**Test state:** 127 tests — 76 unit, 31 API, 20 browser, plus 8 real-model plans. `npm run content:validate`
 clean. `npm run build` and the frontend build both clean.
 
 ```bash
@@ -50,7 +51,7 @@ the prompt and answers it** — section keys, recommendation ids and workshop id
 all come back out of the text the prompt builder produced. A canned reply could
 not work, because the schema is built per request from the selection. The useful
 side effect is that if the prompt ever stops naming the selected ids, every one
-of those 33 tests fails.
+of those 51 tests fails.
 
 Failure modes are reachable on demand rather than waited for: the mock can invent
 a workshop, omit a priority area, write a section the platform owns, return prose
@@ -61,15 +62,22 @@ paths a real model takes intermittently and unreproducibly.
 
 ## Blocked, and on whom
 
+Resolved 2026-08-25, by Dave via Matt: the matrix is approved, the two routing
+rows are removed from routing (workshops stay in ASAP Community), and the
+transition question is dropped — the transition lives in the Circle program
+journey. All three are implemented.
+
+Resolved 2026-08-26, also via Matt: the final wording for both Universal
+Guiding Principles is installed verbatim; the Creating a Healthy Home
+Environment trigger (Q20/Q21) is confirmed; and the formal product name is
+*Family* Risk Assessment & Action Plan (FRAAP), now applied to this product's
+pages and metadata.
+
 | # | Blocked on | What is needed | Effect until it lands |
 |---|---|---|---|
-| 1 | **Dave** | Approval of the transcribed matrix | Every report is provisional and the landing page says so. This is the one blocker that gates the rest. |
-| 2 | **ASAP** | An answer on the two routing rows that cannot fire (`RECOMMENDATION-MATRIX.md` §6.3) | Legal exposure and LGBTQ+-specific risk never route to their workshops |
-| 3 | **ASAP** | A decision on the transition gate (§7) — keep the extra question, or move the judgement to Circle | The transition fires only for parents who answer the gate |
-| 4 | **ASAP** | Circle URLs for 25 workshops and 3 discussion groups | Reports name workshops but cannot link them. One list serves this product and Sustaining Recovery both. |
-| 5 | **ASAP** | Final wording for the two Universal Guiding Principles and the transition section | Placeholder copy ships verbatim, clearly marked |
-| 6 | **ASAP** | Native-speaker sign-off on `SPANISH-REVIEW.md` | Spanish reports carry unreviewed wording |
-| 7 | **Pavlo / ASAP** | A DNS record for `monitoring.asapcommunity.org` | The site stays on `actionplan.asap-community.org` |
+| 1 | **ASAP** | Circle URLs for 25 workshops and 3 discussion groups — Emmanuel is assembling them | Reports name workshops but cannot link them. One list serves this product and Sustaining Recovery both. |
+| 2 | **ASAP** | Native-speaker sign-off on `SPANISH-REVIEW.md` — now including our translations of the two Guiding Principles | Spanish reports carry unreviewed wording |
+| 3 | **Pavlo / ASAP** | A DNS record for `monitoring.asapcommunity.org` | The site stays on `actionplan.asap-community.org` |
 Nothing on this list is on us any more. The baseline is captured and committed
 (`baseline/`), and the pipeline has been verified against the real model.
 
@@ -103,10 +111,12 @@ does, and a reversible switch is worth more than a tidy diff on the day.
    differences for Dave.
 3. ~~Generate against a real model and read it~~ — done for all four severities
    in both languages; §6.8–§6.10 record what it found. Re-run with
-   `npm run verify:real-model` after any prompt or content change.
-4. **Get Dave's approval on the matrix**, including the recovered Effective
-   Communication rule in §6.8 and its threshold, which is ours rather than the
-   methodology's.
+   `npm run verify:real-model` after any prompt or content change — and again
+   now: the 2026-08-25 decisions changed the routing, so the committed
+   verification plans predate them.
+4. ~~Get Dave's approval on the matrix~~ — received 2026-08-25, including the
+   Effective Communication rule and its threshold. Implemented, with the
+   decisions recorded inline in `RECOMMENDATION-MATRIX.md`.
 
 ### Then delete the old path
 
@@ -128,7 +138,7 @@ deleted — it is the record of what the methodology was before the matrix.
 
 ## Launching at the new hostname
 
-**Prerequisite:** item 7 above. `asapcommunity.org` is in a Wix account we do not
+**Prerequisite:** item 3 above. `asapcommunity.org` is in a Wix account we do not
 control; `sustainingrecovery.asapcommunity.org` was set up the same way, so the
 path is known.
 
@@ -167,19 +177,11 @@ path is known.
 
 ## Marking the methodology approved
 
-Once Dave has confirmed the matrix is theirs, two status fields drive the draft
-notice and the `capabilities` response:
-
-```jsonc
-// content/assessment.json
-"status": "approved"          // from "draft"
-
-// content/recommendation-matrix.json
-"status": "approved"          // from "draft"
-```
-
-The landing notice reads the API at runtime, so this needs a backend deploy but
-no frontend rebuild.
+Done, 2026-08-25. Both `content/assessment.json` and
+`content/recommendation-matrix.json` carry `"status": "approved"`, so the
+draft notice disappears and `capabilities` reports `draft: false` on the next
+backend deploy — the landing notice reads the API at runtime, so no frontend
+rebuild is needed.
 
 ---
 
