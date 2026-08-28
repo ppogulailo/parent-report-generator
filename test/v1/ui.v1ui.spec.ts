@@ -390,12 +390,16 @@ test('a parent can complete the questionnaire and read a plan', async ({
   await expect(page.locator('.priority').first()).toBeVisible();
   await expect(page.locator('.priority-area').first()).not.toBeEmpty();
 
-  // Workshops render with their category and, until ASAP supplies URLs, the note
-  // explaining why they are not links.
+  // Workshops render as direct links to their Circle resources — installed
+  // 2026-08-28 — and the "coming soon" note is gone.
   await expect(page.locator('.workshop').first()).toBeVisible();
-  await expect(
-    page.locator('.workshops-note', { hasText: 'coming soon' }),
-  ).toBeVisible();
+  const firstLink = page.locator('a.workshop-link').first();
+  await expect(firstLink).toBeVisible();
+  expect(await firstLink.getAttribute('href')).toMatch(
+    /^https:\/\/asap-community\.circle\.so\/c\//,
+  );
+  await expect(firstLink).toContainText('Open in ASAP Community');
+  await expect(page.locator('.workshops-note')).toHaveCount(0);
 
   // The Universal Guiding Principle is platform copy and must appear verbatim.
   await expect(page.locator('.results')).toContainText(

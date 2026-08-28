@@ -73,11 +73,18 @@ Environment trigger (Q20/Q21) is confirmed; and the formal product name is
 *Family* Risk Assessment & Action Plan (FRAAP), now applied to this product's
 pages and metadata.
 
+Resolved 2026-08-28: the Circle URLs arrived from Emmanuel via Matt and are
+installed — 26 of 28 resources linked, every URL verified live (HTTP 200)
+before installation, and a test now fails if any resource the matrix can
+select lacks a link. The two still unlinked (the Protecting Recovery workshop
+and discussion group) were absent from the list and are cited only inside the
+standardized closing, which is plain text with no link slot — their URLs are
+requested from Matt for completeness.
+
 | # | Blocked on | What is needed | Effect until it lands |
 |---|---|---|---|
-| 1 | **ASAP** | Circle URLs for 25 workshops and 3 discussion groups — Emmanuel is assembling them | Reports name workshops but cannot link them. One list serves this product and Sustaining Recovery both. |
-| 2 | **ASAP** | Native-speaker sign-off on `SPANISH-REVIEW.md` — now including our translations of the two Guiding Principles | Spanish reports carry unreviewed wording |
-| 3 | **Pavlo / ASAP** | A DNS record for `monitoring.asapcommunity.org` | The site stays on `actionplan.asap-community.org` |
+| 1 | **ASAP** | Native-speaker sign-off on `SPANISH-REVIEW.md` — now including our translations of the two Guiding Principles | Spanish reports carry unreviewed wording |
+| 2 | **Pavlo / ASAP** | A DNS record for `monitoring.asapcommunity.org` | The site stays on `actionplan.asap-community.org` |
 Nothing on this list is on us any more. The baseline is captured and committed
 (`baseline/`), and the pipeline has been verified against the real model.
 
@@ -138,7 +145,7 @@ deleted — it is the record of what the methodology was before the matrix.
 
 ## Launching at the new hostname
 
-**Prerequisite:** item 3 above. `asapcommunity.org` is in a Wix account we do not
+**Prerequisite:** item 2 above. `asapcommunity.org` is in a Wix account we do not
 control; `sustainingrecovery.asapcommunity.org` was set up the same way, so the
 path is known.
 

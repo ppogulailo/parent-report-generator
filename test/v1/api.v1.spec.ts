@@ -62,8 +62,8 @@ test('capabilities reports the approved state and the governing versions', async
   // this at runtime, which is why approving needed no frontend rebuild.
   expect(body.draft).toBe(false);
   expect(body.methodologyVersion).toBeTruthy();
-  // No URLs supplied yet, and the frontend uses this to decide whether to say so.
-  expect(body.workshopLinksAvailable).toBe(false);
+  // The Circle URLs arrived 2026-08-28 and are installed in the content.
+  expect(body.workshopLinksAvailable).toBe(true);
 });
 
 test('submitting without the API key is refused', async ({ request }) => {
@@ -208,9 +208,12 @@ test('workshops come back with a link slot and a title from content', async ({
   for (const workshop of list.workshops) {
     expect(workshop.title).toBeTruthy();
     expect(workshop.category).toBeTruthy();
-    // Null until ASAP supplies the Circle URLs; the renderer shows the title
-    // unlinked rather than an empty anchor.
-    expect(workshop.url).toBeNull();
+    // Every workshop the matrix can select carries its Circle URL, installed
+    // from ASAP's list of 2026-08-28. A missing link here is a family sent to
+    // search for a resource the plan was supposed to hand them.
+    expect(workshop.url, workshop.title).toMatch(
+      /^https:\/\/asap-community\.circle\.so\/c\//,
+    );
   }
 });
 

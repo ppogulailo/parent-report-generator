@@ -4,9 +4,12 @@
     "come from the approved resource lists and are cited verbatim in reports —",
     "never translated, never abbreviated, in Spanish reports too.",
     "",
-    "URLS ARE ALL NULL. Boot logs a warning and the report still generates; the",
-    "workshop is named but not linked. The client owes one list of Circle URLs,",
-    "which serves this product and Sustaining Recovery both.",
+    "URLS INSTALLED 2026-08-28 from the Circle list supplied by ASAP (Emmanuel",
+    "via Matt), every one verified live before installation. Two remain null,",
+    "because the list did not include them: the Protecting Recovery workshop",
+    "and the Protecting Recovery discussion group. Both are cited only inside",
+    "the standardized closing (plain text, never a link slot), so no parent-",
+    "visible link is missing. Requested from Matt.",
     "",
     "TWO COUNTS IN THE PROMPTS ARE STALE, and the lists here are authoritative:",
     "  · The English prompt says \"5 Essential\" in one place. There are 4 — the",
@@ -22,7 +25,7 @@
     "RECOMMENDATION-MATRIX.md §5."
   ],
   "version": "1.0.0",
-  "status": "approved-titles-pending-urls",
+  "status": "approved",
   "categoryLabels": {
     "essential": {
       "en": "Essential Workshop",
@@ -39,7 +42,7 @@
       "category": "essential",
       "title": "Effective Communication: Building Trust and Engagement with Your Teen",
       "summary": "Core conversational skills for engaging your teen without escalation — listening, framing, and timing that keeps the dialogue open.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/effective-communication-building-trust-and-engagement-with-your-teen-2edd9b",
       "applicableDomains": [
         "communication-conflict"
       ],
@@ -50,7 +53,7 @@
       "category": "essential",
       "title": "Monitoring and Intervention: Knowing When and How to Step In",
       "summary": "Recognizing patterns of use, when to step in, and how to lead a structured intervention conversation grounded in the ASAP method.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/monitoring-and-intervention",
       "applicableDomains": [
         "immediate-safety-urgency"
       ],
@@ -61,7 +64,7 @@
       "category": "essential",
       "title": "Building a Support Network",
       "summary": "Helping parents build a broad support network for their child — family members, school staff, coaches, therapists, and community resources. Engaging schools is one of the most important components.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/building-a-support-network-engaging-resources-and-allies-dddc58",
       "applicableDomains": [
         "support-professional-engagement",
         "boundary-consistency"
@@ -73,7 +76,7 @@
       "category": "essential",
       "title": "Sustaining Recovery: Parental Oversight and Support for Adolescents Post-Treatment",
       "summary": "Holding the recovery line after professional treatment — oversight, ongoing structure, and the parent’s role in sustaining the work long-term.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/sustaining-recovery-77785e",
       "applicableDomains": [
         "support-professional-engagement"
       ],
@@ -84,7 +87,7 @@
       "category": "auxiliary",
       "title": "Reflection and Assessment",
       "summary": "Helping parents step back and evaluate their child’s behavior patterns and overall situation clearly.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/reflection-and-assessment",
       "applicableDomains": [
         "communication-conflict"
       ],
@@ -95,7 +98,7 @@
       "category": "auxiliary",
       "title": "Intervening When Substance Use is Present: First Steps and Next Steps",
       "summary": "A structured approach to taking immediate action when substance use is confirmed or strongly suspected.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/intervening-when-substance-use-is-present-first-steps-and-next-steps",
       "applicableDomains": [
         "immediate-safety-urgency"
       ],
@@ -106,7 +109,7 @@
       "category": "auxiliary",
       "title": "Early Warning Signs – Identifying Substance Use Before It Becomes a Problem",
       "summary": "Recognizing subtle behavioral, emotional, and social changes that may indicate early substance use.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/early-warning-signs-identifying-substance-use-before-it-becomes-a-problem",
       "applicableDomains": [
         "immediate-safety-urgency"
       ],
@@ -117,7 +120,7 @@
       "category": "auxiliary",
       "title": "Family Dynamics and Substance Use: Strengthening Family Bonds to Prevent Abuse",
       "summary": "Improving family communication and relationships to reduce risk and support recovery.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/family-dynamics-and-substance-use-strengthening-family-bonds-to-prevent-abuse",
       "applicableDomains": [
         "communication-conflict"
       ],
@@ -128,7 +131,7 @@
       "category": "auxiliary",
       "title": "How and When to Search a Room",
       "summary": "Guidance on conducting a room search appropriately while minimizing conflict and preserving trust.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/how-and-when-to-search-a-room",
       "applicableDomains": [
         "immediate-safety-urgency"
       ],
@@ -139,7 +142,7 @@
       "category": "auxiliary",
       "title": "When Is It Time for Professional Help? Knowing When to Seek Outside Support",
       "summary": "Identifying when outside intervention is necessary.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/when-is-it-time-for-professional-help-knowing-when-to-seek-outside-support",
       "applicableDomains": [
         "support-professional-engagement"
       ],
@@ -150,7 +153,7 @@
       "category": "auxiliary",
       "title": "Drug Testing",
       "summary": "Understanding when and how to use drug testing as a monitoring and accountability tool.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/drug-testing",
       "applicableDomains": [
         "immediate-safety-urgency"
       ],
@@ -161,7 +164,7 @@
       "category": "auxiliary",
       "title": "Behavioral Contracts – A Tool for Positive Change",
       "summary": "Creating clear agreements with expectations, rewards, and consequences.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/behavioral-contracts-a-tool-for-positive-change",
       "applicableDomains": [
         "boundary-consistency"
       ],
@@ -172,7 +175,7 @@
       "category": "auxiliary",
       "title": "Partnering with Schools for Your Child's Success",
       "summary": "Working with school staff to support accountability and outcomes.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/partnering-with-schools-for-your-child-s-success",
       "applicableDomains": [
         "support-professional-engagement"
       ],
@@ -183,7 +186,7 @@
       "category": "auxiliary",
       "title": "Understanding and Navigating Peer Pressure",
       "summary": "Helping teens resist negative influences.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/understanding-and-navigating-peer-pressure",
       "applicableDomains": [
         "communication-conflict"
       ],
@@ -194,7 +197,7 @@
       "category": "auxiliary",
       "title": "Setting Boundaries with Respect: Discipline Without Punishment",
       "summary": "Enforcing rules while maintaining a supportive relationship.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/setting-boundaries-with-respect-discipline-without-punishment",
       "applicableDomains": [
         "boundary-consistency"
       ],
@@ -205,7 +208,7 @@
       "category": "auxiliary",
       "title": "The Power of Positive Reinforcement: Rewarding Healthy Behavior",
       "summary": "Encouraging positive choices through recognition.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/the-power-of-positive-reinforcement-rewarding-healthy-behavior",
       "applicableDomains": [
         "boundary-consistency"
       ],
@@ -216,7 +219,7 @@
       "category": "auxiliary",
       "title": "Building Self-Esteem: Helping Your Child Develop Healthy Self-Worth",
       "summary": "Supporting confidence and identity development.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/building-self-esteem-helping-your-child-develop-healthy-self-worth",
       "applicableDomains": [
         "communication-conflict"
       ],
@@ -227,7 +230,7 @@
       "category": "auxiliary",
       "title": "Creating a Healthy Home Environment – The Power of Structure and Routine",
       "summary": "Establishing consistency and stability.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/creating-a-healthy-home-environment-the-power-of-structure-and-routine",
       "applicableDomains": [
         "household-structure"
       ],
@@ -238,7 +241,7 @@
       "category": "auxiliary",
       "title": "Supporting LGBTQ+ Teens: Addressing Unique Substance Use Risks",
       "summary": "Understanding identity-related challenges.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/supporting-lgbtq-teens-addressing-unique-substance-use-risks",
       "applicableDomains": [
         "communication-conflict"
       ],
@@ -249,7 +252,7 @@
       "category": "auxiliary",
       "title": "Understanding the Impact of Social Media on Substance Use and Mental Health",
       "summary": "Recognizing online influences.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/understanding-the-impact-of-social-media-on-substance-use-and-mental-health",
       "applicableDomains": [
         "household-structure"
       ],
@@ -260,7 +263,7 @@
       "category": "auxiliary",
       "title": "Handling Setbacks – Staying Resilient in the Face of Challenges",
       "summary": "Responding constructively to relapses.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/handling-setbacks-staying-resilient-in-the-face-of-challenges",
       "applicableDomains": [
         "immediate-safety-urgency"
       ],
@@ -271,7 +274,7 @@
       "category": "auxiliary",
       "title": "Managing Stress and Pressure – Helping Your Teen Develop Healthy Coping Skills",
       "summary": "Teaching alternatives to substance use.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/managing-stress-and-pressure-helping-your-teen-develop-healthy-coping-skills",
       "applicableDomains": [
         "communication-conflict"
       ],
@@ -282,7 +285,7 @@
       "category": "auxiliary",
       "title": "Long-Term Strategies for Prevention: Staying Involved Through Adolescence and Beyond",
       "summary": "Maintaining engagement over time.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/long-term-strategies-for-prevention-staying-involved-through-adolescence-and-beyond",
       "applicableDomains": [
         "household-structure"
       ],
@@ -293,7 +296,7 @@
       "category": "auxiliary",
       "title": "Legal Issues and Substance Use: Understanding the Consequences",
       "summary": "Awareness of legal risks and responses.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/legal-issues-and-substance-use-understanding-the-consequences",
       "applicableDomains": [
         "immediate-safety-urgency"
       ],
@@ -317,13 +320,13 @@
       "id": "dg-monitoring-intervention",
       "name": "Monitoring and Intervention",
       "usage": "The parent's primary peer-support group. Cited at every severity, in the parent's own support priority. Action language only — \"join the\" or \"reach out to\", never passive.",
-      "url": null
+      "url": "https://asap-community.circle.so/c/monitoring-and-intervention-3da3a5"
     },
     {
       "id": "dg-sustaining-recovery",
       "name": "Sustaining Recovery",
       "usage": "Professional-help adjunct only. Appears exclusively inside the professional-help sequence, and never in a paragraph that does not reference professional help.",
-      "url": null
+      "url": "https://asap-community.circle.so/c/sustaining-recovery"
     },
     {
       "id": "dg-protecting-recovery",

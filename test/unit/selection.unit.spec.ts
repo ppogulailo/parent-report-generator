@@ -310,6 +310,27 @@ test('q04 counts toward Immediate Safety & Urgency', () => {
   expect(exposed.tierId).toBe('mild');
 });
 
+test('every resource the matrix can select carries a Circle URL', () => {
+  // The URLs arrived from ASAP on 2026-08-28. Only the Protecting Recovery
+  // pair may be unlinked — cited solely inside the standardized closing, which
+  // is plain text with no link slot — so an unlinked resource that a rule can
+  // actually route is a regression, not a pending item.
+  const byId = new Map(content.workshops.workshops.map((w) => [w.id, w]));
+  const groupById = new Map(
+    content.workshops.discussionGroups.map((g) => [g.id, g]),
+  );
+  for (const rec of content.matrix.recommendations) {
+    for (const id of rec.workshopIds) {
+      expect(byId.get(id)?.url, `${rec.id} → ${id}`).toMatch(/^https:\/\//);
+    }
+    for (const id of rec.discussionGroupIds) {
+      expect(groupById.get(id)?.url, `${rec.id} → ${id}`).toMatch(
+        /^https:\/\//,
+      );
+    }
+  }
+});
+
 test('the assessment stays at 24 questions, with no gate and no transition section', () => {
   // Founder decision, 2026-08-25: no 25th question. The transition to
   // Sustaining Recovery is handled inside the Circle program journey, so the

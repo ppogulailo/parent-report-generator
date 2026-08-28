@@ -4,8 +4,8 @@
 decisions on 2026-08-25, with the final fixed-passage wording, the row-15
 confirmation and the naming decision following on 2026-08-26. Each decision is
 recorded inline as a **Resolved** note at the section it settles, and the
-content files carry `"status": "approved"`. Two items remain open for launch:
-the Circle URLs and the Spanish sign-off (§12).
+content files carry `"status": "approved"`. The Circle URLs are installed as
+of 2026-08-28; one item remains open for launch: the Spanish sign-off (§12).
 
 Prepared 2026-08-23 · approved 2026-08-25 · methodology version `MI-V1.0` ·
 matrix `1.0.0` (approved)
@@ -634,11 +634,15 @@ Principles (installed verbatim, §8); confirmation of the row-15 threshold; and
 the naming decision — *Family* Risk Assessment & Action Plan (FRAAP) is the
 formal product name across both tracks, now applied to this product's pages.
 
+**Received 2026-08-28:** the Circle URLs — 26 of 28 resources now link
+directly to their Circle spaces, each URL verified live before installation.
+The two exceptions (the Protecting Recovery workshop and discussion group)
+were absent from the list; both are cited only inside the standardized
+closing, which carries no link slot, and their URLs are requested from Matt.
+
 **Still needed before launch:**
 
-1. The Circle URLs for the workshops and discussion groups — Emmanuel is
-   assembling them; 0 of 28 supplied.
-2. Native-speaker sign-off on the Spanish strings — now including our
+1. Native-speaker sign-off on the Spanish strings — now including our
    translations of the two Guiding Principles.
 
 **Still worth a glance whenever:** §6.2 (the two-domain overlap), §6.4 (the

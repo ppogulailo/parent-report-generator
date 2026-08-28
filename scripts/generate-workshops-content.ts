@@ -103,6 +103,59 @@ const INFERRED_DOMAINS: Record<string, string[]> = {
     ['household-structure'],
 };
 
+/**
+ * The Circle URLs, supplied by ASAP (Emmanuel via Matt) on 2026-08-28 and
+ * verified live (HTTP 200) before installation. Keyed by resource id so a
+ * retitled workshop cannot silently unlink.
+ *
+ * Deliberately absent, because ASAP's list did not include them:
+ *   · aux-protecting-recovery-preventing-relapse-and-responding (workshop)
+ *   · dg-protecting-recovery (discussion group)
+ * Both are cited only inside the standardized closing — plain text, never a
+ * link slot — so nothing a parent sees is missing a link. Requested from Matt.
+ *
+ * The list also carried URLs with no counterpart in this product's approved
+ * library, installed nowhere on purpose: the two menu overviews (Matt asked
+ * for direct resource links, not menus), "Fostering Emotional Intelligence"
+ * (not one of the 25 approved M&I resources), "Creating Your Personal
+ * Prevention Program" workshop + group (excluded from this product's output by
+ * founder direction — see bannedTitles), and the Effective Communication and
+ * Building a Support Network discussion groups (this methodology routes to
+ * workshops there, never groups — also in bannedTitles).
+ */
+const CIRCLE = 'https://asap-community.circle.so/c';
+const CIRCLE_URLS: Record<string, string> = {
+  // Essential Workshops
+  'ess-monitoring-and-intervention-knowing-when-and': `${CIRCLE}/monitoring-and-intervention`,
+  'ess-sustaining-recovery-parental-oversight-and-support': `${CIRCLE}/sustaining-recovery-77785e`,
+  'ess-effective-communication-building-trust-and-engagement': `${CIRCLE}/effective-communication-building-trust-and-engagement-with-your-teen-2edd9b`,
+  'ess-building-a-support-network': `${CIRCLE}/building-a-support-network-engaging-resources-and-allies-dddc58`,
+  // Auxiliary Workshops
+  'aux-reflection-and-assessment': `${CIRCLE}/reflection-and-assessment`,
+  'aux-intervening-when-substance-use-is-present': `${CIRCLE}/intervening-when-substance-use-is-present-first-steps-and-next-steps`,
+  'aux-early-warning-signs-identifying-substance-use': `${CIRCLE}/early-warning-signs-identifying-substance-use-before-it-becomes-a-problem`,
+  'aux-family-dynamics-and-substance-use-strengthening': `${CIRCLE}/family-dynamics-and-substance-use-strengthening-family-bonds-to-prevent-abuse`,
+  'aux-how-and-when-to-search-a': `${CIRCLE}/how-and-when-to-search-a-room`,
+  'aux-when-is-it-time-for-professional': `${CIRCLE}/when-is-it-time-for-professional-help-knowing-when-to-seek-outside-support`,
+  'aux-drug-testing': `${CIRCLE}/drug-testing`,
+  'aux-behavioral-contracts-a-tool-for-positive': `${CIRCLE}/behavioral-contracts-a-tool-for-positive-change`,
+  'aux-partnering-with-schools-for-your-childs': `${CIRCLE}/partnering-with-schools-for-your-child-s-success`,
+  'aux-understanding-and-navigating-peer-pressure': `${CIRCLE}/understanding-and-navigating-peer-pressure`,
+  'aux-setting-boundaries-with-respect-discipline-without': `${CIRCLE}/setting-boundaries-with-respect-discipline-without-punishment`,
+  'aux-the-power-of-positive-reinforcement-rewarding': `${CIRCLE}/the-power-of-positive-reinforcement-rewarding-healthy-behavior`,
+  'aux-building-self-esteem-helping-your-child': `${CIRCLE}/building-self-esteem-helping-your-child-develop-healthy-self-worth`,
+  'aux-creating-a-healthy-home-environment-the': `${CIRCLE}/creating-a-healthy-home-environment-the-power-of-structure-and-routine`,
+  'aux-supporting-lgbtq-teens-addressing-unique-substance': `${CIRCLE}/supporting-lgbtq-teens-addressing-unique-substance-use-risks`,
+  'aux-understanding-the-impact-of-social-media': `${CIRCLE}/understanding-the-impact-of-social-media-on-substance-use-and-mental-health`,
+  'aux-handling-setbacks-staying-resilient-in-the': `${CIRCLE}/handling-setbacks-staying-resilient-in-the-face-of-challenges`,
+  'aux-managing-stress-and-pressure-helping-your': `${CIRCLE}/managing-stress-and-pressure-helping-your-teen-develop-healthy-coping-skills`,
+  'aux-long-term-strategies-for-prevention-staying': `${CIRCLE}/long-term-strategies-for-prevention-staying-involved-through-adolescence-and-beyond`,
+  'aux-legal-issues-and-substance-use-understanding': `${CIRCLE}/legal-issues-and-substance-use-understanding-the-consequences`,
+  // Discussion Groups
+  'dg-monitoring-intervention': `${CIRCLE}/monitoring-and-intervention-3da3a5`,
+  'dg-sustaining-recovery': `${CIRCLE}/sustaining-recovery`,
+};
+
 const PROFESSIONAL_HELP_SENTENCES = [
   'For guidance, consider posting questions in the Sustaining Recovery discussion group.',
   'In Admin Spaces, under Treatment Providers, you can find a listing of treatment providers & therapists who endorse and support the ASAP program.',
@@ -157,7 +210,7 @@ function build() {
       category: 'essential' as const,
       title: w.title,
       summary: w.summary,
-      url: null,
+      url: CIRCLE_URLS[`ess-${slug(w.title)}`] ?? null,
       ...domainsFor(w.title),
     })),
     ...AUXILIARY_WORKSHOPS.map((w) => ({
@@ -165,10 +218,31 @@ function build() {
       category: 'auxiliary' as const,
       title: w.title,
       summary: w.summary,
-      url: null,
+      url: CIRCLE_URLS[`aux-${slug(w.title)}`] ?? null,
       ...domainsFor(w.title),
     })),
   ];
+
+  // A URL keyed to an id that no longer exists is a link a family quietly does
+  // not receive. Fail the generator rather than emit it.
+  const knownIds = new Set([
+    ...workshops.map((w) => w.id),
+    ...DISCUSSION_GROUPS.map((name) => DISCUSSION_GROUP_USAGE[name].id),
+  ]);
+  const orphanUrls = Object.keys(CIRCLE_URLS).filter(
+    (id) => !knownIds.has(id),
+  );
+  if (orphanUrls.length > 0) {
+    throw new Error(
+      `CIRCLE_URLS keys match no resource: ${orphanUrls.join(', ')}`,
+    );
+  }
+  const unlinked = [...knownIds].filter((id) => !CIRCLE_URLS[id]);
+  console.log(
+    unlinked.length > 0
+      ? `still unlinked (no URL supplied): ${unlinked.join(', ')}`
+      : 'every resource has a URL',
+  );
 
   return {
     _comment: [
@@ -176,9 +250,12 @@ function build() {
       'come from the approved resource lists and are cited verbatim in reports —',
       'never translated, never abbreviated, in Spanish reports too.',
       '',
-      'URLS ARE ALL NULL. Boot logs a warning and the report still generates; the',
-      'workshop is named but not linked. The client owes one list of Circle URLs,',
-      'which serves this product and Sustaining Recovery both.',
+      'URLS INSTALLED 2026-08-28 from the Circle list supplied by ASAP (Emmanuel',
+      'via Matt), every one verified live before installation. Two remain null,',
+      'because the list did not include them: the Protecting Recovery workshop',
+      'and the Protecting Recovery discussion group. Both are cited only inside',
+      'the standardized closing (plain text, never a link slot), so no parent-',
+      'visible link is missing. Requested from Matt.',
       '',
       'TWO COUNTS IN THE PROMPTS ARE STALE, and the lists here are authoritative:',
       '  · The English prompt says "5 Essential" in one place. There are 4 — the',
@@ -194,7 +271,7 @@ function build() {
       'RECOMMENDATION-MATRIX.md §5.',
     ],
     version: '1.0.0',
-    status: 'approved-titles-pending-urls',
+    status: 'approved',
     categoryLabels: {
       essential: { en: 'Essential Workshop', es: 'Essential Workshop' },
       auxiliary: { en: 'Auxiliary Workshop', es: 'Auxiliary Workshop' },
@@ -211,7 +288,7 @@ function build() {
       id: DISCUSSION_GROUP_USAGE[name].id,
       name,
       usage: DISCUSSION_GROUP_USAGE[name].usage,
-      url: null,
+      url: CIRCLE_URLS[DISCUSSION_GROUP_USAGE[name].id] ?? null,
     })),
     requiredWording: [
       {
