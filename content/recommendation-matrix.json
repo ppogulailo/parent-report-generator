@@ -196,7 +196,7 @@
       },
       "intent": {
         "en": "Before any conversation with the child, the parent steadies themselves first. What the child sees is what the parent brings into the room, not the feeling they had before walking in. In MILD this is naming the second-guessing and pausing before responding; in MODERATE it adds the tactical layer — walk, write down what you want to say, leave the room if it heats up; in SERIOUS and CRITICAL it is explicit. The step is never skipped or downgraded by severity; only the tactics change.",
-        "es": "Antes de cualquier conversación con el hijo, el padre se regula primero. Lo que el hijo ve es lo que el padre lleva al cuarto, no el sentimiento que tuvo antes de entrar. En LEVE esto es nombrar el segundo-cuestionamiento y pausar antes de responder; en MODERADO suma la capa táctica — caminar, escribir lo que quieres decir, salir del cuarto si la cosa se calienta; en GRAVE y CRÍTICO es explícito. El paso nunca se omite ni se rebaja según la severidad; solo cambian las tácticas."
+        "es": "Antes de cualquier conversación con el hijo, el padre se regula primero. Lo que el hijo ve es lo que el padre lleva al cuarto, no el sentimiento que tuvo antes de entrar. En LEVE esto significa reconocer cuando empieza a dudar de sí mismo y hacer una pausa antes de responder; en MODERADO suma la capa táctica — caminar, escribir lo que quieres decir, salir del cuarto si la cosa se calienta; en GRAVE y CRÍTICO es explícito. El paso nunca se omite ni se rebaja según la severidad; solo cambian las tácticas."
       },
       "eligibleAs": ["primary", "supporting"],
       "educationalImpact": 100,
@@ -366,7 +366,7 @@
       },
       "intent": {
         "en": "A day with little routine, or a home the parent is not confident discourages use, leaves rules and consequences nothing to attach to. Rebuilding predictable structure — sleep, school, meals, a home where substances are simply not available — is not cosmetic; it is the frame that makes every boundary in this plan enforceable.",
-        "es": "Un día con poca rutina, o un hogar que el padre no está seguro de que desaliente el consumo, no deja nada a lo que las reglas y las consecuencias puedan sujetarse. Reconstruir una estructura predecible — sueño, escuela, comidas, un hogar donde las sustancias simplemente no estén disponibles — no es cosmético; es el marco que hace aplicable cada límite de este plan."
+        "es": "Cuando hay poca rutina diaria, o el ambiente del hogar no desalienta claramente el consumo, las reglas y las consecuencias pierden la estructura que necesitan para ser efectivas. Reconstruir una estructura predecible — sueño, escuela, comidas, un hogar donde las sustancias simplemente no estén disponibles — no es cosmético; es el marco que hace aplicable cada límite de este plan."
       },
       "eligibleAs": ["primary", "supporting"],
       "educationalImpact": 55,
@@ -459,11 +459,11 @@
       "domainId": "support-professional-engagement",
       "title": {
         "en": "You cannot do this on empty",
-        "es": "No puedes con esto estando vacío"
+        "es": "No puedes afrontar esto si estás agotado"
       },
       "intent": {
         "en": "Exhaustion, fear and isolation do some of the talking in a conversation with a child, whether or not the parent intends it. Peer support is not a comfort measure here; it is what keeps the plan executable.",
-        "es": "El agotamiento, el miedo y el aislamiento hablan por sí solos en una conversación con un hijo, lo quiera el padre o no. El apoyo entre pares no es un consuelo aquí; es lo que mantiene el plan ejecutable."
+        "es": "El agotamiento, el miedo y el aislamiento influyen en una conversación con tu hijo, aunque no sea tu intención. El apoyo entre pares no es un consuelo aquí; es lo que mantiene el plan ejecutable."
       },
       "eligibleAs": ["primary", "supporting"],
       "educationalImpact": 78,

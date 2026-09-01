@@ -111,6 +111,18 @@ const INVERTED_STEMS = new Set([
   6, 7, 11, 13, 14, 15, 16, 18, 19, 20, 21, 22, 24,
 ]);
 
+/**
+ * Approved Spanish label corrections from the native-speaker sign-off (Matt,
+ * 2026-09-01). Applied here rather than in questions.es.ts for the same reason
+ * as APPROVED_DOMAIN_AMENDMENTS: the old path still serves parents until the
+ * switchover and must keep producing byte-identical prompts. Keyed by question
+ * number, then option value.
+ */
+const APPROVED_LABEL_AMENDMENTS_ES: Record<number, Record<number, string>> = {
+  // "Sin combustible" was an over-literal "running on empty".
+  17: { 4: 'Casi a diario — completamente agotado' },
+};
+
 function build() {
   if (QUESTIONS.length !== QUESTIONS_ES.length) {
     throw new Error(
@@ -134,7 +146,10 @@ function build() {
       invertedStem: INVERTED_STEMS.has(index + 1),
       options: labelsEn.map((label, i) => ({
         value: i + 1,
-        label: { en: label, es: labelsEs[i] },
+        label: {
+          en: label,
+          es: APPROVED_LABEL_AMENDMENTS_ES[index + 1]?.[i + 1] ?? labelsEs[i],
+        },
       })),
     };
   });

@@ -168,7 +168,7 @@ const CLOSING_EN = [
 ];
 
 const CLOSING_ES = [
-  'La recuperación es un camino, no un solo acontecimiento, y proteger el progreso que tu hijo ya ha logrado es una de las responsabilidades más importantes que tienes como padre. Aunque muchos adolescentes llegan a alcanzar una recuperación duradera, pueden ocurrir recaídas. Una recaída no borra el progreso alcanzado, y no tiene por qué convertirse en un regreso al pasado.',
+  'La recuperación es un camino, no un solo acontecimiento, y proteger el progreso que tu hijo ya ha logrado es una de las responsabilidades más importantes que tienes como padre. Aunque muchos adolescentes llegan a alcanzar una recuperación duradera, pueden ocurrir contratiempos. Un contratiempo no borra el progreso alcanzado ni tiene por qué convertirse en un regreso al pasado.',
   'La preparación es una de tus mayores fortalezas. Te animamos a completar el Auxiliary Workshop "Protecting Recovery: Preventing Relapse and Responding to Setbacks". Te ayudará a reconocer las señales de alerta tempranas, a responder con calma y eficacia si surgen dificultades, y a fortalecer el plan de tu familia para proteger la recuperación de tu hijo. También te animamos a participar en el Protecting Recovery Discussion Group, donde los padres comparten experiencias, aliento y conocimientos prácticos mientras se apoyan mutuamente a lo largo del camino continuo de la recuperación.',
   'Recuerda que el propósito del monitoreo, la supervisión, las conversaciones y los límites apropiados no es simplemente descubrir qué pasó o cuándo pasó, sino entender por qué. Identificar y abordar las razones de fondo del consumo de sustancias le da a tu hijo la mayor oportunidad de lograr una recuperación a largo plazo y un futuro sano y significativo.',
 ];
