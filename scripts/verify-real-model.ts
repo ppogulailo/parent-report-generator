@@ -78,6 +78,9 @@ async function main() {
   for (const testCase of CASES) {
     for (const language of ['en', 'es'] as Language[]) {
       const id = `${testCase.id}-${language}`;
+      // ONLY=serious-en re-runs a single case — for the plan that failed on a
+      // transient (a 503 mid-run) without paying for the seven that passed.
+      if (process.env.ONLY && process.env.ONLY !== id) continue;
       const responses: Record<string, number> = {};
       for (const question of content.assessment.questions) {
         responses[question.id] = testCase.base;
@@ -108,6 +111,14 @@ async function main() {
       };
       const sections = body.report.sections;
       const prose = proseOf(sections);
+      // The vocabulary and answer-label rules govern what the MODEL writes.
+      // Static sections are ASAP's own approved copy, rendered verbatim by the
+      // platform — and that copy may legitimately use words the model is banned
+      // from reaching for (the client's approved Spanish Guiding Principle says
+      // "utilizar", which is on the corporate-vocabulary ban list). Same
+      // scoping as the runtime checker, which validates the model's response
+      // and never sees a static section.
+      const modelProse = proseOf(sections.filter((s) => s.type !== 'static'));
       const keys = sections.map((s) => s.key);
       const tier = body.severity.tierId;
 
@@ -165,8 +176,10 @@ async function main() {
           .some((r) =>
             r.terms[language].some((term) =>
               r.kind === 'words'
-                ? new RegExp(`\\b${term}\\b`, 'i').test(stripApproved(prose))
-                : stripApproved(prose)
+                ? new RegExp(`\\b${term}\\b`, 'i').test(
+                    stripApproved(modelProse),
+                  )
+                : stripApproved(modelProse)
                     .toLowerCase()
                     .includes(term.toLowerCase()),
             ),
@@ -178,7 +191,7 @@ async function main() {
           )
           .filter((l): l is string => !!l)
           .filter((l) => l.split(/\s+/).length >= 4)
-          .some((l) => prose.includes(l)),
+          .some((l) => modelProse.includes(l)),
         'workshop titles never translated': (
           sections.find((s) => s.type === 'workshopList')?.workshops ?? []
         ).every((w) =>

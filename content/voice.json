@@ -83,10 +83,22 @@
           "you have got this",
           "navigate challenges"
         ],
+        "_comment": [
+          "The solo/sola entries carry punctuation and 'en' variants rather",
+          "than the bare phrase, because Spanish 'solo' is also the adverb",
+          "'just': the final verification caught the checker flagging 'ya no",
+          "estás solo sospechando' — correct, non-empathy prose — on the bare",
+          "substring (2026-09-02). The filler being banned is the standalone",
+          "reassurance, and these forms are how it actually ends a clause."
+        ],
         "es": [
           "escucho lo difícil que es esto",
-          "no estás solo",
-          "no estás sola",
+          "no estás solo.",
+          "no estás sola.",
+          "no estás solo,",
+          "no estás sola,",
+          "no estás solo en esto",
+          "no estás sola en esto",
           "está bien sentir",
           "estás enfrentando mucho",
           "muchos padres sienten",
