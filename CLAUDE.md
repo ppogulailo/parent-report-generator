@@ -9,7 +9,7 @@ NestJS REST API that scores a 24-question parent questionnaire, maps responses t
 **Two pipelines exist right now, deliberately and temporarily.**
 
 - **Version 1.0** (`POST /api/assessment/submit`) — the methodology lives in `content/` as data, routing is decided in `src/selection/` before the model is called, and the model's output is schema-validated against that decision. This is the one to change.
-- **The pre-existing path** (`POST /api/report/generate`) — the methodology lives inside a 307-line prompt and the model is asked to follow it. Still serving the live questionnaire at `/[lang]` while V1 is reviewed at `/[lang]/v1`. Slated for deletion; see `LAUNCH-READINESS.md`.
+- **The pre-existing path** (`POST /api/report/generate`) — the methodology lives inside a 307-line prompt and the model is asked to follow it. **No longer serving parents**: `/[lang]` switched to V1 on 2026-09-02 (`NEXT_PUBLIC_V1_DEFAULT = '1'`). The endpoint still answers for stale clients. Slated for deletion once V1 has held production for a few days; see `LAUNCH-READINESS.md`.
 
 Do not add features to the old path.
 

@@ -83,10 +83,14 @@ corrections; all are installed verbatim and deployed, including the
 setback/relapse distinction ("contratiempos", not "recaídas") applied
 identically in both places the standardized closing lives.
 
-| # | Blocked on | What is needed | Effect until it lands |
-|---|---|---|---|
-| 1 | **Pavlo** | Re-run `npm run verify:real-model` — the committed runs predate the approved routing changes and the Spanish corrections | The final-verification box is unticked |
-| 2 | **Matt** | The word to switch | Parents still get the old questionnaire at `/[lang]` |
+Nothing is blocked. The final verification ran 2026-09-02 against the
+production API — all eight plans, four severities × both languages, every rule
+satisfied (`verification/`, regenerated). Matt gave the switch-over go-ahead
+the same day and `NEXT_PUBLIC_V1_DEFAULT = '1'` is deployed: **parents get
+Version 1.0 at `/[lang]`.**
+
+What remains is the aftermath, not the launch: let V1 hold production for a
+few days, then delete the old path (see below).
 
 (`monitoring.asapcommunity.org` is live and has been serving since August.)
 The baseline is captured and committed
@@ -99,32 +103,24 @@ npm run baseline:compare   # offline; safe to run in CI on every content edit
 
 ---
 
-## The switch-over
+## The switch-over — DONE, 2026-09-02
 
-The Version 1.0 questionnaire lives at `/[lang]/v1`; the pre-existing one serves
-`/[lang]` and is what parents currently reach.
+`/[lang]` serves Version 1.0. Flipped on Matt's written go-ahead after the
+final verification came back all-green the same day.
 
-**Switching is one build arg**, not a code change. In `frontend/fly.toml`:
-
-```toml
-NEXT_PUBLIC_V1_DEFAULT = '1'
-```
-
-Then redeploy the frontend with `--no-cache`, because `NEXT_PUBLIC_*` values are
-inlined at build time. Setting it back to `'0'` is the way back, which is the
-point: the new pipeline will not have written a plan for a real family until it
-does, and a reversible switch is worth more than a tidy diff on the day.
-
-**Before flipping it**, in this order:
+The way back, should it ever be needed: set `NEXT_PUBLIC_V1_DEFAULT = '0'` in
+`frontend/fly.toml` and redeploy the frontend with `--no-cache` (the value is
+inlined at build time). The pre-flip checklist, all boxes ticked:
 
 1. ~~Capture the baseline~~ — done, committed under `baseline/`.
 2. ~~Compare it~~ — done. No severity moved; §6.8 catalogues the resource
    differences for Dave.
-3. ~~Generate against a real model and read it~~ — done for all four severities
-   in both languages; §6.8–§6.10 record what it found. Re-run with
-   `npm run verify:real-model` after any prompt or content change — and again
-   now: the 2026-08-25 decisions changed the routing, so the committed
-   verification plans predate them.
+3. ~~Generate against a real model and read it~~ — done twice: first during
+   development, then the definitive run on 2026-09-02 against the production
+   API with the approved routing, the final wording, and the Spanish
+   corrections in place. Eight plans, every rule satisfied. Re-run with
+   `npm run verify:real-model` after any prompt or content change
+   (`ONLY=<case-id>` re-runs a single plan).
 4. ~~Get Dave's approval on the matrix~~ — received 2026-08-25, including the
    Effective Communication rule and its threshold. Implemented, with the
    decisions recorded inline in `RECOMMENDATION-MATRIX.md`.
