@@ -634,16 +634,17 @@ Principles (installed verbatim, §8); confirmation of the row-15 threshold; and
 the naming decision — *Family* Risk Assessment & Action Plan (FRAAP) is the
 formal product name across both tracks, now applied to this product's pages.
 
-**Received 2026-08-28:** the Circle URLs — 26 of 28 resources now link
-directly to their Circle spaces, each URL verified live before installation.
-The two exceptions (the Protecting Recovery workshop and discussion group)
-were absent from the list; both are cited only inside the standardized
-closing, which carries no link slot, and their URLs are requested from Matt.
+**Received 2026-08-28, completed 2026-09-02:** the Circle URLs — all 28
+resources now link directly to their Circle spaces, each URL verified live
+before installation. The Protecting Recovery workshop and discussion group
+arrived last, from Matt on 2026-09-02.
 
-**Still needed before launch:**
+**Received 2026-09-01:** the Spanish sign-off — nine corrections, installed
+verbatim and deployed, including "contratiempos" for "setbacks" throughout
+the standardized closing.
 
-1. Native-speaker sign-off on the Spanish strings — now including our
-   translations of the two Guiding Principles.
+**Still needed before launch:** nothing from ASAP. One final verification run
+against the real model on our side, then the switch-over on Matt's word.
 
 **Still worth a glance whenever:** §6.2 (the two-domain overlap), §6.4 (the
 social-media row's free-text half), and §5 (the ten remaining inferred domain

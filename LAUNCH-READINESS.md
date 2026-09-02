@@ -73,19 +73,23 @@ Environment trigger (Q20/Q21) is confirmed; and the formal product name is
 *Family* Risk Assessment & Action Plan (FRAAP), now applied to this product's
 pages and metadata.
 
-Resolved 2026-08-28: the Circle URLs arrived from Emmanuel via Matt and are
-installed — 26 of 28 resources linked, every URL verified live (HTTP 200)
-before installation, and a test now fails if any resource the matrix can
-select lacks a link. The two still unlinked (the Protecting Recovery workshop
-and discussion group) were absent from the list and are cited only inside the
-standardized closing, which is plain text with no link slot — their URLs are
-requested from Matt for completeness.
+Resolved 2026-08-28 / completed 2026-09-02: all 28 Circle URLs are installed —
+the main list from Emmanuel via Matt, the Protecting Recovery pair from Matt
+on 2026-09-02 — every URL verified live (HTTP 200) before installation, and a
+test fails if any resource the matrix can select lacks a link.
+
+Resolved 2026-09-01/02: the Spanish sign-off is complete. Matt returned nine
+corrections; all are installed verbatim and deployed, including the
+setback/relapse distinction ("contratiempos", not "recaídas") applied
+identically in both places the standardized closing lives.
 
 | # | Blocked on | What is needed | Effect until it lands |
 |---|---|---|---|
-| 1 | **ASAP** | Native-speaker sign-off on `SPANISH-REVIEW.md` — now including our translations of the two Guiding Principles | Spanish reports carry unreviewed wording |
-| 2 | **Pavlo / ASAP** | A DNS record for `monitoring.asapcommunity.org` | The site stays on `actionplan.asap-community.org` |
-Nothing on this list is on us any more. The baseline is captured and committed
+| 1 | **Pavlo** | Re-run `npm run verify:real-model` — the committed runs predate the approved routing changes and the Spanish corrections | The final-verification box is unticked |
+| 2 | **Matt** | The word to switch | Parents still get the old questionnaire at `/[lang]` |
+
+(`monitoring.asapcommunity.org` is live and has been serving since August.)
+The baseline is captured and committed
 (`baseline/`), and the pipeline has been verified against the real model.
 
 ```bash

@@ -108,11 +108,8 @@ const INFERRED_DOMAINS: Record<string, string[]> = {
  * verified live (HTTP 200) before installation. Keyed by resource id so a
  * retitled workshop cannot silently unlink.
  *
- * Deliberately absent, because ASAP's list did not include them:
- *   · aux-protecting-recovery-preventing-relapse-and-responding (workshop)
- *   · dg-protecting-recovery (discussion group)
- * Both are cited only inside the standardized closing — plain text, never a
- * link slot — so nothing a parent sees is missing a link. Requested from Matt.
+ * The Protecting Recovery pair arrived separately from Matt on 2026-09-02,
+ * completing the set: 28 of 28 resources linked.
  *
  * The list also carried URLs with no counterpart in this product's approved
  * library, installed nowhere on purpose: the two menu overviews (Matt asked
@@ -151,9 +148,11 @@ const CIRCLE_URLS: Record<string, string> = {
   'aux-managing-stress-and-pressure-helping-your': `${CIRCLE}/managing-stress-and-pressure-helping-your-teen-develop-healthy-coping-skills`,
   'aux-long-term-strategies-for-prevention-staying': `${CIRCLE}/long-term-strategies-for-prevention-staying-involved-through-adolescence-and-beyond`,
   'aux-legal-issues-and-substance-use-understanding': `${CIRCLE}/legal-issues-and-substance-use-understanding-the-consequences`,
+  'aux-protecting-recovery-preventing-relapse-and-responding': `${CIRCLE}/protecting-recovery`,
   // Discussion Groups
   'dg-monitoring-intervention': `${CIRCLE}/monitoring-and-intervention-3da3a5`,
   'dg-sustaining-recovery': `${CIRCLE}/sustaining-recovery`,
+  'dg-protecting-recovery': `${CIRCLE}/protecting-recovery-discuss`,
 };
 
 const PROFESSIONAL_HELP_SENTENCES = [
@@ -250,12 +249,9 @@ function build() {
       'come from the approved resource lists and are cited verbatim in reports —',
       'never translated, never abbreviated, in Spanish reports too.',
       '',
-      'URLS INSTALLED 2026-08-28 from the Circle list supplied by ASAP (Emmanuel',
-      'via Matt), every one verified live before installation. Two remain null,',
-      'because the list did not include them: the Protecting Recovery workshop',
-      'and the Protecting Recovery discussion group. Both are cited only inside',
-      'the standardized closing (plain text, never a link slot), so no parent-',
-      'visible link is missing. Requested from Matt.',
+      'ALL 28 URLS INSTALLED — the main list from ASAP (Emmanuel via Matt) on',
+      '2026-08-28, the Protecting Recovery pair from Matt on 2026-09-02, every',
+      'one verified live (HTTP 200) before installation.',
       '',
       'TWO COUNTS IN THE PROMPTS ARE STALE, and the lists here are authoritative:',
       '  · The English prompt says "5 Essential" in one place. There are 4 — the',

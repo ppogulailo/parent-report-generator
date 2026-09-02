@@ -4,12 +4,9 @@
     "come from the approved resource lists and are cited verbatim in reports —",
     "never translated, never abbreviated, in Spanish reports too.",
     "",
-    "URLS INSTALLED 2026-08-28 from the Circle list supplied by ASAP (Emmanuel",
-    "via Matt), every one verified live before installation. Two remain null,",
-    "because the list did not include them: the Protecting Recovery workshop",
-    "and the Protecting Recovery discussion group. Both are cited only inside",
-    "the standardized closing (plain text, never a link slot), so no parent-",
-    "visible link is missing. Requested from Matt.",
+    "ALL 28 URLS INSTALLED — the main list from ASAP (Emmanuel via Matt) on",
+    "2026-08-28, the Protecting Recovery pair from Matt on 2026-09-02, every",
+    "one verified live (HTTP 200) before installation.",
     "",
     "TWO COUNTS IN THE PROMPTS ARE STALE, and the lists here are authoritative:",
     "  · The English prompt says \"5 Essential\" in one place. There are 4 — the",
@@ -307,7 +304,7 @@
       "category": "auxiliary",
       "title": "Protecting Recovery: Preventing Relapse and Responding to Setbacks",
       "summary": "Recognizing early relapse warning signs and responding to setbacks.",
-      "url": null,
+      "url": "https://asap-community.circle.so/c/protecting-recovery",
       "applicableDomains": [
         "immediate-safety-urgency"
       ],
@@ -332,7 +329,7 @@
       "id": "dg-protecting-recovery",
       "name": "Protecting Recovery",
       "usage": "Recovery-maintenance peer group. Cited only inside the standardized closing, on MODERATE, SERIOUS and CRITICAL plans. Never in MILD.",
-      "url": null
+      "url": "https://asap-community.circle.so/c/protecting-recovery-discuss"
     }
   ],
   "requiredWording": [
