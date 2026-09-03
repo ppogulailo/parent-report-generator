@@ -41,6 +41,19 @@ export class PdfService implements OnModuleDestroy {
         ? `pdf generation enabled${this.executablePath ? ` (chromium at ${this.executablePath})` : ''}`
         : 'pdf generation disabled (PDF_ENABLED=false) — clients will be offered browser print instead',
     );
+
+    // Warm Chromium shortly after boot rather than on the first download. The
+    // machine auto-stops when idle, so without this the first parent to click
+    // "Download PDF" after every wake pays the whole launch — measured at over
+    // thirty seconds cold in production, and under a second warmed. Never
+    // blocks boot; a failure here is recorded exactly as a lazy launch's would
+    // be and the capability reports itself unavailable.
+    if (this.enabled) {
+      setTimeout(() => {
+        this.launching ??= this.launch();
+        void this.launching.catch(() => undefined);
+      }, 3_000).unref?.();
+    }
   }
 
   /**
