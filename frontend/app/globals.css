@@ -865,68 +865,150 @@ a:hover {
 }
 
 /* ── Saved-plan link card ─────────────────────────────────────
-   The keepsake: the one thing on the results screen a parent is asked to
-   take with them. Styled as a quiet object — surface, hairline, a single
-   accent — rather than an alert. */
+   The keepsake, now leading the plan: everything about KEEPING the plan in
+   one bordered card that reads as meta rather than as part of the assessment.
+   Hierarchy inside it is deliberate — one primary action, one secondary, and
+   the destructive pair demoted to muted text buttons behind a divider. */
 .plan-link-card {
-  margin: 26px 0 14px;
-  padding: 22px 24px;
+  margin: 18px 0 26px;
+  padding: 20px 22px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  background: var(--surface);
+  background: var(--surface-sunken);
   display: grid;
   gap: 12px;
 }
-.plan-link-head {
+.plan-link-label {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
-.plan-link-icon {
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, var(--accent-violet) 10%, var(--surface));
+.plan-link-label svg {
   color: var(--accent-violet);
-}
-.plan-link-title {
-  font-family: var(--font-display);
-  font-weight: 500;
-  font-size: 17px;
-  margin: 0;
-  color: var(--text-primary);
 }
 .plan-link-note {
   margin: 0;
   font-size: 14px;
   line-height: 1.55;
   color: var(--text-secondary);
-  max-width: 62ch;
+  max-width: 64ch;
+}
+.plan-link-note strong {
+  color: var(--text-primary);
 }
 .plan-link-row {
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
+  gap: 8px;
   align-items: stretch;
+  min-width: 0;
 }
 .plan-link-url {
-  flex: 1 1 260px;
+  flex: 1 1 auto;
   min-width: 0;
   display: flex;
   align-items: center;
-  padding: 10px 14px;
+  padding: 9px 13px;
   font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 13px;
+  font-size: 12.5px;
   color: var(--text-secondary);
-  background: var(--surface-sunken);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  display: block;
+  line-height: 2.1;
+}
+.plan-link-copy {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.plan-link-copy:hover {
+  border-color: var(--accent-violet);
+  color: var(--accent-violet);
+}
+.plan-link-copy.copied {
+  border-color: var(--positive);
+  color: var(--positive);
+}
+.plan-link-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.plan-link-divider {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 4px 0 0;
+}
+.plan-link-danger-row {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.plan-link-textbtn {
+  border: 0;
+  background: none;
+  padding: 2px 0;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--border-strong);
+}
+.plan-link-textbtn:hover {
+  color: var(--text-primary);
+}
+.plan-link-textbtn.danger:hover {
+  color: var(--negative);
+  text-decoration-color: var(--negative);
+}
+@media (max-width: 560px) {
+  .plan-link-row {
+    flex-direction: column;
+  }
+  .plan-link-copy {
+    justify-content: center;
+    padding: 10px 14px;
+  }
+  .plan-link-actions {
+    flex-direction: column;
+  }
+  .plan-link-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* The governing methodology version, as a caption rather than a paragraph. */
+.plan-version-caption {
+  margin: 10px 0 0;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-tertiary);
 }
 
 /* ── Motion / print ────────────────────────────────────────── */

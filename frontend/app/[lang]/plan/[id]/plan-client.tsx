@@ -7,6 +7,7 @@ import ReportView, {
   type ReportSection,
   type ReportSeverity,
 } from '../../ReportView';
+import PlanLinkCard from '../../PlanLinkCard';
 import { clearPlanPointer } from '../../v1/plan-store';
 
 /**
@@ -33,8 +34,13 @@ const EXTRA = {
     retry: 'Try again',
     print: 'Save / Print',
     pdf: 'Download PDF',
-    expiresNote: (date: string) =>
-      `This private link works until ${date}. Download the PDF or print a copy to keep it beyond that.`,
+    linkLabel: 'Your private link',
+    expiresBefore: 'This private link works until ',
+    expiresAfter:
+      ', then this plan is deleted automatically. Download the PDF or print a copy to keep it beyond that.',
+    copyLink: 'Copy link',
+    copied: 'Copied',
+    copiedAnnouncement: 'Link copied to clipboard.',
     deleteButton: 'Delete my data',
     deleteConfirm:
       'Delete your plan, your answers, and everything else we hold about this assessment? This cannot be undone.',
@@ -55,8 +61,13 @@ const EXTRA = {
     retry: 'Intentar de nuevo',
     print: 'Guardar / Imprimir',
     pdf: 'Descargar PDF',
-    expiresNote: (date: string) =>
-      `Este enlace privado funciona hasta el ${date}. Descarga el PDF o imprime una copia para conservarlo después.`,
+    linkLabel: 'Tu enlace privado',
+    expiresBefore: 'Este enlace privado funciona hasta el ',
+    expiresAfter:
+      ', después este plan se elimina automáticamente. Descarga el PDF o imprime una copia para conservarlo.',
+    copyLink: 'Copiar enlace',
+    copied: 'Copiado',
+    copiedAnnouncement: 'Enlace copiado al portapapeles.',
     deleteButton: 'Eliminar mis datos',
     deleteConfirm:
       '¿Eliminar tu plan, tus respuestas y todo lo demás que guardamos sobre esta evaluación? Esto no se puede deshacer.',
@@ -138,7 +149,8 @@ export default function PlanClient({
   }, [fetchPlan]);
 
   async function deleteEverything() {
-    if (!window.confirm(x.deleteConfirm) || deleting) return;
+    // The card's confirm dialog has already run by the time this is called.
+    if (deleting) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/plan/${planId}`, { method: 'DELETE' });
@@ -215,6 +227,26 @@ export default function PlanClient({
       {writing ? (
         <p className="step-hint no-print" role="status">{x.writingNote}</p>
       ) : null}
+      {!writing ? (
+        <PlanLinkCard
+          planUrl={typeof window === 'undefined' ? '' : window.location.href}
+          pdfHref={pdfAvailable ? `/api/plan/${planId}/pdf` : null}
+          copy={{
+            label: x.linkLabel,
+            noteBefore: x.expiresBefore,
+            noteEmphasis: expires,
+            noteAfter: x.expiresAfter,
+            copyLink: x.copyLink,
+            copied: x.copied,
+            copiedAnnouncement: x.copiedAnnouncement,
+            downloadPdf: x.pdf,
+            print: x.print,
+            deleteData: x.deleteButton,
+            deleteConfirm: x.deleteConfirm,
+          }}
+          onDelete={() => void deleteEverything()}
+        />
+      ) : null}
       <ReportView
         sections={plan.sections ?? []}
         severity={severity}
@@ -238,31 +270,6 @@ export default function PlanClient({
           openWorkshop: language === 'es' ? 'Abrir en ASAP Community' : 'Open in ASAP Community',
         }}
       />
-      {!writing ? (
-        <>
-          <div className="done-actions no-print">
-            <button type="button" className="btn btn-secondary" onClick={() => window.print()}>
-              <span>{x.print}</span>
-            </button>
-            {pdfAvailable ? (
-              <a className="btn btn-secondary" href={`/api/plan/${planId}/pdf`}>
-                <span>{x.pdf}</span>
-              </a>
-            ) : null}
-            <button
-              type="button"
-              className="btn btn-ghost"
-              onClick={() => void deleteEverything()}
-              disabled={deleting}
-            >
-              <span>{x.deleteButton}</span>
-            </button>
-          </div>
-          <p className="qgroup-desc no-print" style={{ textAlign: 'center' }}>
-            {x.expiresNote(expires)}
-          </p>
-        </>
-      ) : null}
     </main>
   );
 }

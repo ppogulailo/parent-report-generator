@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { STRINGS, type Language } from '../../i18n';
+import PlanLinkCard from '../PlanLinkCard';
 import ReportView, {
   type ReportSection,
   type ReportSeverity,
@@ -117,10 +118,13 @@ const EXTRA = {
     moreTitle: 'One more question',
     moreDesc: 'This one does not belong to any of the areas above.',
     planLinkHeading: 'Your private link',
-    planLinkNote:
-      'This plan is saved at the link below for 90 days — on this device or any other. After that it is deleted automatically, so download the PDF or print a copy to keep it.',
+    planLinkNoteBefore: 'This plan is saved at the link below for ',
+    planLinkNoteEmphasis: '90 days',
+    planLinkNoteAfter:
+      ' — on this device or any other. After that it is deleted automatically, so download the PDF or print a copy to keep it.',
     copyLink: 'Copy link',
-    copied: 'Copied ✓',
+    copied: 'Copied',
+    copiedAnnouncement: 'Link copied to clipboard.',
     pdfButton: 'Download PDF',
     deleteButton: 'Delete my data',
     deleteConfirm:
@@ -155,10 +159,13 @@ const EXTRA = {
     moreTitle: 'Una pregunta más',
     moreDesc: 'Esta no pertenece a ninguna de las áreas anteriores.',
     planLinkHeading: 'Tu enlace privado',
-    planLinkNote:
-      'Este plan queda guardado en el enlace de abajo durante 90 días — en este dispositivo o en cualquier otro. Después se elimina automáticamente, así que descarga el PDF o imprime una copia para conservarlo.',
+    planLinkNoteBefore: 'Este plan queda guardado en el enlace de abajo durante ',
+    planLinkNoteEmphasis: '90 días',
+    planLinkNoteAfter:
+      ' — en este dispositivo o en cualquier otro. Después se elimina automáticamente, así que descarga el PDF o imprime una copia para conservarlo.',
     copyLink: 'Copiar enlace',
-    copied: 'Copiado ✓',
+    copied: 'Copiado',
+    copiedAnnouncement: 'Enlace copiado al portapapeles.',
     pdfButton: 'Descargar PDF',
     deleteButton: 'Eliminar mis datos',
     deleteConfirm:
@@ -325,7 +332,6 @@ export default function V1Client({
   /** The saved plan's id, once persistence has one. Null when the plan could
    *  not be saved — the plan itself still renders, just without a link. */
   const [planId, setPlanId] = useState<string | null>(null);
-  const [linkCopied, setLinkCopied] = useState(false);
   const [savedPlan, setSavedPlan] = useState<SavedPlanPointer | null>(null);
 
   useEffect(() => {
@@ -1095,6 +1101,59 @@ export default function V1Client({
 
         {stage === 'done' ? (
           <>
+            {/* The keepsake leads: everything about KEEPING the plan sits in
+                one card above the plan itself, so a parent sees the link, the
+                PDF and the 90-day clock before they start reading. Rendered
+                only once the plan is saved and finished — a link we could not
+                create is not offered, and half-written plans are for reading,
+                not archiving. */}
+            {!writing && planId ? (
+              <PlanLinkCard
+                planUrl={`${window.location.origin}/${language}/plan/${planId}`}
+                pdfHref={pdfAvailable ? `/api/plan/${planId}/pdf` : null}
+                copy={{
+                  label: extra.planLinkHeading,
+                  noteBefore: extra.planLinkNoteBefore,
+                  noteEmphasis: extra.planLinkNoteEmphasis,
+                  noteAfter: extra.planLinkNoteAfter,
+                  copyLink: extra.copyLink,
+                  copied: extra.copied,
+                  copiedAnnouncement: extra.copiedAnnouncement,
+                  downloadPdf: extra.pdfButton,
+                  print: t.printButton,
+                  deleteData: extra.deleteButton,
+                  deleteConfirm: extra.deleteConfirm,
+                  secondaryDestructive: t.startOverButton,
+                }}
+                onDelete={() => {
+                  void fetch(`/api/plan/${planId}`, { method: 'DELETE' })
+                    .then((res) => {
+                      if (!res.ok) return;
+                      clearPlanPointer();
+                      setSavedPlan(null);
+                      setPlanId(null);
+                      setStage('form');
+                      setSections([]);
+                      setSeverity(null);
+                      setDomainScores(null);
+                      setTopDomains([]);
+                      goToStep(0);
+                      window.alert(extra.deletedNote);
+                    })
+                    .catch(() => {
+                      /* the plan page offers the same action with retry */
+                    });
+                }}
+                onSecondaryDestructive={() => {
+                  setStage('form');
+                  setSections([]);
+                  setSeverity(null);
+                  setDomainScores(null);
+                  setTopDomains([]);
+                  goToStep(0);
+                }}
+              />
+            ) : null}
             <ReportView
               sections={sections}
               severity={severity}
@@ -1118,93 +1177,18 @@ export default function V1Client({
                 openWorkshop: extra.openWorkshop,
               }}
             />
-            {!writing && planId ? (
-              /* The private return link (Milestone 5). Shown only once the
-                 plan is actually saved — a link we could not create is not
-                 offered, not offered broken. */
-              <section className="plan-link-card no-print" aria-label={extra.planLinkHeading}>
-                <div className="plan-link-head">
-                  <span className="plan-link-icon" aria-hidden>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" />
-                      <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" />
-                    </svg>
-                  </span>
-                  <h2 className="plan-link-title">{extra.planLinkHeading}</h2>
-                </div>
-                <p className="plan-link-note">{extra.planLinkNote}</p>
-                <div className="plan-link-row">
-                  <span className="plan-link-url" title={`${window.location.origin}/${language}/plan/${planId}`}>
-                    {`${window.location.origin}/${language}/plan/${planId}`}
-                  </span>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={() => {
-                      void navigator.clipboard
-                        .writeText(
-                          `${window.location.origin}/${language}/plan/${planId}`,
-                        )
-                        .then(() => {
-                          setLinkCopied(true);
-                          window.setTimeout(() => setLinkCopied(false), 2000);
-                        })
-                        .catch(() => {
-                          /* the link is visible to copy by hand */
-                        });
-                    }}
-                  >
-                    <span>{linkCopied ? extra.copied : extra.copyLink}</span>
-                  </button>
-                </div>
-              </section>
-            ) : null}
-            {!writing ? (
+            {/* The unsaved fallback: no link card without a saved plan, but
+                printing and starting over must survive a database outage. */}
+            {!writing && !planId ? (
               <div className="done-actions no-print">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => window.print()}
-              >
-                <span>{t.printButton}</span>
-              </button>
-              {planId && pdfAvailable ? (
-                <a
-                  className="btn btn-secondary"
-                  href={`/api/plan/${planId}/pdf`}
-                >
-                  <span>{extra.pdfButton}</span>
-                </a>
-              ) : null}
-              {planId ? (
                 <button
                   type="button"
-                  className="btn btn-ghost"
-                  onClick={() => {
-                    if (!window.confirm(extra.deleteConfirm)) return;
-                    void fetch(`/api/plan/${planId}`, { method: 'DELETE' })
-                      .then((res) => {
-                        if (!res.ok) return;
-                        clearPlanPointer();
-                        setSavedPlan(null);
-                        setPlanId(null);
-                        setStage('form');
-                        setSections([]);
-                        setSeverity(null);
-                        setDomainScores(null);
-                        setTopDomains([]);
-                        goToStep(0);
-                        window.alert(extra.deletedNote);
-                      })
-                      .catch(() => {
-                        /* the plan page offers the same action with retry */
-                      });
-                  }}
+                  className="btn btn-secondary"
+                  onClick={() => window.print()}
                 >
-                  <span>{extra.deleteButton}</span>
+                  <span>{t.printButton}</span>
                 </button>
-              ) : null}
-              <button
+                <button
                   type="button"
                   className="btn btn-ghost"
                   onClick={() => {
@@ -1220,7 +1204,7 @@ export default function V1Client({
                 </button>
               </div>
             ) : null}
-            <p className="qgroup-desc no-print" style={{ textAlign: 'center' }}>
+            <p className="plan-version-caption no-print">
               {methodologyVersion}
             </p>
           </>
