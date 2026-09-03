@@ -872,7 +872,12 @@ a:hover {
    Hierarchy inside it is deliberate — one primary action, one secondary, and
    the destructive pair demoted to muted text buttons behind a divider. */
 .plan-link-card {
-  margin: 18px 0 26px;
+  /* The same 680px rail as .results, so this card and the "your plan is
+     ready" status card read as one column — the rail minus the 20px gutters
+     .results carries as padding. */
+  width: calc(100% - 40px);
+  max-width: calc(var(--wrap) - 40px);
+  margin: 18px auto 26px;
   padding: 20px 22px;
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
