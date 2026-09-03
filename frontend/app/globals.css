@@ -150,6 +150,8 @@ a:hover {
   transition: var(--t-control), transform var(--dur-fast) var(--ease-standard);
   height: 48px;
   padding: 0 24px;
+  /* .btn renders on <a> as well as <button>; links must not underline. */
+  text-decoration: none;
 }
 .btn:active {
   transform: scale(0.97);
