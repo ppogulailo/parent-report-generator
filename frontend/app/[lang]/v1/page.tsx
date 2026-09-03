@@ -57,6 +57,7 @@ interface Questionnaire {
 interface Capabilities {
   draft: boolean;
   methodologyVersion: string;
+  pdf?: boolean;
 }
 
 async function load<T>(path: string): Promise<T | null> {
@@ -108,6 +109,7 @@ export default async function V1Page({
       questionnaire={questionnaire}
       draft={capabilities?.draft ?? true}
       methodologyVersion={capabilities?.methodologyVersion ?? 'unknown'}
+      pdfAvailable={capabilities?.pdf ?? false}
     />
   );
 }

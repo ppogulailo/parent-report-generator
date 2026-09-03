@@ -5,7 +5,9 @@
     "test",
     "dist",
     "frontend",
+    "scripts",
     "playwright.config.ts",
+    "playwright.*.config.ts",
     "**/*spec.ts"
   ]
 }

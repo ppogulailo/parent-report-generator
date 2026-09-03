@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AssessmentModule } from './assessment/assessment.module';
 import { ContentModule } from './content/content.module';
 import { HealthModule } from './health/health.module';
+import { PersistenceModule } from './persistence/persistence.module';
 import { ReportModule } from './report/report.module';
 
 @Module({
@@ -12,6 +13,9 @@ import { ReportModule } from './report/report.module';
     // constructor, so a broken routing rule stops the app before anything else
     // initialises.
     ContentModule,
+    // Saved plans (Milestone 5): database, encryption, and the retention
+    // sweep. Global, so the repositories are injectable anywhere.
+    PersistenceModule,
     HealthModule,
     // The Version 1.0 pipeline.
     AssessmentModule,

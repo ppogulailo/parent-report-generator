@@ -12,6 +12,13 @@ export const APP_PORT = Number(process.env.V1_APP_PORT ?? 3401);
 export const APP_URL = `http://localhost:${APP_PORT}`;
 export const MOCK_URL = `http://localhost:${MOCK_PORT}`;
 export const API_KEY = 'test-secret';
+/** The saved-plans database for the suite. Local Postgres, own database, so a
+ *  test run can never touch development data. */
+export const TEST_DATABASE_URL =
+  process.env.V1_TEST_DATABASE_URL ??
+  `postgresql://${process.env.USER ?? 'postgres'}@localhost:5432/mi_test?schema=public`;
+/** Deterministic key so encrypted fixtures stay readable within a run. */
+export const TEST_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString('base64');
 
 export type MockMode =
   | 'valid'

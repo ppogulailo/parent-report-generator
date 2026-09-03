@@ -25,7 +25,9 @@ Selection happens in deterministic TypeScript (`src/selection/`) evaluating cond
 
 This is enforced, not requested. `src/generation/report-schema.ts` builds a Zod schema from the selected ids, and a response whose ids do not match exactly fails validation and is retried with the error fed back. **If you are tempted to let the model pick something, or to move a selection decision into a prompt, stop — that inverts the whole architecture.**
 
-**Out of scope:** no database, no auth beyond the `X-API-Key` header, no PDF/email, no caching. Stored plans, PDF and email are Milestone 2.
+**Saved plans (Milestone 5, 2026-09-03):** Postgres via Prisma (`prisma/`, `src/persistence/`). A submission is stored (urgent note AES-256-GCM-encrypted), the plan gets a private return link at `/[lang]/plan/<uuid>` plus a PDF (Chromium via `playwright-core`), and `RetentionService` enforces the client-approved 90/30/immediate policy — plans 90 days, answers/urgent-note/generation-records 30, parent-requested deletion instant, keyless `ScoreSnapshot` rows forever. **Persistence is fail-soft by design**: a missing `DATABASE_URL` or a down database means plans are generated unsaved, never that the assessment stops working.
+
+**Out of scope:** no auth beyond the `X-API-Key` header, no email, no caching, no accounts — the plan id in the link is the capability.
 
 ## Architecture
 
@@ -100,7 +102,9 @@ Old flow: `ApiKeyGuard → ValidationPipe → ReportController → ReportService
 
 ## Environment variables
 
-`OPENAI_API_KEY`, `API_SECRET_KEY`, `ALLOWED_ORIGIN`, `PORT` (default 3000), `OPENAI_API_URL` and `OPENAI_MODEL` (overridable), `CONTENT_DIR` (test override only).
+`OPENAI_API_KEY`, `API_SECRET_KEY`, `ALLOWED_ORIGIN`, `PORT` (default 3000), `OPENAI_API_URL` and `OPENAI_MODEL` (overridable), `CONTENT_DIR` (test override only), `DATABASE_URL` (unset = plans generated unsaved), `FIELD_ENCRYPTION_KEY` (32 bytes base64; irreplaceable once data exists), `PDF_ENABLED` / `CHROMIUM_PATH`.
+
+The V1 test suites need a local Postgres database `mi_test` (`createdb mi_test`); `test/v1/global-setup.ts` migrates it and boots the app against it. Local dev uses `mi_dev`.
 
 ## Commands
 

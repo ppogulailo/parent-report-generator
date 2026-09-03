@@ -15,6 +15,12 @@ import {
   Spinner,
   SunIcon,
 } from '../ui';
+import {
+  clearPlanPointer,
+  loadPlanPointer,
+  savePlanPointer,
+  type SavedPlanPointer,
+} from './plan-store';
 import { clearProgress, loadProgress, saveProgress } from './progress-store';
 
 /**
@@ -70,6 +76,8 @@ interface Props {
   language: Language;
   draft: boolean;
   methodologyVersion: string;
+  /** Whether the API can hand back a PDF (capabilities.pdf). */
+  pdfAvailable: boolean;
   questionnaire: {
     version: string;
     title: Localized;
@@ -108,6 +116,22 @@ const EXTRA = {
       'One optional question, then your plan. It does not change your priorities.',
     moreTitle: 'One more question',
     moreDesc: 'This one does not belong to any of the areas above.',
+    planLinkHeading: 'Your private link',
+    planLinkNote:
+      'This plan is saved at the link below for 90 days — on this device or any other. After that it is deleted automatically, so download the PDF or print a copy to keep it.',
+    copyLink: 'Copy link',
+    copied: 'Copied ✓',
+    pdfButton: 'Download PDF',
+    deleteButton: 'Delete my data',
+    deleteConfirm:
+      'Delete your plan, your answers, and everything else we hold about this assessment? This cannot be undone.',
+    deletedNote:
+      'Everything has been deleted. Nothing about your family remains.',
+    savedPlanHeading: 'Your plan is still here',
+    savedPlanBody:
+      'You finished the assessment, and your plan is saved and ready to read again.',
+    savedPlanView: 'Read my plan',
+    savedPlanNew: 'Start a new assessment',
   },
   es: {
     draft:
@@ -130,11 +154,30 @@ const EXTRA = {
       'Una pregunta opcional, y luego tu plan. No cambia tus prioridades.',
     moreTitle: 'Una pregunta más',
     moreDesc: 'Esta no pertenece a ninguna de las áreas anteriores.',
+    planLinkHeading: 'Tu enlace privado',
+    planLinkNote:
+      'Este plan queda guardado en el enlace de abajo durante 90 días — en este dispositivo o en cualquier otro. Después se elimina automáticamente, así que descarga el PDF o imprime una copia para conservarlo.',
+    copyLink: 'Copiar enlace',
+    copied: 'Copiado ✓',
+    pdfButton: 'Descargar PDF',
+    deleteButton: 'Eliminar mis datos',
+    deleteConfirm:
+      '¿Eliminar tu plan, tus respuestas y todo lo demás que guardamos sobre esta evaluación? Esto no se puede deshacer.',
+    deletedNote:
+      'Todo ha sido eliminado. No queda nada sobre tu familia.',
+    savedPlanHeading: 'Tu plan sigue aquí',
+    savedPlanBody:
+      'Terminaste la evaluación, y tu plan está guardado y listo para leerse de nuevo.',
+    savedPlanView: 'Leer mi plan',
+    savedPlanNew: 'Empezar una nueva evaluación',
   },
 } as const;
 
 /** The first stream event: everything the matrix decided. */
 interface StreamDecided {
+  /** The saved plan's id — the private return link. Null when persistence was
+   *  unavailable and the plan is being served unsaved. */
+  planId: string | null;
   tierId: string;
   tierLabel: string;
   tierDescription: string;
@@ -253,6 +296,7 @@ export default function V1Client({
   language,
   draft,
   methodologyVersion,
+  pdfAvailable,
   questionnaire,
 }: Props) {
   const t = STRINGS[language];
@@ -278,6 +322,15 @@ export default function V1Client({
     gates: Record<string, string>;
     answered: number;
   } | null>(null);
+  /** The saved plan's id, once persistence has one. Null when the plan could
+   *  not be saved — the plan itself still renders, just without a link. */
+  const [planId, setPlanId] = useState<string | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
+  const [savedPlan, setSavedPlan] = useState<SavedPlanPointer | null>(null);
+
+  useEffect(() => {
+    setSavedPlan(loadPlanPointer());
+  }, []);
 
   const stepRoot = useRef<HTMLDivElement | null>(null);
 
@@ -519,6 +572,14 @@ export default function V1Client({
           if (event === 'decided') {
             meta = payload as StreamDecided;
             outline = skeletonFrom(meta);
+            if (meta.planId) {
+              setPlanId(meta.planId);
+              savePlanPointer({
+                planId: meta.planId,
+                language,
+                savedAt: Date.now(),
+              });
+            }
             setSeverity({
               tierId: meta.tierId,
               label: meta.tierLabel,
@@ -751,6 +812,33 @@ export default function V1Client({
             </p>
           ) : null}
         </section>
+
+        {stage === 'form' && savedPlan && !saved ? (
+          /* A finished plan outranks half-finished answers: the parent who
+             comes back has a plan waiting, and re-answering from scratch is
+             the fallback, not the greeting. */
+          <section className="block" id="saved-plan">
+            <div className="crisis-card">
+              <h2 className="crisis-heading">{extra.savedPlanHeading}</h2>
+              <p className="crisis-intro">{extra.savedPlanBody}</p>
+              <div className="stepnav">
+                <Link
+                  className="btn btn-primary"
+                  href={`/${language}/plan/${savedPlan.planId}`}
+                >
+                  <span>{extra.savedPlanView}</span>
+                </Link>
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => setSavedPlan(null)}
+                >
+                  <span>{extra.savedPlanNew}</span>
+                </button>
+              </div>
+            </div>
+          </section>
+        ) : null}
 
         {stage !== 'done' && saved ? (
           <section className="block" id="resume">
@@ -1030,6 +1118,47 @@ export default function V1Client({
                 openWorkshop: extra.openWorkshop,
               }}
             />
+            {!writing && planId ? (
+              /* The private return link (Milestone 5). Shown only once the
+                 plan is actually saved — a link we could not create is not
+                 offered, not offered broken. */
+              <section className="crisis-card no-print" style={{ marginTop: '1rem' }}>
+                <h2 className="crisis-heading">{extra.planLinkHeading}</h2>
+                <p className="crisis-intro">{extra.planLinkNote}</p>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
+                  <code
+                    style={{
+                      padding: '0.5rem 0.75rem',
+                      border: '1px solid var(--border, #d5d9e0)',
+                      borderRadius: 8,
+                      fontSize: '0.85rem',
+                      overflowWrap: 'anywhere',
+                    }}
+                  >
+                    {`${window.location.origin}/${language}/plan/${planId}`}
+                  </code>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => {
+                      void navigator.clipboard
+                        .writeText(
+                          `${window.location.origin}/${language}/plan/${planId}`,
+                        )
+                        .then(() => {
+                          setLinkCopied(true);
+                          window.setTimeout(() => setLinkCopied(false), 2000);
+                        })
+                        .catch(() => {
+                          /* the link is visible to copy by hand */
+                        });
+                    }}
+                  >
+                    <span>{linkCopied ? extra.copied : extra.copyLink}</span>
+                  </button>
+                </div>
+              </section>
+            ) : null}
             {!writing ? (
               <div className="done-actions no-print">
               <button
@@ -1039,6 +1168,42 @@ export default function V1Client({
               >
                 <span>{t.printButton}</span>
               </button>
+              {planId && pdfAvailable ? (
+                <a
+                  className="btn btn-secondary"
+                  href={`/api/plan/${planId}/pdf`}
+                >
+                  <span>{extra.pdfButton}</span>
+                </a>
+              ) : null}
+              {planId ? (
+                <button
+                  type="button"
+                  className="btn btn-ghost"
+                  onClick={() => {
+                    if (!window.confirm(extra.deleteConfirm)) return;
+                    void fetch(`/api/plan/${planId}`, { method: 'DELETE' })
+                      .then((res) => {
+                        if (!res.ok) return;
+                        clearPlanPointer();
+                        setSavedPlan(null);
+                        setPlanId(null);
+                        setStage('form');
+                        setSections([]);
+                        setSeverity(null);
+                        setDomainScores(null);
+                        setTopDomains([]);
+                        goToStep(0);
+                        window.alert(extra.deletedNote);
+                      })
+                      .catch(() => {
+                        /* the plan page offers the same action with retry */
+                      });
+                  }}
+                >
+                  <span>{extra.deleteButton}</span>
+                </button>
+              ) : null}
               <button
                   type="button"
                   className="btn btn-ghost"

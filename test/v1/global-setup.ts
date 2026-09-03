@@ -1,6 +1,12 @@
-import { spawn, type ChildProcess } from 'child_process';
+import { spawn, spawnSync, type ChildProcess } from 'child_process';
 import { startMockLlm } from './mock-llm';
-import { APP_PORT, API_KEY, MOCK_PORT } from './harness';
+import {
+  APP_PORT,
+  API_KEY,
+  MOCK_PORT,
+  TEST_DATABASE_URL,
+  TEST_ENCRYPTION_KEY,
+} from './harness';
 
 /**
  * Boots the mock model and the Nest app for the Version 1.0 suites.
@@ -13,6 +19,19 @@ export default async function globalSetup(): Promise<void> {
   const mock = await startMockLlm(MOCK_PORT);
   (globalThis as Record<string, unknown>).__V1_MOCK__ = mock;
 
+  // Saved plans (Milestone 5) need a real Postgres. Migrations run here so a
+  // missing table fails as "migrate failed", not as an opaque mid-test error.
+  const migrate = spawnSync('npx', ['prisma', 'migrate', 'deploy'], {
+    env: { ...process.env, DATABASE_URL: TEST_DATABASE_URL },
+    stdio: process.env.V1_TEST_LOGS ? 'inherit' : 'ignore',
+    shell: false,
+  });
+  if (migrate.status !== 0) {
+    throw new Error(
+      `prisma migrate deploy failed against ${TEST_DATABASE_URL.replace(/\/\/[^@]*@/, '//<user>@')} — the v1 suite needs a local Postgres with that database (createdb mi_test)`,
+    );
+  }
+
   const app: ChildProcess = spawn(
     'npx',
     ['ts-node', '-r', 'tsconfig-paths/register', 'src/main.ts'],
@@ -23,6 +42,10 @@ export default async function globalSetup(): Promise<void> {
         API_SECRET_KEY: API_KEY,
         OPENAI_API_KEY: 'mock-key',
         OPENAI_API_URL: `http://localhost:${MOCK_PORT}`,
+        DATABASE_URL: TEST_DATABASE_URL,
+        FIELD_ENCRYPTION_KEY: TEST_ENCRYPTION_KEY,
+        // The mock cannot render a PDF and the suite must not need Chromium.
+        PDF_ENABLED: 'false',
         // Content is loaded from the shipped `content/` on purpose. A fixture
         // bundle would let a broken routing rule pass the suite.
       },

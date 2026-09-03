@@ -78,6 +78,11 @@ export class LlmClient {
   private readonly apiUrl: string;
   private readonly model: string;
 
+  /** For the generation-record audit trail — never for choosing behaviour. */
+  get modelId(): string {
+    return this.model;
+  }
+
   /** The plan runs long across fourteen sections. A ceiling, not a target. */
   private readonly maxTokens = 8192;
   private readonly maxRateLimitRetries = 3;

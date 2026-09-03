@@ -71,6 +71,34 @@ Notes:
   custom domain later, update it:
   `fly secrets set ALLOWED_ORIGIN=https://your.domain -a parent-report-generator-api`
 
+### 1.2b Saved plans: the database and its secrets (Milestone 5)
+
+Unmanaged Fly Postgres, same sizing and same reasoning as the Sustaining
+Recovery FRAAP's (`asap-fraap-db`): Managed Postgres starts at $38/mo, and this
+workload is a few small rows per family.
+
+```bash
+fly postgres create --name parent-report-generator-db --org asap-community \
+  --region iad --initial-cluster-size 1 --vm-size shared-cpu-1x --volume-size 1
+fly postgres attach parent-report-generator-db -a parent-report-generator-api
+# sets DATABASE_URL on the API
+
+fly secrets set \
+  FIELD_ENCRYPTION_KEY="$(openssl rand -base64 32)" \
+  -a parent-report-generator-api
+```
+
+Three things to be careful about:
+
+- **`FIELD_ENCRYPTION_KEY` cannot be rotated casually.** It decrypts the
+  urgent notes at rest; losing it makes those rows permanently unreadable.
+- **Migrations run on container start** (`npx prisma migrate deploy` in the
+  image's CMD) — a deploy carrying a migration never serves against the old
+  schema. `migrate deploy` only applies committed migrations.
+- **Persistence is fail-soft**: with the database down (or `DATABASE_URL`
+  unset) the assessment keeps working and plans are generated unsaved. The
+  boot log says so loudly.
+
 ### 1.3 Deploy
 
 ```bash

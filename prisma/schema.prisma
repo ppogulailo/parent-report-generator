@@ -1,0 +1,157 @@
+// Monitoring & Intervention — saved plans (Milestone 5, funded 2026-09-02).
+//
+// This stores sensitive family information about a child who may be using
+// substances. Three rules shape the schema, the same three as the Sustaining
+// Recovery FRAAP it deliberately mirrors:
+//
+//   1. REPRODUCIBILITY. Every row records the content versions it was produced
+//      under, so a plan generated last month stays explainable after the next
+//      matrix revision.
+//
+//   2. AUDITABILITY. The matrix's decision (the audit) is stored with the plan,
+//      so "why did this family get this?" is answerable from what the platform
+//      decided, not from re-reading the model's prose.
+//
+//   3. MINIMUM PII, ON A CLOCK. The one free-text field (the urgent note) is
+//      encrypted at the application layer (AES-256-GCM). And everything here
+//      lives under the client-approved retention policy of 2026-09-02:
+//      answers, urgent text and generation records for 30 days; the plan for
+//      90; de-identified scores indefinitely; parent-requested deletion
+//      immediately. RetentionService enforces the clocks; ScoreSnapshot is the
+//      only table it never touches.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Language {
+  en
+  es
+}
+
+enum PlanStatus {
+  generating
+  complete
+  failed
+}
+
+/// A parent's answers — the 30-day class. One row per completed assessment.
+///
+/// At 30 days RetentionService SCRUBS this row (answers emptied, urgent text
+/// nulled, scrubbedAt stamped) rather than deleting it, because the Plan hangs
+/// off it and is promised 90 days. At 90 days the row is deleted outright and
+/// the cascade takes the plan and the generation records with it.
+model Submission {
+  id String @id @default(uuid()) @db.Uuid
+
+  /// Content versions this submission was processed under. Never backfilled.
+  assessmentVersion  String
+  matrixVersion      String
+  methodologyVersion String
+
+  language Language @default(en)
+
+  /// `{ "q01": 3, ... }` — keyed by question id, never array position, so a
+  /// reordered questionnaire cannot silently re-map stored answers. Emptied to
+  /// `{}` by the 30-day scrub.
+  responses Json
+
+  /// The urgent-concern note, encrypted at rest (see FieldEncryptionService).
+  /// The most sensitive thing a parent types here. Nulled by the 30-day scrub.
+  urgentTextEncrypted String?
+
+  /// When the 30-day scrub ran. Null means the sensitive fields are intact.
+  scrubbedAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  plans Plan[]
+
+  @@index([createdAt])
+}
+
+/// A generated plan — the 90-day class. What the private return link serves.
+model Plan {
+  id           String     @id @default(uuid()) @db.Uuid
+  submissionId String     @db.Uuid
+  submission   Submission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  status   PlanStatus @default(generating)
+  language Language
+
+  /// The matrix's whole decision, denormalised for the read path: tierId,
+  /// tierLabel, domainScores (by domain id), topDomains, and the selection
+  /// audit. One fetch renders the results screen.
+  severity Json
+
+  /// The validated sections, exactly as the parent first saw them. Null while
+  /// generating or after a failure.
+  sections Json?
+
+  /// Self-contained HTML snapshot, rendered at completion. What the PDF is
+  /// printed from — a re-download matches what the parent originally saw even
+  /// after a content revision.
+  renderedHtml String?
+
+  /// Non-empty means the plan shipped with a known wording violation.
+  warnings String[]
+
+  attempts      Int     @default(0)
+  failureReason String?
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  exchanges LlmExchange[]
+
+  @@index([submissionId, createdAt])
+  @@index([createdAt])
+}
+
+/// One model call — the 30-day class. The request carries the family's answers
+/// in plaintext prompt form, which is a deliberate trade for reviewability and
+/// exactly why these rows die young.
+model LlmExchange {
+  id     String @id @default(uuid()) @db.Uuid
+  planId String @db.Uuid
+  plan   Plan   @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  attempt      Int     @default(1)
+  modelId      String
+  requestBody  Json
+  responseBody Json?
+  errorMessage String?
+
+  createdAt DateTime @default(now())
+
+  @@index([planId, createdAt])
+  @@index([createdAt])
+}
+
+/// De-identified scores, kept indefinitely — the client-approved exception to
+/// the retention clocks. NO foreign key, NO id shared with any other table, by
+/// design: there must be nothing to link a snapshot back to a family, so
+/// pruning the raw rows costs ASAP none of the aggregate picture (how many
+/// families arrive at each severity, which concerns dominate, over years).
+model ScoreSnapshot {
+  id String @id @default(uuid()) @db.Uuid
+
+  tierId       String
+  /// Domain averages keyed by domain id, rounded exactly as the API reports
+  /// them.
+  domainScores Json
+  language     Language
+
+  assessmentVersion  String
+  matrixVersion      String
+  methodologyVersion String
+
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

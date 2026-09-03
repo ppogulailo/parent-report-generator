@@ -108,6 +108,19 @@ export type GenerationEvent =
     }
   | { type: 'report'; report: GeneratedReport };
 
+/**
+ * One model call, reported to whoever is keeping generation records. Optional
+ * everywhere: generation must never depend on persistence, and a listener that
+ * throws is a listener that gets its error swallowed by the caller, not here.
+ */
+export type ExchangeListener = (exchange: {
+  attempt: number;
+  modelId: string;
+  requestBody: unknown;
+  responseBody?: unknown;
+  errorMessage?: string;
+}) => void;
+
 export interface GeneratedReport {
   sections: RenderedSection[];
   language: Language;
@@ -139,6 +152,7 @@ export class GenerationService {
     selection: SelectionResult,
     language: Language,
     urgentText?: string | null,
+    onExchange?: ExchangeListener,
   ): Promise<GeneratedReport> {
     const sections = this.sectionsFor(selection);
 
@@ -162,7 +176,19 @@ export class GenerationService {
       let raw: string;
       try {
         raw = await this.llm.completeJson(messages);
+        onExchange?.({
+          attempt,
+          modelId: this.llm.modelId,
+          requestBody: { messages: [...messages] },
+          responseBody: { text: raw },
+        });
       } catch (err) {
+        onExchange?.({
+          attempt,
+          modelId: this.llm.modelId,
+          requestBody: { messages: [...messages] },
+          errorMessage: err instanceof Error ? err.name : 'unknown',
+        });
         if (err instanceof RetryableLlmError && attempt < this.maxAttempts) {
           this.logger.warn(
             `response unusable (attempt ${attempt}/${this.maxAttempts}); retrying`,
@@ -281,6 +307,7 @@ export class GenerationService {
     selection: SelectionResult,
     language: Language,
     urgentText?: string | null,
+    onExchange?: ExchangeListener,
   ): AsyncGenerator<GenerationEvent> {
     const sections = this.sectionsFor(selection);
     const tier = this.content.tier(selection.tierId);
@@ -351,7 +378,19 @@ export class GenerationService {
           const progress = parsePartialJson(accumulated);
           if (Object.keys(progress).length > 0) pending.push(progress);
         });
+        onExchange?.({
+          attempt,
+          modelId: this.llm.modelId,
+          requestBody: { messages: [...messages] },
+          responseBody: { text: raw },
+        });
       } catch (err) {
+        onExchange?.({
+          attempt,
+          modelId: this.llm.modelId,
+          requestBody: { messages: [...messages] },
+          errorMessage: err instanceof Error ? err.name : 'unknown',
+        });
         if (err instanceof RetryableLlmError && attempt < this.maxAttempts) {
           this.logger.warn(
             `stream unusable (attempt ${attempt}/${this.maxAttempts}); retrying`,

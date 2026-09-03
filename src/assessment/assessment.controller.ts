@@ -11,8 +11,10 @@ import type { Response } from 'express';
 import { ApiKeyGuard } from '../common/guards/api-key.guard';
 import { ContentService } from '../content/content.service';
 import { GenerationService } from '../generation/generation.service';
+import { PdfService } from '../render/pdf.service';
 import { SelectionService } from '../selection/selection.service';
 import { AssessmentValidator } from './assessment.validator';
+import { PlanService } from './plan.service';
 import { SubmitAssessmentDto } from './dto/submit-assessment.dto';
 
 /**
@@ -31,6 +33,8 @@ export class AssessmentController {
     private readonly validator: AssessmentValidator,
     private readonly selection: SelectionService,
     private readonly generation: GenerationService,
+    private readonly plans: PlanService,
+    private readonly pdf: PdfService,
   ) {}
 
   /**
@@ -96,6 +100,9 @@ export class AssessmentController {
       workshopLinksAvailable: this.content.workshops.workshops.some(
         (w) => w.url !== null,
       ),
+      // Whether the API can hand back a PDF. The frontend shows the download
+      // button only when this is true; the print path always exists.
+      pdf: this.pdf.available,
     };
   }
 
@@ -129,6 +136,7 @@ export class AssessmentController {
       res.write(`event: ${event}\ndata: ${JSON.stringify(data)}\n\n`);
     };
 
+    let planId: string | undefined;
     try {
       const submission = this.validator.validate(dto);
       const selection = this.selection.select(
@@ -137,14 +145,29 @@ export class AssessmentController {
         submission.gateAnswers,
       );
 
+      // Fail-soft: a family whose plan cannot be saved still receives it —
+      // they just are not offered a return link.
+      const persisted = await this.plans.persistStart({
+        responses: submission.responses,
+        urgentText: submission.urgentConcern,
+        language: submission.language,
+        selection,
+      });
+      planId = persisted?.planId;
+
       for await (const event of this.generation.generateStream(
         selection,
         submission.language,
         submission.urgentConcern,
+        this.plans.exchangeListener(planId),
       )) {
         if (event.type === 'report') {
+          if (planId) {
+            await this.plans.persistComplete(planId, event.report);
+          }
           send('report', {
             success: true,
+            planId: planId ?? null,
             severity: {
               tierId: selection.tierId,
               label: event.report.tierLabel,
@@ -158,11 +181,15 @@ export class AssessmentController {
             },
             audit: selection.audit,
           });
+        } else if (event.type === 'decided') {
+          // The return link exists before a word of the plan does.
+          send('decided', { ...event, planId: planId ?? null });
         } else {
           send(event.type, event);
         }
       }
     } catch (err) {
+      if (planId) await this.plans.persistFailure(planId, 'generation-failed');
       // The stream is already open, so a failure cannot be an HTTP status. It
       // goes out as an event instead.
       //
@@ -194,14 +221,35 @@ export class AssessmentController {
       submission.gateAnswers,
     );
 
-    const report = await this.generation.generate(
+    const persisted = await this.plans.persistStart({
+      responses: submission.responses,
+      urgentText: submission.urgentConcern,
+      language: submission.language,
       selection,
-      submission.language,
-      submission.urgentConcern,
-    );
+    });
+
+    let report;
+    try {
+      report = await this.generation.generate(
+        selection,
+        submission.language,
+        submission.urgentConcern,
+        this.plans.exchangeListener(persisted?.planId),
+      );
+    } catch (err) {
+      if (persisted) {
+        await this.plans.persistFailure(persisted.planId, 'generation-failed');
+      }
+      throw err;
+    }
+
+    if (persisted) {
+      await this.plans.persistComplete(persisted.planId, report);
+    }
 
     return {
       success: true,
+      planId: persisted?.planId ?? null,
       // The client-facing domain labels, not the internal ids — this is the
       // response shape the existing frontend already understands.
       domainScores: Object.fromEntries(
