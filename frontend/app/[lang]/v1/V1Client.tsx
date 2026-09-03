@@ -922,8 +922,11 @@ export default function V1Client({
 
             {/* Pagination above the questions as well as below it. On a long
                 section the controls were only reachable by scrolling to the
-                bottom, which meant scrolling back up to read the heading. */}
-            {stepNav()}
+                bottom, which meant scrolling back up to read the heading. The
+                FINAL step is exempt: it is one short optional field, and a
+                "Generate Action Plan" button above it invites generating the
+                plan without ever seeing the urgent-note prompt below. */}
+            {step.kind !== 'final' ? stepNav() : null}
 
             {step.kind === 'questions' ? (
               <div className="qgroups">

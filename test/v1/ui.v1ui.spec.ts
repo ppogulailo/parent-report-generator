@@ -217,6 +217,12 @@ test('the last step holds the urgent field and the generate button', async ({
   await expect(page.locator('.crisis-textarea')).toBeVisible();
   await expect(submitButton(page)).toBeEnabled();
   await expect(button(page, NEXT)).toHaveCount(0);
+  // Exactly ONE generate button, below the urgent field. The duplicated top
+  // controls that serve long question steps would sit above the field here and
+  // invite generating without ever seeing it.
+  await expect(
+    page.getByRole('button', { name: 'Generate Action Plan', exact: true }),
+  ).toHaveCount(1);
 });
 
 test("Next lands the new section's first question at the top of the screen", async ({
