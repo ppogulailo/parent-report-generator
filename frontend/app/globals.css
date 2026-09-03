@@ -864,6 +864,71 @@ a:hover {
   margin-top: 8px;
 }
 
+/* ── Saved-plan link card ─────────────────────────────────────
+   The keepsake: the one thing on the results screen a parent is asked to
+   take with them. Styled as a quiet object — surface, hairline, a single
+   accent — rather than an alert. */
+.plan-link-card {
+  margin: 26px 0 14px;
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  display: grid;
+  gap: 12px;
+}
+.plan-link-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.plan-link-icon {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--accent-violet) 10%, var(--surface));
+  color: var(--accent-violet);
+}
+.plan-link-title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 17px;
+  margin: 0;
+  color: var(--text-primary);
+}
+.plan-link-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  max-width: 62ch;
+}
+.plan-link-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: stretch;
+}
+.plan-link-url {
+  flex: 1 1 260px;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 13px;
+  color: var(--text-secondary);
+  background: var(--surface-sunken);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 /* ── Motion / print ────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   .cursor {

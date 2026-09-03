@@ -1122,24 +1122,24 @@ export default function V1Client({
               /* The private return link (Milestone 5). Shown only once the
                  plan is actually saved — a link we could not create is not
                  offered, not offered broken. */
-              <section className="crisis-card no-print" style={{ marginTop: '1rem' }}>
-                <h2 className="crisis-heading">{extra.planLinkHeading}</h2>
-                <p className="crisis-intro">{extra.planLinkNote}</p>
-                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', alignItems: 'center' }}>
-                  <code
-                    style={{
-                      padding: '0.5rem 0.75rem',
-                      border: '1px solid var(--border, #d5d9e0)',
-                      borderRadius: 8,
-                      fontSize: '0.85rem',
-                      overflowWrap: 'anywhere',
-                    }}
-                  >
+              <section className="plan-link-card no-print" aria-label={extra.planLinkHeading}>
+                <div className="plan-link-head">
+                  <span className="plan-link-icon" aria-hidden>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7" />
+                      <path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7" />
+                    </svg>
+                  </span>
+                  <h2 className="plan-link-title">{extra.planLinkHeading}</h2>
+                </div>
+                <p className="plan-link-note">{extra.planLinkNote}</p>
+                <div className="plan-link-row">
+                  <span className="plan-link-url" title={`${window.location.origin}/${language}/plan/${planId}`}>
                     {`${window.location.origin}/${language}/plan/${planId}`}
-                  </code>
+                  </span>
                   <button
                     type="button"
-                    className="btn btn-secondary"
+                    className="btn btn-primary"
                     onClick={() => {
                       void navigator.clipboard
                         .writeText(

@@ -139,6 +139,7 @@ export class PlanService {
       const html = this.renderer.renderDocument({
         planId,
         language: report.language,
+        tierId: report.tierId,
         tierLabel: report.tierLabel,
         tierDescription: this.content.tier(report.tierId).description[
           report.language
